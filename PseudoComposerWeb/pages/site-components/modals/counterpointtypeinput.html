@@ -1,0 +1,83 @@
+<div class="modal fade" id="counterpoint-type-input" tabindex="-1" role="dialog" aria-labelledby="Wine">
+
+    <div class="modal-dialog" role="document">
+
+        <div class="modal-content" ng-controller="pseudoComposerController">
+
+            <div class="modal-body">
+
+                <div>
+                    <p>How many voices are you working with?</p>
+                </div>
+
+                <div ng-repeat="n in [1,2]">
+
+                    <input type="radio" ng-model="inputParams.numberOfVoices" ng-value="{{n}}" value="{{n}}" name="numberOfVoices">
+                    <span ng-class="inputParams.numberOfVoices === {{n}} ? 'active' : ''">{{n}}</span>
+
+                </div>
+
+                <div ng-if="inputParams.numberOfVoices > 1">
+
+                    <div>
+                        <p>What species?</p>
+                    </div>
+
+                    <div ng-repeat="n in [['First', 1], ['Second', 2], ['Third', 3]]">
+
+                        <input type="radio" ng-model="inputParams.species" ng-value="{{n[1]}}" value="{{n[1]}}" name="species">
+                        <span ng-class="inputParams.species === {{n[1]}} ? 'active' : ''">{{n[0]}}</span>
+
+                    </div>
+
+                </div>
+
+                <div ng-repeat="number in getArrayOfSizeNumber(inputParams.numberOfVoices) track by $index">
+
+                    <div>
+                        <p>What clef for voice {{$index + 1}}</p>
+                    </div>
+
+                    <div>
+
+                        <input type="radio" ng-model="inputParams.clef[$index]" ng-value="'img/trebleclef.png'" value="'img/trebleclef.png'" name="clefForVoice{{$index}}">
+                        <span ng-class="inputParams.clef[$index] === 'Treble' ? 'active' : ''">Treble</span>
+
+                    </div>
+
+                    <div>
+
+                        <input type="radio" ng-model="inputParams.clef[$index]" ng-value="'img/altoclef.png'" value="'img/altoclef.png" name="clefForVoice{{$index}}">
+                        <span ng-class="inputParams.clef[$index] === 'Alto' ? 'active' : ''">Alto</span>
+
+                    </div>
+
+                    <div>
+
+                        <input type="radio" ng-model="inputParams.clef[$index]" ng-value="'img/tenorclef.png'" value="'img/tenorclef.png'" name="clefForVoice{{$index}}">
+                        <span ng-class="inputParams.clef[$index] === 'Tenor' ? 'active' : ''">Tenor</span>
+
+                    </div>
+
+                    <div>
+
+                        <input type="radio" ng-model="inputParams.clef[$index]" ng-value="'img/bassclef.png'" value="'img/bassclef.png'" name="clefForVoice{{$index}}">
+                        <span ng-class="inputParams.clef[$index] === 'Bass' ? 'active' : ''">Bass</span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button" class="btn btn-default pull-right" data-toggle="modal" data-target="#staff-input" data-dismiss="modal">Next</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

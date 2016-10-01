@@ -1,0 +1,68 @@
+<div class="modal fade" id="composed-music" tabindex="-1" role="dialog" aria-labelledby="Wine">
+
+    <div class="modal-dialog" role="document">
+
+        <div class="modal-content" ng-controller="inputController">
+
+            <div class="modal-body">
+
+                <div ng-repeat="i in getArrayOfSizeNumber(inputParams.numberOfVoices) track by $index">
+
+                    <div class="staffEntry active composed">
+
+                        <div class="staff">
+
+                            <div class="clef"><img class="clef" src="img/trebleclef.png"></div>
+
+                            <div class="space hoverable a5" data-staff-index="{{$index}}"></div>
+
+                            <div class="space hoverable g5" data-staff-index="{{$index}}"></div>
+                            
+                            <div class="space hoverable f5" data-staff-index="{{$index}}">
+                                <div class="line"></div>
+                            </div>
+                            
+                            <div class="space hoverable e5" data-staff-index="{{$index}}"></div>
+                            
+                            <div class="space hoverable d5" data-staff-index="{{$index}}">
+                                <div class="line"></div>
+                            </div>
+
+                            <div class="space hoverable c5" data-staff-index="{{$index}}"></div>
+                            
+                            <div class="space hoverable b4" data-staff-index="{{$index}}">
+                                <div class="line"></div>
+                            </div>
+            
+                            <div class="space hoverable a4" data-staff-index="{{$index}}"></div>
+            
+                            <div class="space hoverable g4" data-staff-index="{{$index}}">
+                                <div class="line"></div>
+                            </div>
+                
+                            <div class="space hoverable f4" data-staff-index="{{$index}}"></div>
+                
+                            <div class="space hoverable e4" data-staff-index="{{$index}}">
+                                <div class="line"></div>
+                            </div>
+                    
+                            <div class="space hoverable d4" data-staff-index="{{$index}}"></div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        
+            <div class="modal-footer">
+      
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal" data-toggle="modal" data-target="#counterpoint-type-input">Back</button>
+      
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

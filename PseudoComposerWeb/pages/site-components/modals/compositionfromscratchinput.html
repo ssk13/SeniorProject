@@ -1,0 +1,70 @@
+<div class="modal fade" id="composition-from-scratch-input" tabindex="-1" role="dialog" aria-labelledby="Wine">
+
+    <div class="modal-dialog" role="document">
+
+        <div class="modal-content" ng-controller="pseudoComposerController">
+
+            <div class="modal-body">
+
+                <div ng-if="formState==0">
+
+                    <div>
+                        <p>How many voices would you like?</p>
+                    </div>
+
+                    <div ng-repeat="n in [1,2]">
+
+                        <input type="radio" ng-model="inputParams.numberOfVoices" ng-value="{{n}}" value="{{n}}" name="{{n}}">
+                        <span ng-class="inputParams.numberOfVoices === {{n}} ? 'active' : ''">{{n}}</span>
+
+                    </div>
+
+                </div>
+
+                <div ng-if="formState==1 && inputParams.numberOfVoices != 1">
+
+                    <div>
+                        <p>What kind of counterpoint would you like?</p>
+                    </div>
+
+                    <div ng-repeat="n in [['First', 1], ['Second', 2], ['Third' ,3]]">
+
+                        <input type="radio" ng-model="inputParams.species" ng-value="{{n[1]}}" value="{{n[1]}}" name="{{n[1]}}">
+                        <span ng-class="inputParams.species === {{n[1]}} ? 'active' : ''">{{n[0]}}</span>
+
+                    </div>
+
+                </div>
+
+                <div ng-if="formState==1 && inputParams.numberOfVoices == 1">
+
+                    <div>
+                        <p>We'll write you a cantus firmus then :)</p>
+                    </div>
+
+                </div>
+
+                <div ng-if="formState==2">
+
+                    <div>
+                        <p>Go ahead and listen - let us know what you think :) </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                <button ng-if="formState==0" type="button" class="btn btn-default pull-right" ng-click="changeFormState(1)">Next</button>
+                <button ng-if="formState==1" type="button" class="btn btn-default pull-right" ng-click="changeFormState(2); writeMusics();" data-toggle="modal" data-target="#composed-music">Next</button>
+                <button ng-if="formState==2" type="button" class="btn btn-default pull-right" data-dismiss="modal">Done</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

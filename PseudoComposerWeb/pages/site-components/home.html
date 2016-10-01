@@ -1,0 +1,28 @@
+<div ng-if="isLoggedIn == true;" class="other-recommendation col-md-2 col-md-offset-5 get-started-button button clickable" ng-click="routeTo('/quiz')">Get Started<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+</div>
+
+<div class="col-md-12 white margin-top-40">
+
+	<div class="col-md-10 col-md-offset-1">
+
+		<h3 class="col-md-10 col-md-offset-1"><b>PseudoComposer</b> was created by Sarah Klein to earn her a bunch of course credits, a bit of funding, and save Dr. Richards money on red ink.</h3> 
+
+		<div class="col-md-12">
+			<p>Go ahead and tell me what kind of counterpoint you're trying to write, put in your music, and I'll point out the things that would make Palestrina grumble. It's not done when you get <i>my</i> approval (or Palestrina's, for that matter) - music is art!</p>
+		</div>
+
+	</div>
+
+</div>
+
+<div class="other-recommendation col-md-6 col-md-offset-3 get-started-button button clickable color4 round-corners" data-toggle="modal" data-target="#counterpoint-type-input">Enter your attempt at <i>Counterpoint</i><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></div>
+
+<div class="other-recommendation col-md-6 col-md-offset-3 get-started-button button clickable color4 round-corners" data-toggle="modal" data-target="#composition-from-scratch-input">Just make me something from <i>scratch</i><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></div>
+
+<div ng-include src="'pages/site-components/modals/staffinput.html'"></div>
+
+<div ng-include src="'pages/site-components/modals/composedmusic.html'"></div>
+
+<div ng-include src="'pages/site-components/modals/counterpointtypeinput.html'"></div>
+
+<div ng-include src="'pages/site-components/modals/compositionfromscratchinput.html'"></div>

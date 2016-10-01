@@ -1,0 +1,183 @@
+/*
+	Notes
+*/
+
+.activeStaff .notehead.floating {
+	visibility: visible;
+}
+
+.accidental {
+	width: 40px;
+	margin-top: -15px;
+    display: inline-block;
+    position: absolute;
+}
+
+.accidental img {
+	height: 40px;
+    margin-left: 35px;
+}
+
+.accidental .flat {
+	margin-top: -5px;
+}
+
+.accidental .sharp, .accidental .natural {
+	margin-top: 4px;
+}
+
+.activeNote {
+	-webkit-filter: drop-shadow(0px 0px 3px #5a312b);
+    filter: drop-shadow(0px 0px 3px #5a312b);
+}
+
+.halfup, .halfdown, .quarterup, .quarterdown {
+	height: 75px !important;
+}
+
+.halfup, .quarterup {
+	margin-top: -54px !important;
+}
+
+.showIncorrectAccidentals .invalidAccidental {
+	background-color: purple !important;
+}
+
+.showParallelFifths .parallelFifth {
+	border: 2px solid brown !important;
+}
+
+.showParallelOctaves .parallelOctave {
+	border: 2px solid green !important;
+}
+
+.showDirectFifths .directFifth, .showDirectOctaves .directOctave {
+	border: 2px solid black !important;
+}
+
+.showRepeatedNotes .repeatedNote {
+	border: 2px solid yellow !important;
+}
+
+.notehead {
+    width: 30px;
+    height: 20px;
+    position: relative;
+    background-size: cover;
+}
+
+.notehead.floating {
+	background-color: gray;
+	visibility: hidden;
+}
+
+.notehead.static {
+    display: block !important;
+    float: left;
+    position: absolute;
+    margin-top: -1px;
+}
+
+.notehead > img {
+	height: 25px;
+    position: relative;
+    top: -3px;
+}
+
+/*
+	Staff
+*/
+
+.clef {
+	float: left;
+	width: 50px;
+}
+
+.clef.alto {
+   	margin-top: 37px;
+	height: 86px;
+}
+
+.clef.bass {
+	margin-top: 41px;
+	height: 59px;
+}
+
+.clef.tenor {
+	margin-top: 17px;
+    height: 87px;
+}
+
+.clef.treble {
+	margin-top: 14px;
+    height: 137px;
+}
+
+.line {
+	height: 5px;
+	padding-top: 8px;
+	border-bottom: 2px solid black;
+}
+
+.space {
+	height: 10px;
+}
+
+.staff {
+	width: 100%;
+	height: 150px;
+	background-color: white;
+	margin: 0 10% 100px 0%;
+	padding: 0;
+}
+
+.staffEntry {
+	padding: 0;
+	opacity: .5;
+}
+
+.staffEntry.activeStaff {
+	opacity: 1;
+}
+
+/*
+	Toolbar
+*/
+
+.toolbar {
+	margin-left: 86px;
+}
+
+.toolbar-item {
+	width: 40px;
+	height: 50px;
+	padding: 2px;
+	background-color: rgb(216,214,218);
+	border: 2px solid rgb(50,57,92);
+	cursor: pointer;
+}
+
+.toolbar-item.active {
+	-webkit-filter: drop-shadow(0px 0px 3px #5a312b);
+    filter: drop-shadow(0px 0px 3px #5a312b);
+}
+
+.toolbar-item.break {
+	background-color: transparent;
+	border: none;
+}
+
+.toolbar-item > img {
+	height: 40px;
+	margin-left: 6px;
+}
+
+.toolbar-item > img.delete {
+	width: 20px;
+}
+
+.toolbar-item > img.whole {
+	width: 22px;
+    height: auto;
+    margin-top: 22px;
+}

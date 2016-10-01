@@ -1,0 +1,909 @@
+PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope', 
+    function( $scope, $rootScope ) {
+
+        $scope.duration = 'whole';
+        $scope.floatingNoteheadTopPos = 59;
+
+        $scope.incorrectAccidental = [ false, false ]; /* [ has, show ]*/
+        $scope.incorrectHarmony = [ false, false ];
+        $scope.incorrectMelody = [ false, false ];
+        $scope.repeatedNotes = [ false, false ];
+        $scope.voiceCrossing = [ false, false ];
+        $scope.parallelFifths = [ false, false ];
+        $scope.parallelOctaves = [ false, false ];
+        $scope.directFifths = [ false, false ];
+        $scope.directOctaves = [ false, false ];
+
+        var currentLeftPos = [ 90, 90, 90 ],
+            noteIndex = [ 0, 0, 0 ],
+            beatIndex = [ 0, 0, 0 ],
+            notes = [ [],[],[] ],
+            topPosToNoteTableTreble = [ 
+                                        [ 19, 'g5', 41, '.slot0' ], [ 29, 'f5', 39, '.slot1' ], [ 39, 'e5', 38, '.slot2' ], [ 48, 'd5', 36, '.slot3' ], 
+                                        [ 59, 'c5', 34, '.slot4' ], [ 70, 'b4', 33, '.slot5' ], [ 79, 'a4', 31, '.slot6' ], [ 90, 'g4', 29, '.slot7' ], 
+                                        [ 99, 'f4', 27, '.slot8' ], [ 111, 'e4', 26, '.slot9' ], [ 119, 'd4', 24, '.slot10' ]
+                                    ],
+            topPosToNoteTableAlto = [ 
+                                        [ 19, 'a4', 31, '.slot0' ], [ 29, 'g4', 29, '.slot1' ], [ 39, 'f4', 27, '.slot2' ], [ 48, 'e4', 26, '.slot3' ], 
+                                        [ 59, 'd4', 24, '.slot4' ], [ 70, 'c4', 22, '.slot5' ], [ 79, 'b3', 21, '.slot6' ], [ 90, 'a3', 19, '.slot7' ], 
+                                        [ 99, 'g3', 17, '.slot8' ], [ 111, 'f3', 15, '.slot9' ], [ 119, 'e3', 14, '.slot10' ]
+                                    ],
+            topPosToNoteTableTenor = [ 
+                                        [ 19, 'f4', 27, '.slot0' ], [ 29, 'e4', 26, '.slot1' ], [ 39, 'd4', 24, '.slot2' ], [ 48, 'c4', 22, '.slot3' ], 
+                                        [ 59, 'b3', 21, '.slot4' ], [ 70, 'a3', 19, '.slot5' ], [ 79, 'g3', 17, '.slot6' ], [ 90, 'f3', 15, '.slot7' ], 
+                                        [ 99, 'e3', 14, '.slot8' ], [ 111, 'd3', 12, '.slot9' ], [ 119, 'c3', 10, '.slot10' ]
+                                    ],
+            topPosToNoteTableBass = [ 
+                                        [ 19, 'b3', 21, '.slot0' ], [ 29, 'a3', 19, '.slot1' ], [ 39, 'g3', 17, '.slot2' ], [ 48, 'f3', 15, '.slot3' ], 
+                                        [ 59, 'e3', 14, '.slot4' ], [ 70, 'd3', 12, '.slot5' ], [ 79, 'c3', 10, '.slot6' ], [ 90, 'b2', 9, '.slot7' ], 
+                                        [ 99, 'a2', 7, '.slot8' ], [ 111, 'g2', 5, '.slot9' ], [ 119, 'f2', 3, '.slot10' ]
+                                    ],
+            activeStaff = 0,
+            connectionNumber = 0,
+            targetNote;
+
+        /* staff actions */
+
+        $scope.addAccidental = function( acc ) {
+            var index = parseInt( targetNote[ 0 ].getAttribute( 'data-note-index' ) ),
+                note, i, margin, acc, accEl, accClass;
+
+                margin = $( targetNote )[ 0 ].getAttribute( 'style' );
+                margin = margin.slice( margin.indexOf('margin') + 13 );
+                margin = margin.slice( 0, margin.indexOf( 'px' ) ) ;
+                margin = parseInt( margin ) - 105;
+
+            if( !targetNote )
+                return;
+
+            if( $( targetNote ).hasClass( 'hasAccidental' ) ) {
+                accEl = $( $( targetNote )[ 0 ].previousElementSibling )[ 0 ];
+                accClass = $( $( accEl )[ 0 ].firstElementChild )[ 0 ].className;
+                accEl.remove();
+                notes[ activeStaff ][ index ][ 0 ] = notes[ activeStaff ][ index ][ 0 ].slice( 0, -1 );
+
+                if( accClass == 'sharp' )
+                    notes[ activeStaff ][ index ][ 1 ]--;
+                else if( accClass == 'flat' )
+                    notes[ activeStaff ][ index ][ 1 ]++;
+
+                if( accClass == acc ) {
+                    $( targetNote ).removeClass( 'hasAccidental' );
+                    setUpTaskbar( targetNote );
+                    shiftNotes( -20 );
+                    return;
+                }
+            }
+
+            addAccidentalToNote( margin, acc, index );
+
+            if( !$( targetNote ).hasClass( 'hasAccidental' ) ) {
+                $( targetNote ).addClass( 'hasAccidental' );
+                shiftNotes( 20 );
+            }
+            
+            setUpTaskbar( targetNote );
+        };
+
+        $scope.changeDuration = function( dur ) {
+            var staffIndex, noteIndex, val, prevDur;
+
+            $scope.duration = dur;
+
+            if( targetNote ) {
+                staffIndex = $( targetNote )[ 0 ].getAttribute( 'data-staff-index' );
+                noteIndex = $( targetNote )[ 0 ].getAttribute( 'data-note-index' );
+                val = notes[ staffIndex ][ noteIndex ][ 1 ];
+                prevDur = notes[ staffIndex ][ noteIndex ][ 2 ];
+                $( targetNote ).removeClass( 'whole quarterup quarterdown halfup halfdown' );
+
+                if( prevDur == 'whole' )
+                    beatIndex[ staffIndex ] -= 4;
+                else if( prevDur == 'half' )
+                    beatIndex[ staffIndex ] -= 2;
+                else
+                    beatIndex[ staffIndex ] -= 1;
+
+                if( dur == 'quarter' ) {
+                    if( val < 35 ){
+                        $( targetNote )[ 0 ].setAttribute( 'src', 'img/quarterup.png' );  
+                        $( targetNote ).addClass( 'quarterup' );         
+                    }
+                    else{
+                        $( targetNote )[ 0 ].setAttribute( 'src', 'img/quarterdown.png' );
+                        $( targetNote ).addClass( 'quarterdown' ); 
+                    }
+                    beatIndex[ staffIndex ] += 1;
+                }
+                else if( dur == 'half' ) {
+                    if( val < 35 ){
+                        $( targetNote )[ 0 ].setAttribute( 'src', 'img/halfup.png' );
+                        $( targetNote ).addClass( 'halfup' ); 
+                    }
+                    else{
+                        $( targetNote )[ 0 ].setAttribute( 'src', 'img/halfdown.png' );
+                        $( targetNote ).addClass( 'halfdown' ); 
+                    }
+                    beatIndex[ staffIndex ] += 2;
+                }
+                else {
+                    $( targetNote )[ 0 ].setAttribute( 'src', 'img/whole.png' );
+                    $( targetNote ).addClass( 'whole' ); 
+                    beatIndex[ staffIndex ] += 4;
+                }
+                notes[ staffIndex ][ noteIndex ][ 2 ] = dur;
+            }
+        };
+
+        $scope.deleteNote = function() {
+            if( !targetNote )
+                return;
+
+            var noteEls = $( document.querySelectorAll( '[data-staff-index="' + activeStaff + '"].static' ) ),
+                index = targetNote[ 0 ].getAttribute( 'data-note-index' ),
+                hasAccidental = $( targetNote ).hasClass( 'hasAccidental' ),
+                offset = 40,
+                note, acc, i;
+
+            if( hasAccidental )
+                offset = 60;
+
+            
+            if( $( targetNote ).hasClass( 'hasAccidental' ) ) {
+                acc = $( targetNote)[ 0 ].previousElementSibling;
+                $( acc ).remove();
+            }
+            $( targetNote ).remove();
+
+            for( i = parseInt( index ); i != noteEls.length - 1; ++i ) {
+                note = $( document.querySelector( '[data-note-index="' + ( i + 1 ) + '"][data-staff-index="' + activeStaff + '"]' ) );
+                note[ 0 ].setAttribute( 'data-note-index', i );
+                note[ 0 ].style.marginLeft = ( parseInt( note[ 0 ].style.marginLeft ) - offset ) + 'px';
+                if( note.hasClass( 'hasAccidental' ) ) {
+                    acc = note[ 0 ].previousElementSibling;
+                    margin = $( acc )[ 0 ].getAttribute( 'style' );
+                    margin = parseInt( margin.slice( 13, margin.indexOf( 'px' ) ) ) - offset;
+                    $( acc )[ 0 ].style = 'margin-left: ' + margin + 'px;';
+                }
+            }
+
+            currentLeftPos[ activeStaff ] -= offset;
+            notes[ activeStaff ].splice( index, 1 );
+            noteIndex[ activeStaff ]--;
+
+            if( noteIndex[ activeStaff ] > 0 ) {
+                targetNote = $( document.querySelector( '[data-note-index="' + ( noteIndex[ activeStaff ] - 1 ) + '"][data-staff-index="' + activeStaff + '"]' ) );
+                $( targetNote ).addClass( 'activeNote' );
+            }
+            else
+                targetNote = undefined;
+        };
+
+        $scope.floatingNoteheadClicked = function( $event, staffNumber ) {
+            var target;
+
+            for( i = 0; i < topPosToNoteTableTreble.length; ++i ) {
+                if( $rootScope.inputParams.clef[ staffNumber ] == 'img/trebleclef.png' ) {
+                    if( $scope.floatingNoteheadTopPos == topPosToNoteTableTreble[ i ][ 0 ] ) {
+                        target = $( document.querySelector( '.activeStaff' ).querySelector( topPosToNoteTableTreble[ i ][ 3 ] ) );
+                        $scope.insertNote( topPosToNoteTableTreble[ i ][ 3 ], topPosToNoteTableTreble[ i ][ 0 ], target, staffNumber );
+                        return;
+                    }
+                }
+                else if( $rootScope.inputParams.clef[ staffNumber ] == 'img/altoclef.png' ) {
+                    if( $scope.floatingNoteheadTopPos == topPosToNoteTableAlto[ i ][ 0 ] ) {
+                        target = $( document.querySelector( '.activeStaff' ).querySelector( topPosToNoteTableAlto[ i ][ 3 ] ) );
+                        $scope.insertNote( topPosToNoteTableAlto[ i ][ 3 ], topPosToNoteTableAlto[ i ][ 0 ], target, staffNumber );
+                        return;
+                    }
+                }
+                else if( $rootScope.inputParams.clef[ staffNumber ] == 'img/tenorclef.png' ) {
+                    if( $scope.floatingNoteheadTopPos == topPosToNoteTableTenor[ i ][ 0 ] ) {
+                        target = $( document.querySelector( '.activeStaff' ).querySelector( topPosToNoteTableTenor[ i ][ 3 ] ) );
+                        $scope.insertNote( topPosToNoteTableTenor[ i ][ 3 ], topPosToNoteTableTenor[ i ][ 0 ], target, staffNumber );
+                        return;
+                    }
+                }
+                else {
+                    if( $scope.floatingNoteheadTopPos == topPosToNoteTableBass[ i ][ 0 ] ) {
+                        target = $( document.querySelector( '.activeStaff' ).querySelector( topPosToNoteTableBass[ i ][ 3 ] ) );
+                        $scope.insertNote( topPosToNoteTableBass[ i ][ 3 ], topPosToNoteTableBass[ i ][ 0 ], target, staffNumber );
+                        return;
+                    }
+                }
+            }
+        };
+
+        $scope.insertNote = function( classname, topPosValue, $event, staffNumber ) {
+            var otherStaffNumber = Math.abs( staffNumber - 1 ),
+                spaceEl, noteheadDiv, noteheadEl, note, target, i, numericValue, noteName;
+
+            if( $event.target === undefined ) //inserting from click of floating notehead
+                target = $event[ 0 ];
+            else if( $event.target.className.indexOf( 'line' ) !== -1 ) //inserting from click of line
+                target = $( $event.target )[ 0 ].parentElement;
+            else if( $( $event.target )[ 0 ].className.indexOf( 'accidental' ) !== -1 ) //clicking on note with accidental
+                target = $( $event.target )[ 0 ].parentElement;
+            else //inserting from click of space
+                target = $event.target;
+
+            if( target.getAttribute( 'data-staff-index' ) != activeStaff )
+                return;
+
+            if( target.className.indexOf( 'notehead static' ) !== -1 ) { //clicked on notehead
+                setUpTaskbar( target );
+                targetNote = $( target )
+                return;
+            }
+
+            for( i = 0; i < topPosToNoteTableTreble.length; ++i ) {
+                if( $rootScope.inputParams.clef[ staffNumber ] == 'img/trebleclef.png' ) {
+                    if( topPosValue == topPosToNoteTableTreble[ i ][ 0 ] ) {
+                        numericValue = topPosToNoteTableTreble[ i ][ 2 ];
+                        noteName = topPosToNoteTableTreble[ i ][ 1 ];
+                        i = topPosToNoteTableTreble.length;
+                    }
+                }
+                else if( $rootScope.inputParams.clef[ staffNumber ] == 'img/altoclef.png' ) {
+                    if( topPosValue == topPosToNoteTableAlto[ i ][ 0 ] ) {
+                        numericValue = topPosToNoteTableAlto[ i ][ 2 ];
+                        noteName = topPosToNoteTableAlto[ i ][ 1 ];
+                        i = topPosToNoteTableTreble.length;
+                    }
+                }
+                else if( $rootScope.inputParams.clef[ staffNumber ] == 'img/tenorclef.png' ) {
+                    if( topPosValue == topPosToNoteTableTenor[ i ][ 0 ] ) {
+                        numericValue = topPosToNoteTableTenor[ i ][ 2 ];
+                        noteName = topPosToNoteTableTenor[ i ][ 1 ];
+                        i = topPosToNoteTableTreble.length;
+                    }
+                }
+                else {
+                    if( topPosValue == topPosToNoteTableBass[ i ][ 0 ] ) {
+                        numericValue = topPosToNoteTableBass[ i ][ 2 ];
+                        noteName = topPosToNoteTableBass[ i ][ 1 ];
+                        i = topPosToNoteTableTreble.length;
+                    }
+                }
+            }
+
+            spaceEl = $( document.querySelector( '.activeStaff' ).querySelector( classname ) );
+            noteheadEl = getNoteFromDurationAndValue( $scope.duration, numericValue );
+            noteheadEl[ 0 ].setAttribute( 'data-note-index', noteIndex[ activeStaff ] );
+            noteheadEl[ 0 ].setAttribute( 'data-staff-index', staffNumber );
+            noteheadEl.css( {
+                 marginLeft: ( currentLeftPos[ staffNumber ] ) + 'px',
+                 top: ( topPosValue + 65 + ( 250 * staffNumber ) ) + 'px'
+            } ); 
+
+            noteheadDiv = $( '<div></div>' );
+            noteheadDiv.append( noteheadEl );
+            spaceEl.prepend( noteheadDiv );
+            currentLeftPos[ staffNumber ] += 40;
+            note = [ noteName, numericValue, $scope.duration ];
+            notes[ activeStaff ].push( note );
+            noteIndex[ activeStaff ]++;
+            targetNote = noteheadEl[0];
+
+            if( $scope.duration == 'whole' )
+                beatIndex[ activeStaff ] += 4;
+            else if( $scope.duration == 'half' )
+                beatIndex[ activeStaff ] += 2;
+            else
+                beatIndex[ activeStaff ] += 1;
+
+            setUpTaskbar( noteheadEl );
+        };
+
+        $scope.toggleActiveStaff = function( staff ) {
+            activeStaff = staff;
+        };
+
+        /* buttons */
+
+        $scope.checkCounterpoint = function() {
+            $rootScope.notes = notes;
+            checkAccidentals();
+            checkMelodicIntervals();
+            checkRepeatedNotes();
+            checkParallelsAndVoiceCrossingAndHarmonicIntervals();
+        };
+
+        $scope.toggleShowValue = function ( variable, value ) {
+            variable[ 1 ] = value;
+        };
+
+        /* helpers */
+
+        $scope.getClefName = function( val ) {
+            if( val == 'img/trebleclef.png' )
+                return 'treble';
+            if( val == 'img/altoclef.png' )
+                return 'alto';
+            if( val == 'img/tenorclef.png' )
+                return 'tenor';
+            if( val == 'img/bassclef.png' )
+                return 'bass';
+        };
+
+        $scope.getLeftPos = function( staffNumber ) {
+            return currentLeftPos[ staffNumber ];
+        };
+
+        $scope.isActiveStaff = function( staff ) {
+            return activeStaff == staff ? 'activeStaff' : '';
+        };
+
+        $scope.showFloatingNotehead = function( value ) {
+            $scope.floatingNoteheadTopPos = value;
+        };
+
+
+
+        /* note actions */
+
+        function addAccidentalToNote( margin, acc, index ) {
+            $( $( targetNote )[ 0 ].parentElement).prepend( "<div style='margin-left: " + margin + "px;' class='accidental'><img class='" + 
+                                                                 acc + "' src='img/" + acc + ".png'</div>" );
+            notes[ activeStaff ][ index ][ 0 ] = notes[ activeStaff ][ index ][ 0 ].concat( acc );
+            if( acc == 'sharp' )
+                notes[ activeStaff ][ index ][ 1 ]++;    
+            else if( acc == 'flat' )
+                notes[ activeStaff ][ index ][ 1 ]--;   
+        };
+
+        /* counterpoint-checking methods */
+
+        function checkAccidentals() {
+            var i, j, diff, note, noteEl, accEll, nextNote;
+
+            for( i = 0; i < $rootScope.notes.length; ++i ) {
+                for( j = 0; j < $rootScope.notes[ i ].length; ++j ) {
+                    note =  $rootScope.notes[ i ][ j ];
+
+                    if( note[ 0 ].indexOf( 'sharp' ) !== -1 ) {
+                        if( note[ 0 ].indexOf( 'c' ) !== -1 ) {
+                            if( ( j + 1 ) < $rootScope.notes[ i ].length )
+                            nextNote = ( ( j + 1 ) < $rootScope.notes[ i ].length ) ? $rootScope.notes[ i ][ j + 1 ] : undefined;
+
+                            if( ( !nextNote[ 0 ] ) || ( nextNote[ 0 ].indexOf( 'd' ) === -1 ) || ( nextNote[ 0 ].indexOf( 'sharp' ) !== -1 ) || 
+                                ( nextNote[ 0 ].indexOf( 'flat' ) !== -1 ) || ( nextNote[ 1 ] - note[ 1 ] != 1 ) ) {
+                                noteEl = $( document.querySelector( '[data-note-index="' + j + '"][data-staff-index="' + i + '"]' ) );
+                                accEl = $( $( $( $( noteEl )[ 0 ].previousElementSibling )[ 0 ] )[ 0 ].firstElementChild );
+                                $( accEl ).addClass( "invalidAccidental" );
+                                $scope.incorrectAccidental[ 0 ] = true;
+                            }
+                        }
+                        else {
+                            noteEl = $( document.querySelector( '[data-note-index="' + j + '"][data-staff-index="' + i + '"]' ) );
+                            accEl = $( $( $( $( noteEl )[ 0 ].previousElementSibling )[ 0 ] )[ 0 ].firstElementChild );
+                            $( accEl ).addClass( "invalidAccidental" );
+                            $scope.incorrectAccidental[ 0 ] = true;
+                        }
+                    }
+
+                    if( note[ 0 ].indexOf( 'flat' ) > 0 ) {
+                        if( note[ 0 ].indexOf( 'b' ) === -1 ) {
+                            noteEl = $( document.querySelector( '[data-note-index="' + j + '"][data-staff-index="' + i + '"]' ) );
+                            accEl = $( $( $( $( noteEl )[ 0 ].previousElementSibling )[ 0 ] )[ 0 ].firstElementChild );
+                            $( accEl ).addClass( "invalidAccidental" );
+                            $scope.incorrectAccidental[ 0 ] = true;
+                        }
+                    }
+                }
+            }
+        };
+
+        function checkMelodicIntervals() {
+            var i, j, note, classA, classB;
+
+            for( i = 0; i < $rootScope.notes.length; ++i ) {
+                for( j = 0; j < $rootScope.notes[ i ].length - 1; ++j ) {
+                    if( !isValidMelodically( $rootScope.notes[ i ][ j + 1 ], $rootScope.notes[ i ][ j ] ) ) {
+                        note = $( document.querySelector( '[data-note-index="' + ( j + 1 ) + '"][data-staff-index="' + i + '"]' ) );
+                        classA = "invalidMelodicInterval" + connectionNumber++;
+                        classB = "invalidMelodicInterval" + connectionNumber++;
+                        note.addClass( classA );
+                        note = $( document.querySelector( '[data-note-index="' + j + '"][data-staff-index="' + i + '"]' ) );
+                        note.addClass( classB );
+                        $( '.' + classA ).connections( { to: '.' + classB, 'class': 'connections melodic' } );
+                        $scope.incorrectMelody[ 0 ] = true;
+                    }
+                }
+            }
+
+            var connections = $('connection, inner');
+            connections.connections('update');
+        };
+
+        function checkParallelsAndVoiceCrossingAndHarmonicIntervals() {
+            if( $rootScope.inputParams.numberOfVoices < 2 )
+                return;
+
+            var i = 0,
+                j = 0,
+                beatOfI = 0,
+                beatOfJ = 0,
+                prevWasFifth = false,
+                prevWasOctave = false,
+                note, classA, classB;
+
+            while( i < $rootScope.notes[ 0 ].length && j < $rootScope.notes[ 1 ].length ) {
+                checkVoiceCrossing( i, j );
+
+                if( !isConsonantHarmonically( $rootScope.notes[ 0 ][ i ], $rootScope.notes[ 1 ][ j ] ) ) {
+                    if( $rootScope.inputParams.species == 1 || ( ( $rootScope.inputParams.species == 2 ) && ( i % 2 == 0 ) ) || 
+                        ( ( $rootScope.inputParams.species == 3 ) && ( i % 4 == 0 ) ) ) {
+                        markHarmony( 'harmonic', i, j );
+                    }
+                }
+
+                if( beatOfI == 0 || beatOfJ == 0 ) {
+                    if( ( ( notes[ 0 ][ i ][ 1 ] - notes[ 1 ][ j ][ 1 ] ) % 7 ) == 0 ) {
+                        if( prevWasOctave )
+                            markParallelOrDirect( 'directFifth', i, j );
+                        else if( prevWasFifth ) 
+                            markParallelOrDirect( 'parallelFifth', i, j )
+                        else
+                            prevWasFifth = true;
+
+                        prevWasOctave = false;
+                    }
+                    else if( ( ( notes[ 0 ][ i ][ 1 ] - notes[ 1 ][ j ][ 1 ] ) % 12 ) == 0 )  {
+                        if( prevWasFifth )
+                            markParallelOrDirect( 'directOctave', i, j );
+                        else if( prevWasOctave ) 
+                            markParallelOrDirect( 'parallelOctave', i, j )
+                        else
+                            prevWasOctave = true;
+
+                        prevWasFifth = false;
+                    }
+                    else {
+                        prevWasFifth = false;
+                        prevWasOctave = false;
+                    }
+                }
+
+                if( notes[ 0 ][ i ][ 2 ] == 'whole' ) {
+                    if( beatOfI == 3 ) {
+                        beatOfI = 0;
+                        ++i;
+                    }
+                    else
+                        ++beatOfI;
+                }
+                else if( notes[ 0 ][ i ][ 2 ] == 'half' ) {
+                    if( beatOfI == 1 ) {
+                        beatOfI = 0;
+                        ++i;
+                    }
+                    else
+                        ++beatOfI;
+                }
+                else
+                   ++i;
+
+               if( notes[ 1 ][ j ][ 2 ] == 'whole' ) {
+                    if( beatOfJ == 3 ) {
+                        beatOfJ = 0;
+                        ++j;
+                    }
+                    else
+                        ++beatOfJ;
+                }
+                else if( notes[ 1 ][ j ][ 2 ] == 'half' ) {
+                    if( beatOfJ == 1 ) {
+                        beatOfJ = 0;
+                        ++j;
+                    }
+                    else
+                        ++beatOfJ;
+                }
+                else
+                   ++j;
+
+            }
+
+            var connections = $('connection, inner');
+            connections.connections('update');
+        };
+
+        function checkRepeatedNotes() {
+            var i, j, repeatedNote, noteEl;
+
+            for( i = 0; i < $rootScope.notes.length; ++i ) {
+                for( j = 0; j < $rootScope.notes[ i ].length - 1; ++j ) {
+                    if( $rootScope.notes[ i ][ j + 1 ][ 1 ] == $rootScope.notes[ i ][ j ][ 1 ] ) {
+                        if( repeatedNote == $rootScope.notes[ i ][ j ][ 1 ] ) {
+                            noteEl = $( document.querySelector( '[data-note-index="' + ( j + 1 ) + '"][data-staff-index="' + i + '"]' ) );
+                            noteEl.addClass( "repeatedNote" );
+                            noteEl = $( document.querySelector( '[data-note-index="' + j + '"][data-staff-index="' + i + '"]' ) );
+                            noteEl.addClass( "repeatedNote" );
+                            noteEl = $( document.querySelector( '[data-note-index="' + ( j - 1 ) + '"][data-staff-index="' + i + '"]' ) );
+                            noteEl.addClass( "repeatedNote" );
+                            $scope.repeatedNotes[ 0 ] = true;
+                        }
+                        else
+                            repeatedNote = $rootScope.notes[ i ][ j ][ 1 ]
+                    }
+                    else
+                        repeatedNote = 0;
+                }
+            }
+        };
+
+        function checkVoiceCrossing( firstNoteIndex, secondNoteIndex ) {
+            var note, classA, classB;
+
+            if( firstNoteIndex < $rootScope.notes[ 0 ].length && secondNoteIndex < $rootScope.notes[ 1 ].length ) {
+                if( isVoiceCrossing( $rootScope.notes[ 0 ][ firstNoteIndex ], $rootScope.notes[ 1 ][ secondNoteIndex ] ) ) {
+                    note = $( document.querySelector( '[data-note-index="' + firstNoteIndex + '"][data-staff-index="' + 0 + '"]' ) );
+                    classA = "voiceCrossing" + connectionNumber++;
+                    classB = "voiceCrossing" + connectionNumber++;
+                    note.addClass( classA );
+                    note = $( document.querySelector( '[data-note-index="' + secondNoteIndex + '"][data-staff-index="' + 1 + '"]' ) );
+                    note.addClass( classB );
+                    $( '.' + classA ).connections( { to: '.' + classB, 'class': 'connections voiceCrossing' } );
+                    $scope.voiceCrossing[ 0 ] = true;
+                }
+            }
+        };
+
+        function isConsonantHarmonically( topNote, bottomNote ) {
+            var diff = topNote[ 1 ] - bottomNote[ 1 ],
+                validityTable = [ 
+                                    [ 0, 0 ], [ 3, -5 ], [ 3, 2 ], [ 4, -5 ], [ 4, 2 ], [ 7, -3 ], [ 7, 4 ], [ 8, -2 ], [ 8, 5 ], [ 9, -2 ], 
+                                    [ 9, 5 ], [ 12, 0 ]
+                                ],
+                i = 0,
+                swap = ( diff < 0 );
+
+            diff %= 12;
+            if( diff < 0 )
+                diff *= -1;
+
+            while( i < validityTable.length ) {
+                if( diff == validityTable[ i ][ 0 ] ) {
+                    if( swap ) {
+                        if( $rootScope.getAsciiDiff( bottomNote[ 0 ].charAt( 0 ), topNote[ 0 ].charAt( 0 ) ) == validityTable[ i ][ 1 ] )
+                            return true;
+                    }
+                    else {
+                        if( $rootScope.getAsciiDiff( topNote[ 0 ].charAt( 0 ), bottomNote[ 0 ].charAt( 0 ) ) == validityTable[ i ][ 1 ] )
+                            return true;
+                    }
+                    
+                    if( validityTable[ i ][ 0 ] > diff )
+                        return false;
+                }
+                ++i;
+            }
+
+            return false;
+        };
+
+        function isValidMelodically( secondNote, firstNote ) {
+            var diff = secondNote[ 1 ] - firstNote[ 1 ],
+                validityTable = [ 
+                                    [ -12, 0 ], [ -7, -4 ], [ -7, 3 ], [ -5, 4 ], [ -5, -3 ], [ -4, 5 ], [ -4, -2 ], [ -3, -5 ], [ -3, -2 ], 
+                                    [-2, 6 ], [ -2, -1 ], [ -1, -6 ], [ -1, -1 ], [ 0, 0 ], [ 1, -6 ], [ 1, 1 ], [ 2, -6 ], [ 2, 1 ], 
+                                    [ 3, -5 ], [ 3, 2 ], [ 4, -5 ], [ 4, 2 ], [ 5, -4 ], [ 5, 3 ], [ 7, -3 ], [ 7, 4 ], [ 8, -2 ], [ 8, 5 ], 
+                                    [ 12, 0 ] 
+                                ],
+                i = 0;
+
+            while( i < validityTable.length ) {
+                if( diff == validityTable[ i ][ 0 ] ) {
+                    if( $rootScope.getAsciiDiff( secondNote[0].charAt(0), firstNote[0].charAt(0) ) == validityTable[ i ][ 1 ] )
+                        return true;
+                    if( validityTable[i][0] > diff )
+                        return false;
+                }
+                ++i;
+            }
+
+            return false;
+        };
+
+        function isVoiceCrossing( topNote, bottomNote ) {
+            return ( ( topNote[ 1 ] - bottomNote[ 1 ] ) < 0 );
+        };
+
+        /* marking methods */
+
+        function markHarmony( className, i, j ) {
+            var note = $( document.querySelector( '[data-note-index="' + i + '"][data-staff-index="' + 0 + '"]' ) );
+                classA = className + connectionNumber++,
+                classB = className + connectionNumber++;
+
+            note.addClass( classA );
+            note = $( document.querySelector( '[data-note-index="' + j + '"][data-staff-index="' + 1 + '"]' ) );
+            note.addClass( classB );
+            $( '.' + classA ).connections( { to: '.' + classB, 'class': 'connections ' + className } );
+
+            if( className == 'harmonic' )
+                $scope.incorrectHarmony[ 0 ] = true;
+        }
+
+        function markParallelOrDirect( className, i, j ) {
+            var note = $( document.querySelector( '[data-note-index="' + i + '"][data-staff-index="' + 0 + '"]' ) ),
+                classA = className + connectionNumber++,
+                classB = className + connectionNumber++,
+                classC = className + connectionNumber++,
+                classD = className + connectionNumber++;
+
+            note.addClass( classA + ' ' + className );
+            note = $( document.querySelector( '[data-note-index="' + ( i - 1 ) + '"][data-staff-index="' + 0 + '"]' ) );
+            note.addClass( classB + ' ' + className );
+
+            note = $( document.querySelector( '[data-note-index="' + j + '"][data-staff-index="' + 1 + '"]' ) );
+
+            note.addClass( classC + ' ' + className );
+            note = $( document.querySelector( '[data-note-index="' + ( j - 1 ) + '"][data-staff-index="' + 1 + '"]' ) );
+            note.addClass( classD + ' ' + className );
+
+            $( '.' + classA ).connections( { to: '.' + classC, 'class': 'connections ' + className } );
+            $( '.' + classB ).connections( { to: '.' + classD, 'class': 'connections ' + className } );
+
+            if( className == 'parallelFifth')
+                $scope.parallelFifths[ 0 ] = true;
+            else if( className == 'parallelOctave' )
+                $scope.parallelOctaves[ 0 ] = true;
+            else if( className == 'directFifth' )
+                $scope.directFifths[ 0 ] = true;
+            else if( className == 'directOctave' )
+                $scope.directOctaves[ 0 ] = true;
+        };
+
+        /* helpers */
+
+        function getNoteFromDurationAndValue( dur, val ) {
+            var noteEl = $( '<img class="notehead static">' )
+            if( dur == 'quarter' ) {
+                if( val < 33 ){
+                    $( noteEl )[ 0 ].setAttribute( 'src', 'img/quarterup.png' );  
+                    $( noteEl ).addClass( 'quarterup' );         
+                }
+                else{
+                    $( noteEl )[ 0 ].setAttribute( 'src', 'img/quarterdown.png' );
+                    $( noteEl ).addClass( 'quarterdown' ); 
+                }
+            }
+            else if( dur == 'half' ) {
+                if( val < 33 ){
+                    $( noteEl )[ 0 ].setAttribute( 'src', 'img/halfup.png' );
+                    $( noteEl ).addClass( 'halfup' ); 
+                }
+                else{
+                    $( noteEl )[ 0 ].setAttribute( 'src', 'img/halfdown.png' );
+                    $( noteEl ).addClass( 'halfdown' ); 
+                }
+            }
+            else {
+                $( noteEl )[ 0 ].setAttribute( 'src', 'img/whole.png' );
+                $( noteEl ).addClass( 'whole' ); 
+            }
+
+            return noteEl;
+        };
+
+        function insertPreComposedNote( value, staffNumber ) {
+            var notesConversion = [
+                                    [ 24, 130, '.d4', false ], [ 26, 119, '.e4', false ], [ 27, 108, '.f4', false ], [ 29, 97, '.g4', false ], 
+                                    [ 31, 86, '.a4', false ], [ 33, 75, '.b4', false ], [ 34, 64, '.c5', false ], [ 35, 64, '.c5', true ], 
+                                    [ 36, 53, '.d5', false ], [ 38, 42, '.e5', false ], [ 39, 31, '.f5', false ], [ 41, 20, '.g5', false ],
+                                    [ 43, 9, '.a5', false ]
+                                  ],
+                noteIndex = -1,
+                i = 0,
+                myEl, classname;
+
+            while( noteIndex < 0 ) {
+                if( notesConversion[ i ][ 0 ] == value )
+                    noteIndex = i;
+                ++i;
+                if( i > notesConversion.length ) {
+                    console.log("invalid note value: " + value);
+                    return;
+                }
+            }
+
+            classname = 'space hoverable ' + notesConversion[ noteIndex ][ 2 ];
+            myEl = angular.element( document.querySelectorAll( '.composed' )[ staffNumber ].querySelector( notesConversion[ noteIndex ][ 2 ] ) );
+            if( notesConversion[ noteIndex ][ 3 ] ) {
+                myEl.append( "<div class='accidental' style='margin-left:" + ( currentLeftPos[ staffNumber ] - 76 ) + 
+                             "px;'><img src='img/sharp.png'></div>" );
+                currentLeftPos[ staffNumber ] += 20;
+            }
+            myEl.append( "<div class='notehead static' style='margin-left:" + ( currentLeftPos[ staffNumber ] ) + "px; top: " + 
+                         ( notesConversion[ noteIndex ][ 1 ] + ( 300 * staffNumber ) ) + "px;'><img src='img/whole.png'></div>" );
+            currentLeftPos[ staffNumber ] += 20;
+        };
+
+        function setUpTaskbar( target ) {
+            var acc;
+
+            targetNote = target;
+            $( document.querySelector( '.activeNote' ) ).removeClass( 'activeNote' );
+            $( target ).addClass( 'activeNote' );
+            $( document.querySelector( '.accidental-item.active' ) ).removeClass( 'active' );
+
+            if( $(target).hasClass( 'hasAccidental' ) ) {
+                acc = $( $( target )[ 0 ].previousElementSibling )[ 0 ];
+
+                if( $( $( $( acc )[ 0 ].firstElementChild )[ 0 ] ).hasClass( 'sharp' ) )
+                    $( document.querySelector( '.toolbar-item.sharp' ) ).addClass( 'active' );
+                else if( $( $( $( acc )[ 0 ].firstElementChild )[ 0 ] ).hasClass( 'flat' ) )
+                    $( document.querySelector( '.toolbar-item.flat' ) ).addClass( 'active' );
+                else
+                    $( document.querySelector( '.toolbar-item.natural' ) ).addClass( 'active' );
+            }
+
+            if( $( target ).hasClass( 'whole' ) )
+                $scope.duration = 'whole';
+            else if( $( target ).hasClass( 'quarterup' ) || $( target ).hasClass( 'quarterdown' ) )
+                $scope.duration = 'quarter';
+            else
+                $scope.duration = 'half';
+        };
+
+        function shiftNotes( offset ) {
+            var notesArr = $( document.querySelectorAll( '[data-staff-index="' + activeStaff + '"].static' ) ),
+                index = parseInt( targetNote[0].getAttribute( 'data-note-index' ) ),
+                note, acc, margin;
+
+            for( i = index; i != notesArr.length ; ++i ) {
+                note = $( document.querySelector( '[data-note-index="' + ( i ) + '"][data-staff-index="' + activeStaff + '"]' ) );
+                note[ 0 ].style.marginLeft = ( parseInt( note[ 0 ].style.marginLeft ) + offset ) + 'px';
+                if( note.hasClass( 'hasAccidental' ) ) {
+                    acc = note[ 0 ].previousElementSibling;
+                    margin = $( acc )[ 0 ].getAttribute( 'style' );
+                    margin = parseInt( margin.slice( 13, margin.indexOf( 'px' ) ) ) + offset;
+                    $( acc )[ 0 ].style = 'margin-left: ' + margin + 'px;';
+                }
+            }
+
+            currentLeftPos[ activeStaff ] += offset;
+        };
+
+        $rootScope.$on( 'printMusic', function( event, args ) {
+            var i, j;
+            console.log(args);
+            if( $rootScope.inputParams.numberOfVoices == 1) {
+                for( j = 0; j != args.numNotes; ++j )
+                    insertPreComposedNote( args.notes[ j ].val, 0 );
+                return;
+            }
+
+            for( i = 0; i != args.numVoices; ++i ) {
+                if( $rootScope.inputParams.species == 1 ) {
+                    for( j = 0; j != args.numNotes; ++j )
+                        insertPreComposedNote( args.notes[ i ][ j ].val, i );
+                }
+                else if( $rootScope.inputParams.species == 2 ) {
+                    for( j = 0; j != args.numNotes; ++j ) {
+                        if( i == 0 || j % 2 == 0 )
+                            insertPreComposedNote( args.notes[ i ][ j ].val, i );
+                    }
+                }
+                else {
+                    for( j = 0; j != args.numNotes; ++j ) {
+                        if( i == 0 || j % 4 == 0 )
+                            insertPreComposedNote( args.notes[ i ][ j ].val, i );
+                    }
+                }
+            }
+        } );
+    }
+] );
+
+
+        /*function getNoteAtBeat( beat, staff ) {
+            var currentBeat = 0,
+                noteIndex = 0;
+                console.log(staff);
+
+            while( currentBeat < beat ) {
+                console.log("note index: " + noteIndex);
+                if( notes[ staff ][ noteIndex ][ 2 ] == 'whole' )
+                    currentBeat += 4;
+                else if( notes[ staff ][ noteIndex ][ 2 ] == 'half' )
+                    currentBeat += 2;
+                else
+                    currentBeat += 1;
+
+                ++noteIndex;
+            }
+
+            return noteIndex;
+        };*/
+
+                /*function isFillingInBeat( beat, duration, staffNumber ) {
+            var currentBeat = 0,
+                dur = 1,
+                noteIndex = 0;
+
+            if( duration == 'whole' )
+                dur = 4;
+            else if( duration == 'half' )
+                dur = 2;
+
+            while( ( currentBeat + dur ) <= beat ) {
+                console.log(noteIndex);
+                if( notes[ staffNumber ][ noteIndex ][ 2 ] == 'whole' )
+                    currentBeat += 4;
+                else if( notes[ staffNumber ][ noteIndex ][ 2 ] == 'half' )
+                    currentBeat += 2;
+                else
+                    currentBeat += 1;
+
+                ++noteIndex;
+            }
+
+            if( ( currentBeat == beat ) || ( ( currentBeat + dur ) == beat ) ) {
+                console.log("nope");
+                return false;
+            }
+
+            console.log("yep");
+            return true;
+        };
+
+       /* function isAfterCurrentBeatInOtherLine( beat, duration, staffNumber ) {
+            var currentBeat = 0,
+                dur = 1,
+                noteIndex = 0;
+
+            if( duration == 'whole' )
+                dur = 4;
+            else if( duration == 'half' )
+                dur = 2;
+
+            while( ( currentBeat + dur ) <= beat ) {
+                console.log(noteIndex);
+                if( notes[ staffNumber ][ noteIndex ][ 2 ] == 'whole' )
+                    currentBeat += 4;
+                else if( notes[ staffNumber ][ noteIndex ][ 2 ] == 'half' )
+                    currentBeat += 2;
+                else
+                    currentBeat += 1;
+
+                ++noteIndex;
+            }
+
+            if( ( currentBeat == beat ) || ( ( currentBeat + dur ) == beat ) ) {
+                console.log("nope");
+                return false;
+            }
+
+            console.log("yep");
+            return true;
+        };*/
+
+
+           // console.log(beatIndex);
+
+            /*if( beatIndex[ staffNumber ] < beatIndex[ otherStaffNumber ] ) {
+                if( isAfterCurrentBeatInOtherLine( beatIndex[ staffNumber ], $scope.duration, otherStaffNumber ) )
+                    currentLeftPos[ staffNumber ] += 40;
+                if( isFillingInBeat( beatIndex[ staffNumber ], $scope.duration, otherStaffNumber ) ) {
+                    var notesArr = $( document.querySelectorAll( '[data-staff-index="' + otherStaffNumber + '"].static' ) ),
+                        index =  getNoteAtBeat( beatIndex[ staffNumber ], otherStaffNumber ),
+                        offset = 40,
+                        note, acc, margin;
+
+                    for( i = index; i != notesArr.length ; ++i ) {
+                        note = $( document.querySelector( '[data-note-index="' + ( i ) + '"][data-staff-index="' + otherStaffNumber + '"]' ) );
+                        note[ 0 ].style.marginLeft = ( parseInt( note[ 0 ].style.marginLeft ) + offset ) + 'px';
+                        if( note.hasClass( 'hasAccidental' ) ) {
+                            acc = note[ 0 ].previousElementSibling;
+                            margin = $( acc )[ 0 ].getAttribute( 'style' );
+                            margin = parseInt( margin.slice( 13, margin.indexOf( 'px' ) ) ) + offset;
+                            $( acc )[ 0 ].style = 'margin-left: ' + margin + 'px;';
+                        }
+                    }
+
+                    currentLeftPos[ otherStaffNumber ] += offset;
+                }
+            }*/

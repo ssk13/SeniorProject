@@ -1,0 +1,203 @@
+<div class="modal fade" id="staff-input" tabindex="-1" role="dialog" aria-labelledby="Wine">
+
+    <div class="modal-dialog" role="document">
+
+        <div class="modal-content" ng-controller="inputController">
+
+            <div class="modal-body" ng-class="{showIncorrectMelody: incorrectMelody[1], showIncorrectAccidentals: incorrectAccidentals[1], showRepeatedNotes: repeatedNotes[1], showIncorrectHarmony: incorrectHarmony[1], showVoiceCrossing: voiceCrossing[1], showParallelFifths: parallelFifths[1], showParallelOctaves: parallelOctaves[1], showDirectFifths: directFifths[1], showDirectOctaves: directOctaves[1]}">
+
+                <div class="row toolbar">
+
+                    <div ng-click="addAccidental('sharp')" class="pull-left toolbar-item accidental-item sharp" ><img src="img/sharp.png"></div>
+                    <div ng-click="addAccidental('flat')" class="pull-left toolbar-item accidental-item flat"><img src="img/flat.png"></div>
+                    <div ng-click="addAccidental('natural')" class="pull-left toolbar-item accidental-item natural"><img src="img/natural.png"></div>
+                    <div ng-click="deleteNote()" class="pull-left toolbar-item"><img class="delete" src="img/delete.png"></div>
+                    <div class="pull-left toolbar-item break"></div>
+                    <div ng-click="changeDuration('quarter')" class="pull-left toolbar-item quarter-item" ng-class="duration === 'quarter' ? 'active' : ''"><img src="img/quarterup.png"></div>
+                    <div ng-click="changeDuration('half')" class="pull-left toolbar-item half-item" ng-class="duration === 'half' ? 'active' : ''"><img src="img/halfup.png"></div>
+                    <div ng-click="changeDuration('whole')" class="pull-left toolbar-item whole-item" ng-class="duration === 'whole' ? 'active' : ''"><img class="whole" src="img/whole.png"></div>
+
+                </div>
+
+                <div class="row" ng-repeat="i in getArrayOfSizeNumber(inputParams.numberOfVoices) track by $index">
+
+                    <div class="staffEntry" ng-class="isActiveStaff($index)" ng-click="toggleActiveStaff($index)">
+
+                        <div class="staff">
+
+                            <div class="clef"><img class="clef" ng-class="getClefName(inputParams.clef[$index])" ng-src="{{inputParams.clef[$index]}}" alt="img/trebleclef.png"></div>
+
+                            <div class="notehead floating" ng-style="{'top': floatingNoteheadTopPos + 'px', 'left': getLeftPos($index) + 'px'}" ng-click="floatingNoteheadClicked($event, $index);"></div>
+
+                            <div class="space hoverable slot0" data-staff-index="{{$index}}" ng-mouseover="showFloatingNotehead(19)" ng-click="insertNote('.slot0', 19, $event, $index)"></div>
+                            
+                            <div class="space hoverable slot1" data-staff-index="{{$index}}" ng-mouseover="showFloatingNotehead(29)" ng-click="insertNote('.slot1', 29, $event, $index)">
+                                <div class="line" ng-click="insertNote('.slot1', 29, $event, $index); $event.stopPropagation();"></div>
+                            </div>
+                            
+                            <div class="space hoverable slot2" data-staff-index="{{$index}}" ng-mouseover="showFloatingNotehead(39)" ng-click="insertNote('.slot2', 39, $event, $index)"></div>
+                            
+                            <div class="space hoverable slot3" data-staff-index="{{$index}}" ng-mouseover="showFloatingNotehead(48)" ng-click="insertNote('.slot3', 48, $event, $index)">
+                                <div class="line" ng-click="insertNote('.slot3', 48, $event, $index); $event.stopPropagation();"></div>
+                            </div>
+
+                            <div class="space hoverable slot4" data-staff-index="{{$index}}" ng-mouseover="showFloatingNotehead(59)" ng-click="insertNote('.slot4', 59, $event, $index)"></div>
+                            
+                            <div class="space hoverable slot5" data-staff-index="{{$index}}" ng-mouseover="showFloatingNotehead(70)" ng-click="insertNote('.slot5', 70, $event, $index)">
+                                <div class="line" ng-click="insertNote('.slot5', 70, $event, $index); $event.stopPropagation();"></div>
+                            </div>
+            
+                            <div class="space hoverable slot6" data-staff-index="{{$index}}" ng-mouseover="showFloatingNotehead(79)" ng-click="insertNote('.slot6', 79, $event, $index)"></div>
+            
+                            <div class="space hoverable slot7" data-staff-index="{{$index}}" ng-mouseover="showFloatingNotehead(90)" ng-click="insertNote('.slot7', 90, $event, $index)">
+                                <div class="line" ng-click="insertNote('.slot7', 90, $event, $index); $event.stopPropagation();" ></div>
+                            </div>
+                
+                            <div class="space hoverable slot8" data-staff-index="{{$index}}" ng-mouseover="showFloatingNotehead(99)" ng-click="insertNote('.slot8', 99, $event, $index)"></div>
+                
+                            <div class="space hoverable slot9" data-staff-index="{{$index}}" ng-mouseover="showFloatingNotehead(111)" ng-click="insertNote('.slot9', 111, $event, $index)">
+                                <div class="line" ng-click="insertNote('.slot9', 111, $event, $index); $event.stopPropagation();"></div>
+                            </div>
+                    
+                            <div class="space hoverable slot10" data-staff-index="{{$index}}" ng-mouseover="showFloatingNotehead(119)" ng-click="insertNote('.slot10', 119, $event, $index)"></div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="row col-md-10 col-md-offset-1" ng-show="incorrectMelody[0]">
+
+                        <p class="pull-left">You have one or more incorect melodic intervals</p>
+                        <div class="pull-right">
+
+                            <span ng-click="toggleShowValue(incorrectMelody, true);" ng-class="{activeToggle: incorrectMelody[1]}">Show</span>
+                            <span>|</span>
+                            <span ng-click="toggleShowValue(incorrectMelody, false);" ng-class="{activeToggle: !incorrectMelody[1]}">Hide</span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row col-md-10 col-md-offset-1" ng-show="incorrectHarmony[0]">
+
+                        <p class="pull-left">You have one or more incorect harmonic intervals</p>
+                        <div class="pull-right">
+
+                            <span ng-click="toggleShowValue(incorrectHarmony, true);" ng-class="{activeToggle: incorrectHarmony[1]}">Show</span>
+                            <span>|</span>
+                            <span ng-click="toggleShowValue(incorrectHarmony, false);" ng-class="{activeToggle: !incorrectHarmony[1]}">Hide</span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row col-md-10 col-md-offset-1" ng-show="voiceCrossing[0]">
+
+                        <p class="pull-left">You have crossed voices</p>
+                        <div class="pull-right">
+
+                            <span ng-click="toggleShowValue(voiceCrossing, true);" ng-class="{activeToggle: voiceCrossing[1]}">Show</span>
+                            <span>|</span>
+                            <span ng-click="toggleShowValue(voiceCrossing, false);" ng-class="{activeToggle: !voiceCrossing[1]}">Hide</span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row col-md-10 col-md-offset-1" ng-show="incorrectAccidental[0]">
+
+                        <p class="pull-left">You have one or more incorrect accidentals</p>
+                        <div class="pull-right">
+
+                            <span ng-click="toggleShowValue(incorrectAccidentals, true);" ng-class="{activeToggle: incorrectAccidentals[1]}">Show</span>
+                            <span>|</span>
+                            <span ng-click="toggleShowValue(incorrectAccidentals, false);" ng-class="{activeToggle: !incorrectAccidentals[1]}">Hide</span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row col-md-10 col-md-offset-1" ng-show="repeatedNotes[0]">
+
+                        <p class="pull-left">You have repeated one or more notes</p>
+                        <div class="pull-right">
+
+                            <span ng-click="toggleShowValue(repeatedNotes, true);" ng-class="{activeToggle: repeatedNotes[1]}">Show</span>
+                            <span>|</span>
+                            <span ng-click="toggleShowValue(repeatedNotes, false);" ng-class="{activeToggle: !repeatedNotes[1]}">Hide</span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row col-md-10 col-md-offset-1" ng-show="parallelFifths[0]">
+
+                        <p class="pull-left">You have parallel fifths</p>
+                        <div class="pull-right">
+
+                            <span ng-click="toggleShowValue(parallelFifths, true);" ng-class="{activeToggle: parallelFifths[1]}">Show</span>
+                            <span>|</span>
+                            <span ng-click="toggleShowValue(parallelFifths, false);" ng-class="{activeToggle: !parallelFifths[1]}">Hide</span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row col-md-10 col-md-offset-1" ng-show="parallelOctaves[0]">
+
+                        <p class="pull-left">You have parallel octaves</p>
+                        <div class="pull-right">
+
+                            <span ng-click="toggleShowValue(parallelOctaves, true);" ng-class="{activeToggle: parallelOctaves[1]}">Show</span>
+                            <span>|</span>
+                            <span ng-click="toggleShowValue(parallelOctaves, false);" ng-class="{activeToggle: !parallelOctaves[1]}">Hide</span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row col-md-10 col-md-offset-1" ng-show="directFifths[0]">
+
+                        <p class="pull-left">You have approached one or more perfect fifths incorrectly</p>
+                        <div class="pull-right">
+
+                            <span ng-click="toggleShowValue(directFifths, true);" ng-class="{activeToggle: directFifths[1]}">Show</span>
+                            <span>|</span>
+                            <span ng-click="toggleShowValue(directFifths, false);" ng-class="{activeToggle: !directFifths[1]}">Hide</span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row col-md-10 col-md-offset-1" ng-show="directOctaves[0]">
+
+                        <p class="pull-left">You have approached one or more perfect octaves incorrectly</p>
+                        <div class="pull-right">
+
+                            <span ng-click="toggleShowValue(directOctaves, true);" ng-class="{activeToggle: directOctaves[1]}">Show</span>
+                            <span>|</span>
+                            <span ng-click="toggleShowValue(directOctaves, false);" ng-class="{activeToggle: !directOctaves[1]}">Hide</span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        
+            <div class="modal-footer">
+      
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal" data-toggle="modal" data-target="#counterpoint-type-input">Back</button>
+                <button type="button" class="btn btn-default pull-right" ng-click="checkCounterpoint()">Check My Homework</button>
+      
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
