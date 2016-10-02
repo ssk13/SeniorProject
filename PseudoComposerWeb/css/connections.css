@@ -2,10 +2,11 @@ connection {
 	visibility: hidden;
 }
 
-.showIncorrectMelody connection.melodic {
+.showConsecutivePerfect connection.consecutivePerfect {
 	visibility: visible;
-	border: 2px solid red;
+	border: 2px solid purple;
 	border-radius: 25px;
+	margin-left: 11px;
 }
 
 .showIncorrectHarmony connection.harmonic {
@@ -14,37 +15,36 @@ connection {
 	border-radius: 25px;
 }
 
-.showVoiceCrossing connection.voiceCrossing {
+.showIncorrectMelody connection.melodic {
 	visibility: visible;
-	border: 2px solid blue;
+	border: 2px solid red;
 	border-radius: 25px;
-	margin-left: 5px;
 }
 
-.showParallelFifths connection.parallelFifth {
+.showParallelPerfect connection.parallelPerfect {
 	visibility: visible;
 	border: 2px solid brown;
 	border-radius: 25px;
 	margin-left: 7px;
 }
 
-.showParallelOctaves connection.parallelOctave {
-	visibility: visible;
-	border: 2px solid green;
-	border-radius: 25px;
-	margin-left: 9px;
-}
-
-.showDirectFifths connection.directFifth {
+.showPerfectApproachedBySimilarMotion connection.perfectApproachedBySimilarMotion {
 	visibility: visible;
 	border: 2px solid purple;
 	border-radius: 25px;
 	margin-left: 11px;
 }
 
-.showDirectOctaves connection.directOctave {
+.showTooManyParallelIntervals connection.tooManyParallelIntervals {
 	visibility: visible;
-	border: 2px solid gray;
+	border: 2px solid brown;
 	border-radius: 25px;
-	margin-left: 13px;
+	margin-left: 7px;
+}
+
+.showVoiceCrossing connection.voiceCrossing {
+	visibility: visible;
+	border: 2px solid blue;
+	border-radius: 25px;
+	margin-left: 5px;
 }

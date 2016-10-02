@@ -4,15 +4,22 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         $scope.duration = 'whole';
         $scope.floatingNoteheadTopPos = 59;
 
+        /*hard rules*/
         $scope.incorrectAccidental = [ false, false ]; /* [ has, show ]*/
         $scope.incorrectHarmony = [ false, false ];
         $scope.incorrectMelody = [ false, false ];
         $scope.repeatedNotes = [ false, false ];
+        $scope.parallelPerfect = [ false, false ];
+        $scope.perfectApproachedBySimilarMotion = [ false, false ];
+        $scope.tooManyParallelIntervals = [ false, false ];
+        /*soft rules*/
         $scope.voiceCrossing = [ false, false ];
-        $scope.parallelFifths = [ false, false ];
-        $scope.parallelOctaves = [ false, false ];
-        $scope.directFifths = [ false, false ];
-        $scope.directOctaves = [ false, false ];
+        $scope.consecutivePerfect = [ false, false ];
+
+        $scope.hasBrokenHardRules = false;
+        $scope.hasBrokenSoftRules = false;
+
+        $scope.counterpointChecked = false;
 
         var currentLeftPos = [ 90, 90, 90 ],
             noteIndex = [ 0, 0, 0 ],
@@ -39,6 +46,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                                         [ 99, 'a2', 7, '.slot8' ], [ 111, 'g2', 5, '.slot9' ], [ 119, 'f2', 3, '.slot10' ]
                                     ],
             activeStaff = 0,
+            connections = $('connection, inner'),
             connectionNumber = 0,
             targetNote;
 
@@ -303,10 +311,12 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
 
         $scope.checkCounterpoint = function() {
             $rootScope.notes = notes;
-            checkAccidentals();
-            checkMelodicIntervals();
-            checkRepeatedNotes();
-            checkParallelsAndVoiceCrossingAndHarmonicIntervals();
+            checkHorizontallyBeatByBeat();
+            checkVerticallyBeatByBeat();
+            setRulesHeadings();
+            connections.connections('update');
+
+            $scope.counterpointChecked = true;
         };
 
         $scope.toggleShowValue = function ( variable, value ) {
@@ -354,11 +364,46 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
 
         /* counterpoint-checking methods */
 
-        function checkAccidentals() {
-            var i, j, diff, note, noteEl, accEll, nextNote;
+        /* this method takes the absolute values of the difference between the int values of 2 pairs of notes and returns whether they are the same interval, ignoring quality or 
+            enharmonic versions of the intervals (i.e. a diminished-fourth is treated like a major-third) */
+        function areSameInterval( intervalA, intervalB ) {
+            if( intervalA == intervalB )
+                return true;
+            else if( ( intervalA == 3 ) || ( intervalA == 4 ) ) {
+                if( ( intervalB == 3 ) || ( intervalB == 4 ) )
+                    return true;
+            }
+            else if( ( intervalA == 6 ) || ( intervalA == 6 ) ) {
+                if( ( intervalB == 7 ) || ( intervalB == 7 ) )
+                    return true;
+            }
+
+            return false;
+        }
+
+        /*
+            Checks for:
+            * invalid melodic intervals
+            * invalid accidentals
+            * too many horizontal repeated notes
+        */
+
+        function checkHorizontallyBeatByBeat() {
+            var i, j, k, noteEl, classA, classB, diff, note, accEl, nextNote, repeatedNote;
 
             for( i = 0; i < $rootScope.notes.length; ++i ) {
-                for( j = 0; j < $rootScope.notes[ i ].length; ++j ) {
+                for( j = 0; j < $rootScope.notes[ i ].length - 1; ++j ) {
+                    if( !isValidMelodically( $rootScope.notes[ i ][ j + 1 ], $rootScope.notes[ i ][ j ] ) ) {
+                        noteEl = $( document.querySelector( '[data-note-index="' + ( j + 1 ) + '"][data-staff-index="' + i + '"]' ) );
+                        classA = "invalidMelodicInterval" + connectionNumber++;
+                        classB = "invalidMelodicInterval" + connectionNumber++;
+                        noteEl.addClass( classA );
+                        noteEl = $( document.querySelector( '[data-note-index="' + j + '"][data-staff-index="' + i + '"]' ) );
+                        noteEl.addClass( classB );
+                        $( '.' + classA ).connections( { to: '.' + classB, 'class': 'connections melodic' } );
+                        $scope.incorrectMelody[ 0 ] = true;
+                    }
+
                     note =  $rootScope.notes[ i ][ j ];
 
                     if( note[ 0 ].indexOf( 'sharp' ) !== -1 ) {
@@ -367,56 +412,46 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                             nextNote = ( ( j + 1 ) < $rootScope.notes[ i ].length ) ? $rootScope.notes[ i ][ j + 1 ] : undefined;
 
                             if( ( !nextNote[ 0 ] ) || ( nextNote[ 0 ].indexOf( 'd' ) === -1 ) || ( nextNote[ 0 ].indexOf( 'sharp' ) !== -1 ) || 
-                                ( nextNote[ 0 ].indexOf( 'flat' ) !== -1 ) || ( nextNote[ 1 ] - note[ 1 ] != 1 ) ) {
-                                noteEl = $( document.querySelector( '[data-note-index="' + j + '"][data-staff-index="' + i + '"]' ) );
-                                accEl = $( $( $( $( noteEl )[ 0 ].previousElementSibling )[ 0 ] )[ 0 ].firstElementChild );
-                                $( accEl ).addClass( "invalidAccidental" );
-                                $scope.incorrectAccidental[ 0 ] = true;
-                            }
+                                ( nextNote[ 0 ].indexOf( 'flat' ) !== -1 ) || ( nextNote[ 1 ] - note[ 1 ] != 1 ) )
+                                markInvalidAccidental( i, j )
                         }
-                        else {
-                            noteEl = $( document.querySelector( '[data-note-index="' + j + '"][data-staff-index="' + i + '"]' ) );
-                            accEl = $( $( $( $( noteEl )[ 0 ].previousElementSibling )[ 0 ] )[ 0 ].firstElementChild );
-                            $( accEl ).addClass( "invalidAccidental" );
-                            $scope.incorrectAccidental[ 0 ] = true;
-                        }
+                        else
+                            markInvalidAccidental( i, j )
                     }
 
                     if( note[ 0 ].indexOf( 'flat' ) > 0 ) {
-                        if( note[ 0 ].indexOf( 'b' ) === -1 ) {
-                            noteEl = $( document.querySelector( '[data-note-index="' + j + '"][data-staff-index="' + i + '"]' ) );
-                            accEl = $( $( $( $( noteEl )[ 0 ].previousElementSibling )[ 0 ] )[ 0 ].firstElementChild );
-                            $( accEl ).addClass( "invalidAccidental" );
-                            $scope.incorrectAccidental[ 0 ] = true;
+                        if( note[ 0 ].indexOf( 'b' ) === -1 )
+                            markInvalidAccidental( i, j )
+                    }
+
+                    if( $rootScope.notes[ i ][ j + 1 ][ 1 ] == $rootScope.notes[ i ][ j ][ 1 ] ) {
+                        if( repeatedNote == $rootScope.notes[ i ][ j ][ 1 ] ) {
+                            for( k = -1; k < 2; k++) {
+                                noteEl = $( document.querySelector( '[data-note-index="' + ( j + k ) + '"][data-staff-index="' + i + '"]' ) );
+                                noteEl.addClass( 'repeatedNote' );
+                            }
+
+                            $scope.repeatedNotes[ 0 ] = true;
                         }
+                        else
+                            repeatedNote = $rootScope.notes[ i ][ j ][ 1 ];
                     }
+                    else
+                        repeatedNote = 0;
                 }
             }
         };
 
-        function checkMelodicIntervals() {
-            var i, j, note, classA, classB;
-
-            for( i = 0; i < $rootScope.notes.length; ++i ) {
-                for( j = 0; j < $rootScope.notes[ i ].length - 1; ++j ) {
-                    if( !isValidMelodically( $rootScope.notes[ i ][ j + 1 ], $rootScope.notes[ i ][ j ] ) ) {
-                        note = $( document.querySelector( '[data-note-index="' + ( j + 1 ) + '"][data-staff-index="' + i + '"]' ) );
-                        classA = "invalidMelodicInterval" + connectionNumber++;
-                        classB = "invalidMelodicInterval" + connectionNumber++;
-                        note.addClass( classA );
-                        note = $( document.querySelector( '[data-note-index="' + j + '"][data-staff-index="' + i + '"]' ) );
-                        note.addClass( classB );
-                        $( '.' + classA ).connections( { to: '.' + classB, 'class': 'connections melodic' } );
-                        $scope.incorrectMelody[ 0 ] = true;
-                    }
-                }
-            }
-
-            var connections = $('connection, inner');
-            connections.connections('update');
-        };
-
-        function checkParallelsAndVoiceCrossingAndHarmonicIntervals() {
+        /*
+            Checks for:
+            * Parallel perfect intervals
+            * Direct perfect intervals
+            * Voice crossing
+            * Invalid harmonic intervals
+            * Approach of perfect intervals by similar motion
+            * No more than 4 consecutive parallels
+        */
+        function checkVerticallyBeatByBeat() {
             if( $rootScope.inputParams.numberOfVoices < 2 )
                 return;
 
@@ -426,9 +461,12 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 beatOfJ = 0,
                 prevWasFifth = false,
                 prevWasOctave = false,
-                note, classA, classB;
+                prevWasUnison = false,
+                prevInterval = -1,
+                numberOfParallelIntervals = 1,
+                currInterval, note, classA, classB;
 
-            while( i < $rootScope.notes[ 0 ].length && j < $rootScope.notes[ 1 ].length ) {
+            while( ( i < $rootScope.notes[ 0 ].length ) && ( j < $rootScope.notes[ 1 ].length ) ) {
                 checkVoiceCrossing( i, j );
 
                 if( !isConsonantHarmonically( $rootScope.notes[ 0 ][ i ], $rootScope.notes[ 1 ][ j ] ) ) {
@@ -438,26 +476,69 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                     }
                 }
 
-                if( beatOfI == 0 || beatOfJ == 0 ) {
-                    if( ( ( notes[ 0 ][ i ][ 1 ] - notes[ 1 ][ j ][ 1 ] ) % 7 ) == 0 ) {
-                        if( prevWasOctave )
-                            markParallelOrDirect( 'directFifth', i, j );
+                if( ( beatOfI == 0 ) || ( beatOfJ == 0 ) ) {
+                    if( ( beatOfI == 0 ) && ( beatOfJ == 0 ) ) {
+                        currInterval = Math.abs( notes[ 0 ][ i ] [ 1 ] - notes[ 1 ][ j ][ 1 ] );
+                        if( areSameInterval( currInterval, prevInterval ) ) {
+                            ++numberOfParallelIntervals;
+                            if( numberOfParallelIntervals > 4 )
+                                markConsecutiveVerticalIntervals( 'tooManyParallelIntervals', i, j );
+                        }
+                        prevInterval = currInterval;
+                    }
+                    else {
+                        numberOfParallelIntervals = 0;
+                        prevInterval = -1;
+                        currInterval = -1;
+                    }
+
+                    if( notes[ 0 ][ i ] [ 1 ] == notes[ 1 ][ j ][ 1 ] ) {
+                        if( isApproachedBySimilarMotion( i, j ) )
+                            markConsecutiveVerticalIntervals( 'perfectApproachedBySimilarMotion', i, j );
+
+                        if( prevWasOctave || prevWasFifth ) {
+                            markConsecutiveVerticalIntervals( 'consecutivePerfect', i, j );
+                            prevWasUnison = true;
+                        }
+                        else if( prevWasUnison )
+                            markConsecutiveVerticalIntervals( 'parallelPerfect', i, j )
+                        else
+                            prevWasUnison = true;
+
+                        prevWasOctave = false;
+                        prevWasFifth = false;
+                    }
+                    else if( ( ( notes[ 0 ][ i ][ 1 ] - notes[ 1 ][ j ][ 1 ] ) % 7 ) == 0 ) {
+                        if( isApproachedBySimilarMotion( i, j ) )
+                            markConsecutiveVerticalIntervals( 'perfectApproachedBySimilarMotion', i, j );
+
+                        if( prevWasOctave || prevWasUnison ) {
+                            markConsecutiveVerticalIntervals( 'consecutivePerfect', i, j );
+                            prevWasFifth = true;
+                        }
                         else if( prevWasFifth ) 
-                            markParallelOrDirect( 'parallelFifth', i, j )
+                            markConsecutiveVerticalIntervals( 'parallelPerfect', i, j )
                         else
                             prevWasFifth = true;
 
                         prevWasOctave = false;
+                        prevWasUnison = false;
                     }
                     else if( ( ( notes[ 0 ][ i ][ 1 ] - notes[ 1 ][ j ][ 1 ] ) % 12 ) == 0 )  {
-                        if( prevWasFifth )
-                            markParallelOrDirect( 'directOctave', i, j );
+                        if( isApproachedBySimilarMotion( i, j ) )
+                            markConsecutiveVerticalIntervals( 'perfectApproachedBySimilarMotion', i, j );
+
+                        if( prevWasFifth || prevWasUnison ) {
+                            markConsecutiveVerticalIntervals( 'consecutivePerfect', i, j );
+                            prevWasOctave = true;
+                        }
                         else if( prevWasOctave ) 
-                            markParallelOrDirect( 'parallelOctave', i, j )
+                            markConsecutiveVerticalIntervals( 'parallelPerfect', i, j )
                         else
                             prevWasOctave = true;
 
                         prevWasFifth = false;
+                        prevWasUnison = false;
                     }
                     else {
                         prevWasFifth = false;
@@ -504,33 +585,6 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                    ++j;
 
             }
-
-            var connections = $('connection, inner');
-            connections.connections('update');
-        };
-
-        function checkRepeatedNotes() {
-            var i, j, repeatedNote, noteEl;
-
-            for( i = 0; i < $rootScope.notes.length; ++i ) {
-                for( j = 0; j < $rootScope.notes[ i ].length - 1; ++j ) {
-                    if( $rootScope.notes[ i ][ j + 1 ][ 1 ] == $rootScope.notes[ i ][ j ][ 1 ] ) {
-                        if( repeatedNote == $rootScope.notes[ i ][ j ][ 1 ] ) {
-                            noteEl = $( document.querySelector( '[data-note-index="' + ( j + 1 ) + '"][data-staff-index="' + i + '"]' ) );
-                            noteEl.addClass( "repeatedNote" );
-                            noteEl = $( document.querySelector( '[data-note-index="' + j + '"][data-staff-index="' + i + '"]' ) );
-                            noteEl.addClass( "repeatedNote" );
-                            noteEl = $( document.querySelector( '[data-note-index="' + ( j - 1 ) + '"][data-staff-index="' + i + '"]' ) );
-                            noteEl.addClass( "repeatedNote" );
-                            $scope.repeatedNotes[ 0 ] = true;
-                        }
-                        else
-                            repeatedNote = $rootScope.notes[ i ][ j ][ 1 ]
-                    }
-                    else
-                        repeatedNote = 0;
-                }
-            }
         };
 
         function checkVoiceCrossing( firstNoteIndex, secondNoteIndex ) {
@@ -548,6 +602,32 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                     $scope.voiceCrossing[ 0 ] = true;
                 }
             }
+        };
+
+        function isApproachedBySimilarMotion( topNoteIndex, bottomNoteIndex ) {
+            if( ( topNoteIndex < 1 ) || ( bottomNoteIndex < 1 ) )
+                return;
+
+            var firstTopNote = notes[ 0 ][ topNoteIndex - 1 ],
+                secondTopNote = notes[ 0 ][ topNoteIndex ],
+                firstBottomNote = notes[ 1 ][ bottomNoteIndex - 1 ],
+                secondBottomNote = notes[ 1 ][ bottomNoteIndex ];
+
+            if( ( secondTopNote[ 1 ] - firstTopNote[ 1 ] ) < 0 ) {
+                if( ( secondBottomNote[ 1 ] - firstBottomNote[ 1 ] ) < 0 )
+                    return true;
+                else
+                    return false;
+            }
+
+            if( ( secondTopNote[ 1 ] - firstTopNote[ 1 ] ) > 0 ) {
+                if( ( secondBottomNote[ 1 ] - firstBottomNote[ 1 ] ) > 0 )
+                    return true;
+                else
+                    return false;
+            }
+
+            return false;
         };
 
         function isConsonantHarmonically( topNote, bottomNote ) {
@@ -612,21 +692,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
 
         /* marking methods */
 
-        function markHarmony( className, i, j ) {
-            var note = $( document.querySelector( '[data-note-index="' + i + '"][data-staff-index="' + 0 + '"]' ) );
-                classA = className + connectionNumber++,
-                classB = className + connectionNumber++;
-
-            note.addClass( classA );
-            note = $( document.querySelector( '[data-note-index="' + j + '"][data-staff-index="' + 1 + '"]' ) );
-            note.addClass( classB );
-            $( '.' + classA ).connections( { to: '.' + classB, 'class': 'connections ' + className } );
-
-            if( className == 'harmonic' )
-                $scope.incorrectHarmony[ 0 ] = true;
-        }
-
-        function markParallelOrDirect( className, i, j ) {
+        function markConsecutiveVerticalIntervals( className, i, j ) {
             var note = $( document.querySelector( '[data-note-index="' + i + '"][data-staff-index="' + 0 + '"]' ) ),
                 classA = className + connectionNumber++,
                 classB = className + connectionNumber++,
@@ -646,14 +712,57 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             $( '.' + classA ).connections( { to: '.' + classC, 'class': 'connections ' + className } );
             $( '.' + classB ).connections( { to: '.' + classD, 'class': 'connections ' + className } );
 
-            if( className == 'parallelFifth')
-                $scope.parallelFifths[ 0 ] = true;
-            else if( className == 'parallelOctave' )
-                $scope.parallelOctaves[ 0 ] = true;
-            else if( className == 'directFifth' )
-                $scope.directFifths[ 0 ] = true;
-            else if( className == 'directOctave' )
-                $scope.directOctaves[ 0 ] = true;
+            if( className == 'tooManyParallelIntervals' ) {
+                note = $( document.querySelector( '[data-note-index="' + ( i - 2 ) + '"][data-staff-index="' + 0 + '"]' ) ),
+                    classA = className + connectionNumber++,
+                    classB = className + connectionNumber++,
+                    classC = className + connectionNumber++,
+                    classD = className + connectionNumber++;
+
+                note.addClass( classA + ' ' + className );
+                note = $( document.querySelector( '[data-note-index="' + ( i - 3 ) + '"][data-staff-index="' + 0 + '"]' ) );
+                note.addClass( classB + ' ' + className );
+
+                note = $( document.querySelector( '[data-note-index="' + ( j - 2 ) + '"][data-staff-index="' + 1 + '"]' ) );
+
+                note.addClass( classC + ' ' + className );
+                note = $( document.querySelector( '[data-note-index="' + ( j - 3 ) + '"][data-staff-index="' + 1 + '"]' ) );
+                note.addClass( classD + ' ' + className );
+
+                $( '.' + classA ).connections( { to: '.' + classC, 'class': 'connections ' + className } );
+                $( '.' + classB ).connections( { to: '.' + classD, 'class': 'connections ' + className } );
+            }
+
+            if( className == 'parallelPerfect')
+                $scope.parallelPerfect[ 0 ] = true;
+            else if( className == 'consecutivePerfect' )
+                $scope.consecutivePerfect[ 0 ] = true;
+            else if( className == 'perfectApproachedBySimilarMotion' )
+                $scope.perfectApproachedBySimilarMotion[ 0 ] = true;
+            else if( className == 'tooManyParallelIntervals' )
+                $scope.tooManyParallelIntervals[ 0 ] = true;
+        };
+
+        function markHarmony( className, i, j ) {
+            var note = $( document.querySelector( '[data-note-index="' + i + '"][data-staff-index="' + 0 + '"]' ) );
+                classA = className + connectionNumber++,
+                classB = className + connectionNumber++;
+
+            note.addClass( classA );
+            note = $( document.querySelector( '[data-note-index="' + j + '"][data-staff-index="' + 1 + '"]' ) );
+            note.addClass( classB );
+            $( '.' + classA ).connections( { to: '.' + classB, 'class': 'connections ' + className } );
+
+            if( className == 'harmonic' )
+                $scope.incorrectHarmony[ 0 ] = true;
+        };
+
+        function markInvalidAccidental( i, j ) {
+            var noteEl = $( document.querySelector( '[data-note-index="' + j + '"][data-staff-index="' + i + '"]' ) ),
+                accEl = $( $( $( $( noteEl )[ 0 ].previousElementSibling )[ 0 ] )[ 0 ].firstElementChild );
+
+            $( accEl ).addClass( 'invalidAccidental' );
+            $scope.incorrectAccidental[ 0 ] = true;
         };
 
         /* helpers */
@@ -719,6 +828,14 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             myEl.append( "<div class='notehead static' style='margin-left:" + ( currentLeftPos[ staffNumber ] ) + "px; top: " + 
                          ( notesConversion[ noteIndex ][ 1 ] + ( 300 * staffNumber ) ) + "px;'><img src='img/whole.png'></div>" );
             currentLeftPos[ staffNumber ] += 20;
+        };
+
+        function setRulesHeadings() {
+            if( $scope.incorrectAccidental[ 0 ] || $scope.incorrectHarmony[ 0 ] || $scope.incorrectMelody[ 0 ] || $scope.repeatedNotes[ 0 ] || 
+                $scope.parallelPerfect[ 0 ] || $scope.perfectApproachedBySimilarMotion[ 0 ] || $scope.tooManyParallelIntervals[ 0 ] )
+                $scope.hasBrokenHardRules = true;
+            if( $scope.voiceCrossing[ 0 ] || $scope.consecutivePerfect[ 0 ] )
+                $scope.hasBrokenSoftRules = true;
         };
 
         function setUpTaskbar( target ) {

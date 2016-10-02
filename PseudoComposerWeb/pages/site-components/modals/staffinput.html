@@ -4,7 +4,7 @@
 
         <div class="modal-content" ng-controller="inputController">
 
-            <div class="modal-body" ng-class="{showIncorrectMelody: incorrectMelody[1], showIncorrectAccidentals: incorrectAccidentals[1], showRepeatedNotes: repeatedNotes[1], showIncorrectHarmony: incorrectHarmony[1], showVoiceCrossing: voiceCrossing[1], showParallelFifths: parallelFifths[1], showParallelOctaves: parallelOctaves[1], showDirectFifths: directFifths[1], showDirectOctaves: directOctaves[1]}">
+            <div class="modal-body" ng-class="{showIncorrectMelody: incorrectMelody[1], showIncorrectAccidentals: incorrectAccidental[1], showRepeatedNotes: repeatedNotes[1], showIncorrectHarmony: incorrectHarmony[1], showVoiceCrossing: voiceCrossing[1], showParallelPerfect: parallelPerfect[1], showConsecutivePerfect: consecutivePerfect[1], showPerfectApproachedBySimilarMotion: perfectApproachedBySimilarMotion[1], showTooManyParallelIntervals: tooManyParallelIntervals[1]}">
 
                 <div class="row toolbar">
 
@@ -68,118 +68,130 @@
 
                 <div class="row">
 
-                    <div class="row col-md-10 col-md-offset-1" ng-show="incorrectMelody[0]">
+                    <div class="col-md-6 rules" ng-show="counterpointChecked" ng-class="{active: hasBrokenHardRules}">
 
-                        <p class="pull-left">You have one or more incorect melodic intervals</p>
-                        <div class="pull-right">
+                        <h2>Hard Rules</h2>
 
-                            <span ng-click="toggleShowValue(incorrectMelody, true);" ng-class="{activeToggle: incorrectMelody[1]}">Show</span>
-                            <span>|</span>
-                            <span ng-click="toggleShowValue(incorrectMelody, false);" ng-class="{activeToggle: !incorrectMelody[1]}">Hide</span>
+                        <div class="row col-md-10 col-md-offset-1" ng-show="incorrectAccidental[0]">
+
+                            <p class="pull-left">Invalid accidental</p>
+                            <div class="pull-right">
+
+                                <span ng-click="toggleShowValue(incorrectAccidental, true);" ng-class="{activeToggle: incorrectAccidental[1]}">Show</span>
+                                <span>|</span>
+                                <span ng-click="toggleShowValue(incorrectAccidental, false);" ng-class="{activeToggle: !incorrectAccidental[1]}">Hide</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row col-md-10 col-md-offset-1" ng-show="incorrectMelody[0]">
+
+                            <p class="pull-left">Invalid melodic interval</p>
+                                <div class="pull-right">
+
+                                    <span ng-click="toggleShowValue(incorrectMelody, true);" ng-class="{activeToggle: incorrectMelody[1]}">Show</span>
+                                    <span>|</span>
+                                    <span ng-click="toggleShowValue(incorrectMelody, false);" ng-class="{activeToggle: !incorrectMelody[1]}">Hide</span>
+
+                                </div>
+
+                        </div>
+
+                        <div class="row col-md-10 col-md-offset-1" ng-show="incorrectHarmony[0]">
+
+                            <p class="pull-left">Invalid harmonic interval</p>
+                            <div class="pull-right">
+
+                                <span ng-click="toggleShowValue(incorrectHarmony, true);" ng-class="{activeToggle: incorrectHarmony[1]}">Show</span>
+                                <span>|</span>
+                                <span ng-click="toggleShowValue(incorrectHarmony, false);" ng-class="{activeToggle: !incorrectHarmony[1]}">Hide</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row col-md-10 col-md-offset-1" ng-show="repeatedNotes[0]">
+
+                            <p class="pull-left">Too many note repetitions</p>
+                            <div class="pull-right">
+
+                                <span ng-click="toggleShowValue(repeatedNotes, true);" ng-class="{activeToggle: repeatedNotes[1]}">Show</span>
+                                <span>|</span>
+                                <span ng-click="toggleShowValue(repeatedNotes, false);" ng-class="{activeToggle: !repeatedNotes[1]}">Hide</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row col-md-10 col-md-offset-1" ng-show="parallelPerfect[0]">
+
+                            <p class="pull-left">Parallel perfect intervals</p>
+                            <div class="pull-right">
+
+                                <span ng-click="toggleShowValue(parallelPerfect, true);" ng-class="{activeToggle: parallelPerfect[1]}">Show</span>
+                                <span>|</span>
+                                <span ng-click="toggleShowValue(parallelPerfect, false);" ng-class="{activeToggle: !parallelPerfect[1]}">Hide</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row col-md-10 col-md-offset-1" ng-show="tooManyParallelIntervals[0]">
+
+                            <p class="pull-left">Too many consecutive parallel intervals</p>
+                            <div class="pull-right">
+
+                                <span ng-click="toggleShowValue(tooManyParallelIntervals, true);" ng-class="{activeToggle: tooManyParallelIntervals[1]}">Show</span>
+                                <span>|</span>
+                                <span ng-click="toggleShowValue(tooManyParallelIntervals, false);" ng-class="{activeToggle: !tooManyParallelIntervals[1]}">Hide</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row col-md-10 col-md-offset-1" ng-show="perfectApproachedBySimilarMotion[0]">
+
+                            <p class="pull-left">Perfect interval approached by similar motion</p>
+                            <div class="pull-right">
+
+                                <span ng-click="toggleShowValue(perfectApproachedBySimilarMotion, true);" ng-class="{activeToggle: perfectApproachedBySimilarMotion[1]}">Show</span>
+                                <span>|</span>
+                                <span ng-click="toggleShowValue(perfectApproachedBySimilarMotion, false);" ng-class="{activeToggle: !perfectApproachedBySimilarMotion[1]}">Hide</span>
+
+                            </div>
 
                         </div>
 
                     </div>
 
-                    <div class="row col-md-10 col-md-offset-1" ng-show="incorrectHarmony[0]">
+                    <div class="col-md-6 rules" ng-show="counterpointChecked" ng-class="{active: hasBrokenSoftRules}">
 
-                        <p class="pull-left">You have one or more incorect harmonic intervals</p>
-                        <div class="pull-right">
+                        <h2>Soft Rules</h2>
 
-                            <span ng-click="toggleShowValue(incorrectHarmony, true);" ng-class="{activeToggle: incorrectHarmony[1]}">Show</span>
-                            <span>|</span>
-                            <span ng-click="toggleShowValue(incorrectHarmony, false);" ng-class="{activeToggle: !incorrectHarmony[1]}">Hide</span>
+                        <div class="row col-md-10 col-md-offset-1" ng-show="voiceCrossing[0]">
 
-                        </div>
+                            <p class="pull-left">Crossed voices</p>
+                            <div class="pull-right">
 
-                    </div>
+                                <span ng-click="toggleShowValue(voiceCrossing, true);" ng-class="{activeToggle: voiceCrossing[1]}">Show</span>
+                                <span>|</span>
+                                <span ng-click="toggleShowValue(voiceCrossing, false);" ng-class="{activeToggle: !voiceCrossing[1]}">Hide</span>
 
-                    <div class="row col-md-10 col-md-offset-1" ng-show="voiceCrossing[0]">
-
-                        <p class="pull-left">You have crossed voices</p>
-                        <div class="pull-right">
-
-                            <span ng-click="toggleShowValue(voiceCrossing, true);" ng-class="{activeToggle: voiceCrossing[1]}">Show</span>
-                            <span>|</span>
-                            <span ng-click="toggleShowValue(voiceCrossing, false);" ng-class="{activeToggle: !voiceCrossing[1]}">Hide</span>
+                            </div>
 
                         </div>
 
-                    </div>
+                        <div class="row col-md-10 col-md-offset-1" ng-show="consecutivePerfect[0]">
 
-                    <div class="row col-md-10 col-md-offset-1" ng-show="incorrectAccidental[0]">
+                            <p class="pull-left">Consecutive perfect intervals</p>
+                            <div class="pull-right">
 
-                        <p class="pull-left">You have one or more incorrect accidentals</p>
-                        <div class="pull-right">
+                                <span ng-click="toggleShowValue(consecutivePerfect, true);" ng-class="{activeToggle: consecutivePerfect[1]}">Show</span>
+                                <span>|</span>
+                                <span ng-click="toggleShowValue(consecutivePerfect, false);" ng-class="{activeToggle: !consecutivePerfect[1]}">Hide</span>
 
-                            <span ng-click="toggleShowValue(incorrectAccidentals, true);" ng-class="{activeToggle: incorrectAccidentals[1]}">Show</span>
-                            <span>|</span>
-                            <span ng-click="toggleShowValue(incorrectAccidentals, false);" ng-class="{activeToggle: !incorrectAccidentals[1]}">Hide</span>
-
-                        </div>
-
-                    </div>
-
-                    <div class="row col-md-10 col-md-offset-1" ng-show="repeatedNotes[0]">
-
-                        <p class="pull-left">You have repeated one or more notes</p>
-                        <div class="pull-right">
-
-                            <span ng-click="toggleShowValue(repeatedNotes, true);" ng-class="{activeToggle: repeatedNotes[1]}">Show</span>
-                            <span>|</span>
-                            <span ng-click="toggleShowValue(repeatedNotes, false);" ng-class="{activeToggle: !repeatedNotes[1]}">Hide</span>
-
-                        </div>
-
-                    </div>
-
-                    <div class="row col-md-10 col-md-offset-1" ng-show="parallelFifths[0]">
-
-                        <p class="pull-left">You have parallel fifths</p>
-                        <div class="pull-right">
-
-                            <span ng-click="toggleShowValue(parallelFifths, true);" ng-class="{activeToggle: parallelFifths[1]}">Show</span>
-                            <span>|</span>
-                            <span ng-click="toggleShowValue(parallelFifths, false);" ng-class="{activeToggle: !parallelFifths[1]}">Hide</span>
-
-                        </div>
-
-                    </div>
-
-                    <div class="row col-md-10 col-md-offset-1" ng-show="parallelOctaves[0]">
-
-                        <p class="pull-left">You have parallel octaves</p>
-                        <div class="pull-right">
-
-                            <span ng-click="toggleShowValue(parallelOctaves, true);" ng-class="{activeToggle: parallelOctaves[1]}">Show</span>
-                            <span>|</span>
-                            <span ng-click="toggleShowValue(parallelOctaves, false);" ng-class="{activeToggle: !parallelOctaves[1]}">Hide</span>
-
-                        </div>
-
-                    </div>
-
-                    <div class="row col-md-10 col-md-offset-1" ng-show="directFifths[0]">
-
-                        <p class="pull-left">You have approached one or more perfect fifths incorrectly</p>
-                        <div class="pull-right">
-
-                            <span ng-click="toggleShowValue(directFifths, true);" ng-class="{activeToggle: directFifths[1]}">Show</span>
-                            <span>|</span>
-                            <span ng-click="toggleShowValue(directFifths, false);" ng-class="{activeToggle: !directFifths[1]}">Hide</span>
-
-                        </div>
-
-                    </div>
-
-                    <div class="row col-md-10 col-md-offset-1" ng-show="directOctaves[0]">
-
-                        <p class="pull-left">You have approached one or more perfect octaves incorrectly</p>
-                        <div class="pull-right">
-
-                            <span ng-click="toggleShowValue(directOctaves, true);" ng-class="{activeToggle: directOctaves[1]}">Show</span>
-                            <span>|</span>
-                            <span ng-click="toggleShowValue(directOctaves, false);" ng-class="{activeToggle: !directOctaves[1]}">Hide</span>
+                            </div>
 
                         </div>
 

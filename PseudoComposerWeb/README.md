@@ -1,5 +1,5 @@
 # PseudoComposer
-Application built for HCI that recommends wines to users based on an assessed taste profile
+Senior Project
 
 Install Node and run the following commands from folder
 	npm install http-server -g
@@ -7,3 +7,58 @@ Install Node and run the following commands from folder
 
 
 app location: localhost:8080
+
+Rules To Implement:
+* Hard rules
+	* Circumstances for Eb
+	* Bb as upper neighbor to A or to avoid tritone ONLY
+	* No outline of augmented fourth
+	* Outline of diminished 5th must be filled in and followed by step in the opposite direction
+	* Repeated notes in counterpoint can't occur over repeated notes in CF
+	* Direct repetition of contrapuntal combinaiton is forbidden - only 2 sequential repetitions allowed
+	* First and last notes must be perfect consonances
+	* 2nd species
+		* off-beats can only be dissonant if passing
+		* successive downbeats can be parallel perfect intervals if 'broken up' by a weak beat
+		* repeated notes are not allowed in added voice
+		* may begin with a half-note rest, but first sounding note must be perfect consonance
+	* 3rd species
+		* lower neighbors
+		* Skips should be less than 1/4 of melodic motion
+		* Do not use same neighbor twice in a row
+		* Do not change direction more than 3 times in 6 quarter notes
+		* cambiata, echappee, double neighbor allowed allowed
+* Soft rules
+	* Use more steps than skips
+	* Make m6 descending and M6 ascending and descending a soft rule
+	* No more than 2 skips in succession unless small
+	* When having 2 successive skips, larger should be below
+	* Avoid skipping to and from a temporary high point
+	* Accidental Bb's followed by descending motion
+	* Avoid unisons (on strong beats in 2nd and 3rd species)
+	* Avoid skipping in both voices - not as bad if 3rds
+	* Nothing wider than a 12th
+	* Change direction after a large skip (larger than a 4th) with a step
+	* Try to fill in skips
+	* Try to cover the whole octave every 10-20 CF notes (first species)
+	* Try to cover the whole octave every 4-8 CF notes (2nd species)
+	* 3rd
+		* Avoid skipping up to a weak quarter
+		* avoid temporary high note on weak quarter
+		* rarely exceed a 3rd in this species
+		* avoid breaking up parallel intervals with only one quarter
+
+Features To Implement
+* Information about rules broken
+* MIDI playback
+* MusicXML
+* Check if invertible (just omit the 5ths if invertible at the octave...)
+* 4th and 5th species CP
+* Page that just lists all da rulez
+
+Aesthetic:
+* Find way to connect parallel/consecutive perfect intervals horizontally to better group them
+* Make sure that all broken rules are visible over each other
+
+Rules to fix:
+* Make repeated intervals check for enharmonic spellings of intervals

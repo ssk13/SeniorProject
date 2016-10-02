@@ -39,24 +39,28 @@
 	margin-top: -54px !important;
 }
 
+.showConsecutivePerfect .consecutivePerfect {
+	border: 2px solid black !important;
+}
+
 .showIncorrectAccidentals .invalidAccidental {
 	background-color: purple !important;
 }
 
-.showParallelFifths .parallelFifth {
+.showParallelPerfect .parallelPerfect {
 	border: 2px solid brown !important;
 }
 
-.showParallelOctaves .parallelOctave {
-	border: 2px solid green !important;
-}
-
-.showDirectFifths .directFifth, .showDirectOctaves .directOctave {
+.showPerfectApproachedBySimilarMotion .perfectApproachedBySimilarMotion {
 	border: 2px solid black !important;
 }
 
 .showRepeatedNotes .repeatedNote {
 	border: 2px solid yellow !important;
+}
+
+.showTooManyParallelIntervals .tooManyParallelIntervals {
+	border: 2px solid brown !important;
 }
 
 .notehead {

@@ -1,0 +1,7 @@
+.rules {
+	opacity: 0.5;
+}
+
+.rules.active {
+	opacity: 1;
+}
