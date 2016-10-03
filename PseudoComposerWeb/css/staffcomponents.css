@@ -43,6 +43,10 @@
 	border: 2px solid black !important;
 }
 
+.showimperfectStartingOrEndingInterval .imperfectStartingOrEndingInterval {
+	background-color: purple !important;
+}
+
 .showIncorrectAccidentals .invalidAccidental {
 	background-color: purple !important;
 }

@@ -4,7 +4,7 @@
 
         <div class="modal-content" ng-controller="inputController">
 
-            <div class="modal-body" ng-class="{showIncorrectMelody: incorrectMelody[1], showIncorrectAccidentals: incorrectAccidental[1], showRepeatedNotes: repeatedNotes[1], showIncorrectHarmony: incorrectHarmony[1], showVoiceCrossing: voiceCrossing[1], showParallelPerfect: parallelPerfect[1], showConsecutivePerfect: consecutivePerfect[1], showPerfectApproachedBySimilarMotion: perfectApproachedBySimilarMotion[1], showTooManyParallelIntervals: tooManyParallelIntervals[1]}">
+            <div class="modal-body" ng-class="{showIncorrectMelody: incorrectMelody[1], showIncorrectAccidentals: incorrectAccidental[1], showRepeatedNotes: repeatedNotes[1], showIncorrectHarmony: incorrectHarmony[1], showVoiceCrossing: voiceCrossing[1], showParallelPerfect: parallelPerfect[1], showConsecutivePerfect: consecutivePerfect[1], showPerfectApproachedBySimilarMotion: perfectApproachedBySimilarMotion[1], showTooManyParallelIntervals: tooManyParallelIntervals[1], showImperfectStartingOrEndingInterval: imperfectStartingOrEndingInterval[1]}">
 
                 <div class="row toolbar">
 
@@ -30,36 +30,37 @@
                             <div class="notehead floating" ng-style="{'top': floatingNoteheadTopPos + 'px', 'left': getLeftPos($index) + 'px'}" ng-click="floatingNoteheadClicked($event, $index);"></div>
 
                             <div class="space hoverable slot0" data-staff-index="{{$index}}" ng-mouseover="showFloatingNotehead(19)" ng-click="insertNote('.slot0', 19, $event, $index)"></div>
-                            
+
                             <div class="space hoverable slot1" data-staff-index="{{$index}}" ng-mouseover="showFloatingNotehead(29)" ng-click="insertNote('.slot1', 29, $event, $index)">
                                 <div class="line" ng-click="insertNote('.slot1', 29, $event, $index); $event.stopPropagation();"></div>
                             </div>
-                            
+
                             <div class="space hoverable slot2" data-staff-index="{{$index}}" ng-mouseover="showFloatingNotehead(39)" ng-click="insertNote('.slot2', 39, $event, $index)"></div>
-                            
+
                             <div class="space hoverable slot3" data-staff-index="{{$index}}" ng-mouseover="showFloatingNotehead(48)" ng-click="insertNote('.slot3', 48, $event, $index)">
                                 <div class="line" ng-click="insertNote('.slot3', 48, $event, $index); $event.stopPropagation();"></div>
                             </div>
 
                             <div class="space hoverable slot4" data-staff-index="{{$index}}" ng-mouseover="showFloatingNotehead(59)" ng-click="insertNote('.slot4', 59, $event, $index)"></div>
-                            
+
                             <div class="space hoverable slot5" data-staff-index="{{$index}}" ng-mouseover="showFloatingNotehead(70)" ng-click="insertNote('.slot5', 70, $event, $index)">
                                 <div class="line" ng-click="insertNote('.slot5', 70, $event, $index); $event.stopPropagation();"></div>
                             </div>
-            
+
                             <div class="space hoverable slot6" data-staff-index="{{$index}}" ng-mouseover="showFloatingNotehead(79)" ng-click="insertNote('.slot6', 79, $event, $index)"></div>
-            
+
                             <div class="space hoverable slot7" data-staff-index="{{$index}}" ng-mouseover="showFloatingNotehead(90)" ng-click="insertNote('.slot7', 90, $event, $index)">
                                 <div class="line" ng-click="insertNote('.slot7', 90, $event, $index); $event.stopPropagation();" ></div>
                             </div>
-                
+
                             <div class="space hoverable slot8" data-staff-index="{{$index}}" ng-mouseover="showFloatingNotehead(99)" ng-click="insertNote('.slot8', 99, $event, $index)"></div>
-                
+
                             <div class="space hoverable slot9" data-staff-index="{{$index}}" ng-mouseover="showFloatingNotehead(111)" ng-click="insertNote('.slot9', 111, $event, $index)">
                                 <div class="line" ng-click="insertNote('.slot9', 111, $event, $index); $event.stopPropagation();"></div>
                             </div>
-                    
+
                             <div class="space hoverable slot10" data-staff-index="{{$index}}" ng-mouseover="showFloatingNotehead(119)" ng-click="insertNote('.slot10', 119, $event, $index)"></div>
+
                         </div>
 
                     </div>
@@ -71,6 +72,25 @@
                     <div class="col-md-6 rules" ng-show="counterpointChecked" ng-class="{active: hasBrokenHardRules}">
 
                         <h2>Hard Rules</h2>
+
+                        <div class="row col-md-10 col-md-offset-1" ng-show="unequalNumberOfBeats[0]">
+
+                            <p class="pull-left">Unequal number of beats in voices</p>
+
+                        </div>
+
+                        <div class="row col-md-10 col-md-offset-1" ng-show="imperfectStartingOrEndingInterval[0]">
+
+                            <p class="pull-left">Imperfect first or last interval</p>
+                                <div class="pull-right">
+
+                                    <span ng-click="toggleShowValue(imperfectStartingOrEndingInterval, true);" ng-class="{activeToggle: imperfectStartingOrEndingInterval[1]}">Show</span>
+                                    <span>|</span>
+                                    <span ng-click="toggleShowValue(imperfectStartingOrEndingInterval, false);" ng-class="{activeToggle: !imperfectStartingOrEndingInterval[1]}">Hide</span>
+
+                                </div>
+
+                        </div>
 
                         <div class="row col-md-10 col-md-offset-1" ng-show="incorrectAccidental[0]">
 

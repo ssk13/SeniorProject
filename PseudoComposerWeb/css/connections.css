@@ -9,6 +9,12 @@ connection {
 	margin-left: 11px;
 }
 
+.showImperfectStartingOrEndingInterval connection.imperfectStartingOrEndingInterval {
+	visibility: visible;
+	border: 2px solid red;
+	border-radius: 25px;
+}
+
 .showIncorrectHarmony connection.harmonic {
 	visibility: visible;
 	border: 2px solid orange;

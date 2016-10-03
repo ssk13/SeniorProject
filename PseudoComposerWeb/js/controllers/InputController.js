@@ -4,14 +4,17 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         $scope.duration = 'whole';
         $scope.floatingNoteheadTopPos = 59;
 
+        /* [ has, show ] */
         /*hard rules*/
-        $scope.incorrectAccidental = [ false, false ]; /* [ has, show ]*/
+        $scope.imperfectStartingOrEndingInterval = [ false, false ];
+        $scope.incorrectAccidental = [ false, false ];
         $scope.incorrectHarmony = [ false, false ];
         $scope.incorrectMelody = [ false, false ];
         $scope.repeatedNotes = [ false, false ];
         $scope.parallelPerfect = [ false, false ];
         $scope.perfectApproachedBySimilarMotion = [ false, false ];
         $scope.tooManyParallelIntervals = [ false, false ];
+        $scope.unequalNumberOfBeats = [ false, false ];
         /*soft rules*/
         $scope.voiceCrossing = [ false, false ];
         $scope.consecutivePerfect = [ false, false ];
@@ -450,6 +453,8 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             * Invalid harmonic intervals
             * Approach of perfect intervals by similar motion
             * No more than 4 consecutive parallels
+            * Perfect first and last intervals
+            * Equality of length of voices
         */
         function checkVerticallyBeatByBeat() {
             if( $rootScope.inputParams.numberOfVoices < 2 )
@@ -585,6 +590,19 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                    ++j;
 
             }
+
+            if( ( notes[ 0 ].length < 1 ) || ( notes[ 1 ].length < 1 ) ) {
+                $scope.unequalNumberOfBeats[ 0 ] = true;
+                return;
+            }
+
+            if( !isPerfectInterval( notes[ 0 ][ 0 ], notes[ 1 ][ 0 ] ) )
+                markHarmony( 'imperfectStartingOrEndingInterval', 0, 0 );
+            if( !isPerfectInterval( notes[ 0 ][ $rootScope.notes[ 0 ].length - 1 ], notes[ 1 ][ $rootScope.notes[ 1 ].length - 1 ] ) )
+                markHarmony( 'imperfectStartingOrEndingInterval', $rootScope.notes[ 0 ].length - 1, $rootScope.notes[ 1 ].length - 1 );
+
+            if( $scope.beatIndex[ index ] > $scope.beatIndex[ Math.abs( index - 1 ) ] )
+                $scope.unequalNumberOfBeats[ 0 ] = true;
         };
 
         function checkVoiceCrossing( firstNoteIndex, secondNoteIndex ) {
@@ -663,6 +681,38 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             return false;
         };
 
+        function isPerfectInterval( topNote, bottomNote ) {
+            var diff = ( topNote[ 1 ] - bottomNote[ 1 ] ),
+                validityTable = [
+                                    [ -12, 0 ], [ -7, -4 ], [ -7, 3 ], [ -5, 4 ], [ -5, -3 ], [ 0, 0 ], [ 5, -4 ], [ 5, 3 ], [ 7, -3 ], [ 7, 4 ], [ 12, 0 ]
+                                ],
+                i = 0,
+                swap = ( diff < 0 );
+
+            diff %= 12;
+            if( diff < 0 )
+                diff *= -1;
+
+            while( i < validityTable.length ) {
+                if( diff == validityTable[ i ][ 0 ] ) {
+                    if( swap ) {
+                        if( $rootScope.getAsciiDiff( bottomNote[ 0 ].charAt( 0 ), topNote[ 0 ].charAt( 0 ) ) == validityTable[ i ][ 1 ] )
+                            return true;
+                    }
+                    else {
+                        if( $rootScope.getAsciiDiff( topNote[ 0 ].charAt( 0 ), bottomNote[ 0 ].charAt( 0 ) ) == validityTable[ i ][ 1 ] )
+                            return true;
+                    }
+
+                    if( validityTable[ i ][ 0 ] > diff )
+                        return false;
+                }
+                ++i;
+            }
+
+            return false;
+        }
+
         function isValidMelodically( secondNote, firstNote ) {
             var diff = secondNote[ 1 ] - firstNote[ 1 ],
                 validityTable = [ 
@@ -677,7 +727,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 if( diff == validityTable[ i ][ 0 ] ) {
                     if( $rootScope.getAsciiDiff( secondNote[0].charAt(0), firstNote[0].charAt(0) ) == validityTable[ i ][ 1 ] )
                         return true;
-                    if( validityTable[i][0] > diff )
+                    if( validityTable[ i ][ 0 ] > diff )
                         return false;
                 }
                 ++i;
@@ -755,6 +805,8 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
 
             if( className == 'harmonic' )
                 $scope.incorrectHarmony[ 0 ] = true;
+            else if( className == 'imperfectStartingOrEndingInterval' )
+                $scope.imperfectStartingOrEndingInterval[ 0 ] = true;
         };
 
         function markInvalidAccidental( i, j ) {
@@ -832,7 +884,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
 
         function setRulesHeadings() {
             if( $scope.incorrectAccidental[ 0 ] || $scope.incorrectHarmony[ 0 ] || $scope.incorrectMelody[ 0 ] || $scope.repeatedNotes[ 0 ] || 
-                $scope.parallelPerfect[ 0 ] || $scope.perfectApproachedBySimilarMotion[ 0 ] || $scope.tooManyParallelIntervals[ 0 ] )
+                $scope.parallelPerfect[ 0 ] || $scope.perfectApproachedBySimilarMotion[ 0 ] || $scope.tooManyParallelIntervals[ 0 ] || $scope.unequalNumberOfBeats[ 0 ] )
                 $scope.hasBrokenHardRules = true;
             if( $scope.voiceCrossing[ 0 ] || $scope.consecutivePerfect[ 0 ] )
                 $scope.hasBrokenSoftRules = true;
