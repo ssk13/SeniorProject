@@ -4,7 +4,7 @@
 
         <div class="modal-content" ng-controller="inputController">
 
-            <div class="modal-body" ng-class="{showIncorrectMelody: incorrectMelody[1], showIncorrectAccidentals: incorrectAccidental[1], showRepeatedNotes: repeatedNotes[1], showIncorrectHarmony: incorrectHarmony[1], showVoiceCrossing: voiceCrossing[1], showParallelPerfect: parallelPerfect[1], showConsecutivePerfect: consecutivePerfect[1], showPerfectApproachedBySimilarMotion: perfectApproachedBySimilarMotion[1], showTooManyParallelIntervals: tooManyParallelIntervals[1], showImperfectStartingOrEndingInterval: imperfectStartingOrEndingInterval[1]}">
+            <div class="modal-body" ng-class="{showIncorrectMelody: incorrectMelody[1], showIncorrectAccidentals: incorrectAccidental[1], showRepeatedNotes: repeatedNotes[1], showIncorrectHarmony: incorrectHarmony[1], showVoiceCrossing: voiceCrossing[1], showParallelPerfect: parallelPerfect[1], showConsecutivePerfect: consecutivePerfect[1], showPerfectApproachedBySimilarMotion: perfectApproachedBySimilarMotion[1], showTooManyParallelIntervals: tooManyParallelIntervals[1], showImperfectStartingOrEndingInterval: imperfectStartingOrEndingInterval[1], showConsecutiveSkips: consecutiveSkips[1]}">
 
                 <div class="row toolbar">
 
@@ -191,7 +191,20 @@
 
                         <div class="row col-md-10 col-md-offset-1" ng-show="hasMoreSkipsThanSteps[0]">
 
-                            <p class="pull-left">You have more skips than steps</p>
+                            <p class="pull-left">More skips than steps</p>
+
+                        </div>
+
+                        <div class="row col-md-10 col-md-offset-1" ng-show="consecutiveSkips[0]">
+
+                            <p class="pull-left">Too many consecutive skips</p>
+                            <div class="pull-right">
+
+                                <span ng-click="toggleShowValue(consecutiveSkips, true);" ng-class="{activeToggle: consecutiveSkips[1]}">Show</span>
+                                <span>|</span>
+                                <span ng-click="toggleShowValue(consecutiveSkips, false);" ng-class="{activeToggle: !consecutiveSkips[1]}">Hide</span>
+
+                            </div>
 
                         </div>
 

@@ -16,8 +16,9 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         $scope.tooManyParallelIntervals = [ false, false ];
         $scope.unequalNumberOfBeats = [ false ];
         /*soft rules*/
-        $scope.voiceCrossing = [ false, false ];
         $scope.consecutivePerfect = [ false, false ];
+        $scope.consecutiveSkips = [ false, false ];
+        $scope.voiceCrossing = [ false, false ];
         $scope.hasMoreSkipsThanSteps = [ false ];
 
         $scope.hasBrokenHardRules = false;
@@ -391,9 +392,10 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             * invalid accidentals
             * too many horizontal repeated notes
         */
-
         function checkHorizontallyBeatByBeat() {
             var numberOfSkips = 0,
+                numberOfConsecutiveSkips = 0,
+                hadLargeSkip = false,
                 numberOfSteps = 0,
                 i, j, k, noteEl, classA, classB, diff, note, accEl, nextNote, repeatedNote;
 
@@ -412,24 +414,27 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                         }
 
                         if( $rootScope.notes[ i ][ j + 1 ][ 1 ] == $rootScope.notes[ i ][ j ][ 1 ] ) {
-                            if( repeatedNote == $rootScope.notes[ i ][ j ][ 1 ] ) {
-                                for( k = -1; k < 2; k++) {
-                                    noteEl = $( document.querySelector( '[data-note-index="' + ( j + k ) + '"][data-staff-index="' + i + '"]' ) );
-                                    noteEl.addClass( 'repeatedNote' );
-                                }
-
-                                $scope.repeatedNotes[ 0 ] = true;
-                            }
+                            if( repeatedNote == $rootScope.notes[ i ][ j ][ 1 ] )
+                                markThreeConsecutiveNotes( i, j, 'repeatedNote' );
                             else
                                 repeatedNote = $rootScope.notes[ i ][ j ][ 1 ];
                         }
                         else
                             repeatedNote = 0;
 
-                        if( isSkip( $rootScope.notes[ i ][ j + 1 ], $rootScope.notes[ i ][ j ] ) )
+                        if( isSkip( $rootScope.notes[ i ][ j + 1 ], $rootScope.notes[ i ][ j ] ) ) {
                             ++numberOfSkips;
-                        else
+                            ++numberOfConsecutiveSkips;
+                            if( isLargeSkip( $rootScope.notes[ i ][ j + 1 ], $rootScope.notes[ i ][ j ] ) )
+                                hadLargeSkip = true;
+                            if( ( numberOfConsecutiveSkips > 2 ) && hadLargeSkip )
+                                markThreeConsecutiveNotes( i, j, 'consecutiveSkips' );
+                        }
+                        else {
                             ++numberOfSteps;
+                            numberOfConsecutiveSkips = 0;
+                            hadLargeSkip = false;
+                        }
                     }
 
                     note =  $rootScope.notes[ i ][ j ];
@@ -752,19 +757,29 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             return false;
         };
 
-        function isSkip( secondNote, firstNote ) {
-            if( Math.abs( $rootScope.getAsciiDiff( secondNote[ 0 ].charAt( 0 ), firstNote[ 0 ].charAt( 0 ) ) ) == 1 )
-                return false;
+        function isLargeSkip( secondNote, firstNote ) {
+            if( ( Math.abs( $rootScope.getAsciiDiff( secondNote[ 0 ].charAt( 0 ), firstNote[ 0 ].charAt( 0 ) ) ) <= 2 ) || 
+                ( (secondNote[ 0 ].charAt( 0 ) == 'g' ) && ( firstNote[ 0 ].charAt( 0 ) == 'a' ) ) ||
+                ( (secondNote[ 0 ].charAt( 0 ) == 'a' ) && ( firstNote[ 0 ].charAt( 0 ) == 'g' ) ) ||
+                ( (secondNote[ 0 ].charAt( 0 ) == 'f' ) && ( firstNote[ 0 ].charAt( 0 ) == 'a' ) ) ||
+                ( (secondNote[ 0 ].charAt( 0 ) == 'a' ) && ( firstNote[ 0 ].charAt( 0 ) == 'f' ) ) ||
+                ( (secondNote[ 0 ].charAt( 0 ) == 'g' ) && ( firstNote[ 0 ].charAt( 0 ) == 'b' ) ) ||
+                ( (secondNote[ 0 ].charAt( 0 ) == 'b' ) && ( firstNote[ 0 ].charAt( 0 ) == 'g' ) )
+              ) {
+                if( Math.abs( secondNote[ 1 ] - firstNote[ 1 ] ) < 6 )
+                    return false;
+            }
 
-            if( Math.abs( $rootScope.getAsciiDiff( secondNote[ 0 ].charAt( 0 ), firstNote[ 0 ].charAt( 0 ) ) ) == 6 ) {
-                if( secondNote[ 0 ].charAt( 0 ) == 'g' ) {
-                    if( firstNote[ 0 ].charAt( 0 ) == 'a' )
-                        return false;
-                }
-                else if( secondNote[ 0 ].charAt( 0 ) == 'a' ) {
-                    if( firstNote[ 0 ].charAt( 0 ) == 'g' )
-                        return false;
-                }
+            return true;
+        };
+
+        function isSkip( secondNote, firstNote ) {
+            if( ( Math.abs( $rootScope.getAsciiDiff( secondNote[ 0 ].charAt( 0 ), firstNote[ 0 ].charAt( 0 ) ) ) <= 1 ) || 
+                ( (secondNote[ 0 ].charAt( 0 ) == 'g' ) && ( firstNote[ 0 ].charAt( 0 ) == 'a' ) ) ||
+                ( (secondNote[ 0 ].charAt( 0 ) == 'a' ) && ( firstNote[ 0 ].charAt( 0 ) == 'g' ) )
+              ) {
+                if( Math.abs( secondNote[ 1 ] - firstNote[ 1 ] ) < 4 )
+                    return false;
             }
 
             return true;
@@ -851,6 +866,21 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             $scope.incorrectAccidental[ 0 ] = true;
         };
 
+        function markThreeConsecutiveNotes( i, j, className) {
+            var noteEl;
+
+            for( k = -1; k < 2; k++) {
+                noteEl = $( document.querySelector( '[data-note-index="' + ( j + k ) + '"][data-staff-index="' + i + '"]' ) );
+                noteEl.addClass( className );
+                            console.log(noteEl);
+            }
+
+            if( className == 'repeatedNote')
+                $scope.repeatedNotes[ 0 ] = true;
+            else if( className == 'consecutiveSkips' )
+                $scope.consecutiveSkips[ 0 ] = true;
+        };
+
         /* helpers */
 
         function getNoteFromDurationAndValue( dur, val ) {
@@ -920,7 +950,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             if( $scope.incorrectAccidental[ 0 ] || $scope.incorrectHarmony[ 0 ] || $scope.incorrectMelody[ 0 ] || $scope.repeatedNotes[ 0 ] || 
                 $scope.parallelPerfect[ 0 ] || $scope.perfectApproachedBySimilarMotion[ 0 ] || $scope.tooManyParallelIntervals[ 0 ] || $scope.unequalNumberOfBeats[ 0 ] )
                 $scope.hasBrokenHardRules = true;
-            if( $scope.voiceCrossing[ 0 ] || $scope.consecutivePerfect[ 0 ] || $scope.hasMoreSkipsThanSteps[ 0 ] )
+            if( $scope.voiceCrossing[ 0 ] || $scope.consecutivePerfect[ 0 ] || $scope.hasMoreSkipsThanSteps[ 0 ] || $scope.consecutiveSkips[ 0 ] )
                 $scope.hasBrokenSoftRules = true;
         };
 

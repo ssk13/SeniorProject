@@ -63,6 +63,10 @@
 	border: 2px solid yellow !important;
 }
 
+.showConsecutiveSkips .consecutiveSkips {
+	border: 2px solid yellow !important;
+}
+
 .showTooManyParallelIntervals .tooManyParallelIntervals {
 	border: 2px solid brown !important;
 }

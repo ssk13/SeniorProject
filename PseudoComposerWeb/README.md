@@ -29,7 +29,6 @@ Rules To Implement:
 	* Check cadence
 * Soft rules
 	* Make m6 descending and M6 ascending and descending a soft rule
-	* No more than 2 skips in succession unless small
 	* When having 2 successive skips, larger should be below
 	* Avoid skipping to and from a temporary high point
 	* Accidental Bb's followed by descending motion
