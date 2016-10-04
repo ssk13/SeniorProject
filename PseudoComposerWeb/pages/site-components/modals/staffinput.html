@@ -4,7 +4,7 @@
 
         <div class="modal-content" ng-controller="inputController">
 
-            <div class="modal-body" ng-class="{showIncorrectMelody: incorrectMelody[1], showIncorrectAccidentals: incorrectAccidental[1], showRepeatedNotes: repeatedNotes[1], showIncorrectHarmony: incorrectHarmony[1], showVoiceCrossing: voiceCrossing[1], showParallelPerfect: parallelPerfect[1], showConsecutivePerfect: consecutivePerfect[1], showPerfectApproachedBySimilarMotion: perfectApproachedBySimilarMotion[1], showTooManyParallelIntervals: tooManyParallelIntervals[1], showImperfectStartingOrEndingInterval: imperfectStartingOrEndingInterval[1], showConsecutiveSkips: consecutiveSkips[1]}">
+            <div class="modal-body" ng-class="{showIncorrectMelody: incorrectMelody[1], showIncorrectAccidentals: incorrectAccidental[1], showRepeatedNotes: repeatedNotes[1], showIncorrectHarmony: incorrectHarmony[1], showVoiceCrossing: voiceCrossing[1], showParallelPerfect: parallelPerfect[1], showConsecutivePerfect: consecutivePerfect[1], showPerfectApproachedBySimilarMotion: perfectApproachedBySimilarMotion[1], showTooManyParallelIntervals: tooManyParallelIntervals[1], showImperfectStartingOrEndingInterval: imperfectStartingOrEndingInterval[1], showConsecutiveSkips: consecutiveSkips[1], showLargeSkipOnTop: largeSkipOnTop[1]}">
 
                 <div class="row toolbar">
 
@@ -203,6 +203,19 @@
                                 <span ng-click="toggleShowValue(consecutiveSkips, true);" ng-class="{activeToggle: consecutiveSkips[1]}">Show</span>
                                 <span>|</span>
                                 <span ng-click="toggleShowValue(consecutiveSkips, false);" ng-class="{activeToggle: !consecutiveSkips[1]}">Hide</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row col-md-10 col-md-offset-1" ng-show="largeSkipOnTop[0]">
+
+                            <p class="pull-left">Large skip above smaller skip</p>
+                            <div class="pull-right">
+
+                                <span ng-click="toggleShowValue(largeSkipOnTop, true);" ng-class="{activeToggle: largeSkipOnTop[1]}">Show</span>
+                                <span>|</span>
+                                <span ng-click="toggleShowValue(largeSkipOnTop, false);" ng-class="{activeToggle: !largeSkipOnTop[1]}">Hide</span>
 
                             </div>
 

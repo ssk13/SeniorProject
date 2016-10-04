@@ -18,6 +18,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         /*soft rules*/
         $scope.consecutivePerfect = [ false, false ];
         $scope.consecutiveSkips = [ false, false ];
+        $scope.largeSkipOnTop = [ false, false ];
         $scope.voiceCrossing = [ false, false ];
         $scope.hasMoreSkipsThanSteps = [ false ];
 
@@ -391,6 +392,8 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             * invalid melodic intervals
             * invalid accidentals
             * too many horizontal repeated notes
+            * too many consecutive skips if one is large
+            * consecutive skips with larger on top
         */
         function checkHorizontallyBeatByBeat() {
             var numberOfSkips = 0,
@@ -427,8 +430,13 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                             ++numberOfConsecutiveSkips;
                             if( isLargeSkip( $rootScope.notes[ i ][ j + 1 ], $rootScope.notes[ i ][ j ] ) )
                                 hadLargeSkip = true;
-                            if( ( numberOfConsecutiveSkips > 2 ) && hadLargeSkip )
-                                markThreeConsecutiveNotes( i, j, 'consecutiveSkips' );
+                            if( numberOfSkips > 1 )
+                                if( ( $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) < ( $rootScope.notes[ i ][ j + 1 ][ 1 ] - 
+                                      $rootScope.notes[ i ][ j ][ 1 ] ) ) {
+                                    markThreeConsecutiveNotes( i, j, 'largeSkipOnTop' );
+                                if( ( numberOfConsecutiveSkips > 2 ) && hadLargeSkip )
+                                    markThreeConsecutiveNotes( i, j, 'consecutiveSkips' );
+                            }
                         }
                         else {
                             ++numberOfSteps;
@@ -879,6 +887,8 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 $scope.repeatedNotes[ 0 ] = true;
             else if( className == 'consecutiveSkips' )
                 $scope.consecutiveSkips[ 0 ] = true;
+            else if( className == 'largeSkipOnTop' )
+                $scope.largeSkipOnTop[ 0 ] = true;
         };
 
         /* helpers */
@@ -950,7 +960,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             if( $scope.incorrectAccidental[ 0 ] || $scope.incorrectHarmony[ 0 ] || $scope.incorrectMelody[ 0 ] || $scope.repeatedNotes[ 0 ] || 
                 $scope.parallelPerfect[ 0 ] || $scope.perfectApproachedBySimilarMotion[ 0 ] || $scope.tooManyParallelIntervals[ 0 ] || $scope.unequalNumberOfBeats[ 0 ] )
                 $scope.hasBrokenHardRules = true;
-            if( $scope.voiceCrossing[ 0 ] || $scope.consecutivePerfect[ 0 ] || $scope.hasMoreSkipsThanSteps[ 0 ] || $scope.consecutiveSkips[ 0 ] )
+            if( $scope.voiceCrossing[ 0 ] || $scope.consecutivePerfect[ 0 ] || $scope.hasMoreSkipsThanSteps[ 0 ] || $scope.consecutiveSkips[ 0 ] || $scope.largeSkipOnTop[ 0 ] )
                 $scope.hasBrokenSoftRules = true;
         };
 
