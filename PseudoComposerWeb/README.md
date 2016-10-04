@@ -28,7 +28,6 @@ Rules To Implement:
 		* cambiata, echappee, double neighbor allowed allowed
 	* Check cadence
 * Soft rules
-	* Use more steps than skips
 	* Make m6 descending and M6 ascending and descending a soft rule
 	* No more than 2 skips in succession unless small
 	* When having 2 successive skips, larger should be below
