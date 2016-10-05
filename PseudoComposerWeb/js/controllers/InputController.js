@@ -10,9 +10,10 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         $scope.incorrectAccidental = [ false, false ];
         $scope.incorrectHarmony = [ false, false ];
         $scope.incorrectMelody = [ false, false ];
-        $scope.repeatedNotes = [ false, false ];
+        $scope.largerThan12th = [ false, false ];
         $scope.parallelPerfect = [ false, false ];
         $scope.perfectApproachedBySimilarMotion = [ false, false ];
+        $scope.repeatedNotes = [ false, false ];
         $scope.tooManyParallelIntervals = [ false, false ];
         $scope.unequalNumberOfBeats = [ false ];
         /*soft rules*/
@@ -483,6 +484,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             * No more than 4 consecutive parallels
             * Perfect first and last intervals
             * Equality of length of voices
+            * Nothing wider than a 12th
         */
 
         function checkVerticallyBeatByBeat() {
@@ -511,6 +513,9 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 }
 
                 if( ( beatOfI == 0 ) || ( beatOfJ == 0 ) ) {
+                    if( Math.abs( notes[ 0 ][ i ][ 1 ] - notes[ 1 ][ j ][ 1 ] ) > 16 )
+                        markHarmony( 'largerThan12th', i, j );
+
                     if( ( beatOfI == 0 ) && ( beatOfJ == 0 ) ) {
                         currInterval = Math.abs( notes[ 0 ][ i ] [ 1 ] - notes[ 1 ][ j ][ 1 ] );
                         if( areSameInterval( currInterval, prevInterval ) ) {
@@ -864,6 +869,8 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 $scope.incorrectHarmony[ 0 ] = true;
             else if( className == 'imperfectStartingOrEndingInterval' )
                 $scope.imperfectStartingOrEndingInterval[ 0 ] = true;
+            else if( className == 'largerThan12th' )
+                $scope.largerThan12th[ 0 ] = true;
         };
 
         function markInvalidAccidental( i, j ) {
@@ -880,7 +887,6 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             for( k = -1; k < 2; k++) {
                 noteEl = $( document.querySelector( '[data-note-index="' + ( j + k ) + '"][data-staff-index="' + i + '"]' ) );
                 noteEl.addClass( className );
-                            console.log(noteEl);
             }
 
             if( className == 'repeatedNote')
@@ -960,7 +966,8 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             if( $scope.incorrectAccidental[ 0 ] || $scope.incorrectHarmony[ 0 ] || $scope.incorrectMelody[ 0 ] || $scope.repeatedNotes[ 0 ] || 
                 $scope.parallelPerfect[ 0 ] || $scope.perfectApproachedBySimilarMotion[ 0 ] || $scope.tooManyParallelIntervals[ 0 ] || $scope.unequalNumberOfBeats[ 0 ] )
                 $scope.hasBrokenHardRules = true;
-            if( $scope.voiceCrossing[ 0 ] || $scope.consecutivePerfect[ 0 ] || $scope.hasMoreSkipsThanSteps[ 0 ] || $scope.consecutiveSkips[ 0 ] || $scope.largeSkipOnTop[ 0 ] )
+            if( $scope.voiceCrossing[ 0 ] || $scope.consecutivePerfect[ 0 ] || $scope.hasMoreSkipsThanSteps[ 0 ] || $scope.consecutiveSkips[ 0 ] || $scope.largeSkipOnTop[ 0 ] ||
+                $scope.largerThan12th[ 0 ] )
                 $scope.hasBrokenSoftRules = true;
         };
 

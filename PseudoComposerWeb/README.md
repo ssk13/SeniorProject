@@ -33,7 +33,6 @@ Rules To Implement:
 	* Accidental Bb's followed by descending motion
 	* Avoid unisons (on strong beats in 2nd and 3rd species)
 	* Avoid skipping in both voices - not as bad if 3rds
-	* Nothing wider than a 12th
 	* Change direction after a large skip (larger than a 4th) with a step
 	* Try to fill in skips
 	* no outline of 7th, 9th, other dissonant intervals

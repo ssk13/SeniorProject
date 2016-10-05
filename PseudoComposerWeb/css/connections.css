@@ -27,6 +27,12 @@ connection {
 	border-radius: 25px;
 }
 
+.showLargerThan12th connection.largerThan12th {
+	visibility: visible;
+	border: 2px solid orange;
+	border-radius: 25px;
+}
+
 .showParallelPerfect connection.parallelPerfect {
 	visibility: visible;
 	border: 2px solid brown;
