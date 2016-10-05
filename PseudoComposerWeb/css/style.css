@@ -54,10 +54,6 @@ nav .clickable:hover {
 	Misc
 */
 
-.activeToggle {
-	border: 2px solid green;
-}
-
 .button {
 	height: 40px;
 	line-height: 40px;

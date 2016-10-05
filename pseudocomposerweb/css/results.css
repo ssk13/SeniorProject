@@ -1,7 +1,16 @@
+.activeToggle {
+	background-color: rgba(50,57,92,0.3);
+	border-radius: 6px;
+}
+
 .rules {
 	opacity: 0.5;
 }
 
 .rules.active {
 	opacity: 1;
+}
+
+.toggle {
+	padding: 0px 4px 0px 4px;
 }

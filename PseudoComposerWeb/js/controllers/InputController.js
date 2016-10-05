@@ -431,9 +431,9 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                             ++numberOfConsecutiveSkips;
                             if( isLargeSkip( $rootScope.notes[ i ][ j + 1 ], $rootScope.notes[ i ][ j ] ) )
                                 hadLargeSkip = true;
-                            if( numberOfSkips > 1 )
+                            if( numberOfConsecutiveSkips > 1 ) {
                                 if( ( $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) < ( $rootScope.notes[ i ][ j + 1 ][ 1 ] - 
-                                      $rootScope.notes[ i ][ j ][ 1 ] ) ) {
+                                      $rootScope.notes[ i ][ j ][ 1 ] ) )
                                     markThreeConsecutiveNotes( i, j, 'largeSkipOnTop' );
                                 if( ( numberOfConsecutiveSkips > 2 ) && hadLargeSkip )
                                     markThreeConsecutiveNotes( i, j, 'consecutiveSkips' );
@@ -468,6 +468,9 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                             markInvalidAccidental( i, j )
                     }
                 }
+
+                numberOfConsecutiveSkips = 0;
+                hadLargeSkip = false;
             }
 
             if( numberOfSteps < numberOfSkips )

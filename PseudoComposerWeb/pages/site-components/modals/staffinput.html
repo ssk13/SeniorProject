@@ -4,8 +4,7 @@
 
         <div class="modal-content" ng-controller="inputController">
 
-            <div class="modal-body" ng-class="{showIncorrectMelody: incorrectMelody[1], showIncorrectAccidentals: incorrectAccidental[1], showRepeatedNotes: repeatedNotes[1], showIncorrectHarmony: incorrectHarmony[1], showVoiceCrossing: voiceCrossing[1], showParallelPerfect: parallelPerfect[1], showConsecutivePerfect: consecutivePerfect[1], showPerfectApproachedBySimilarMotion: perfectApproachedBySimilarMotion[1], showTooManyParallelIntervals: tooManyParallelIntervals[1], showImperfectStartingOrEndingInterval: imperfectStartingOrEndingInterval[1], showConsecutiveSkips: consecutiveSkips[1], showLargeSkipOnTop: largeSkipOnTop[1], 
-            showLargerThan12th: largerThan12th[1]}">
+            <div class="modal-body" ng-class="{showIncorrectMelody: incorrectMelody[1], showIncorrectAccidentals: incorrectAccidental[1], showRepeatedNotes: repeatedNotes[1], showIncorrectHarmony: incorrectHarmony[1], showVoiceCrossing: voiceCrossing[1], showParallelPerfect: parallelPerfect[1], showConsecutivePerfect: consecutivePerfect[1], showPerfectApproachedBySimilarMotion: perfectApproachedBySimilarMotion[1], showTooManyParallelIntervals: tooManyParallelIntervals[1], showImperfectStartingOrEndingInterval: imperfectStartingOrEndingInterval[1], showConsecutiveSkips: consecutiveSkips[1], showLargeSkipOnTop: largeSkipOnTop[1], showLargerThan12th: largerThan12th[1]}">
 
                 <div class="row toolbar">
 
@@ -85,9 +84,9 @@
                             <p class="pull-left">Imperfect first or last interval</p>
                                 <div class="pull-right">
 
-                                    <span ng-click="toggleShowValue(imperfectStartingOrEndingInterval, true);" ng-class="{activeToggle: imperfectStartingOrEndingInterval[1]}">Show</span>
+                                    <span ng-click="toggleShowValue(imperfectStartingOrEndingInterval, true);" class="toggle" ng-class="{activeToggle: imperfectStartingOrEndingInterval[1]}">Show</span>
                                     <span>|</span>
-                                    <span ng-click="toggleShowValue(imperfectStartingOrEndingInterval, false);" ng-class="{activeToggle: !imperfectStartingOrEndingInterval[1]}">Hide</span>
+                                    <span ng-click="toggleShowValue(imperfectStartingOrEndingInterval, false);" class="toggle" ng-class="{activeToggle: !imperfectStartingOrEndingInterval[1]}">Hide</span>
 
                                 </div>
 
@@ -98,9 +97,9 @@
                             <p class="pull-left">Invalid accidental</p>
                             <div class="pull-right">
 
-                                <span ng-click="toggleShowValue(incorrectAccidental, true);" ng-class="{activeToggle: incorrectAccidental[1]}">Show</span>
+                                <span ng-click="toggleShowValue(incorrectAccidental, true);" class="toggle" ng-class="{activeToggle: incorrectAccidental[1]}">Show</span>
                                 <span>|</span>
-                                <span ng-click="toggleShowValue(incorrectAccidental, false);" ng-class="{activeToggle: !incorrectAccidental[1]}">Hide</span>
+                                <span ng-click="toggleShowValue(incorrectAccidental, false);" class="toggle" ng-class="{activeToggle: !incorrectAccidental[1]}">Hide</span>
 
                             </div>
 
@@ -111,9 +110,9 @@
                             <p class="pull-left">Invalid melodic interval</p>
                                 <div class="pull-right">
 
-                                    <span ng-click="toggleShowValue(incorrectMelody, true);" ng-class="{activeToggle: incorrectMelody[1]}">Show</span>
+                                    <span ng-click="toggleShowValue(incorrectMelody, true);" class="toggle" ng-class="{activeToggle: incorrectMelody[1]}">Show</span>
                                     <span>|</span>
-                                    <span ng-click="toggleShowValue(incorrectMelody, false);" ng-class="{activeToggle: !incorrectMelody[1]}">Hide</span>
+                                    <span ng-click="toggleShowValue(incorrectMelody, false);" class="toggle" ng-class="{activeToggle: !incorrectMelody[1]}">Hide</span>
 
                                 </div>
 
@@ -124,9 +123,9 @@
                             <p class="pull-left">Invalid harmonic interval</p>
                             <div class="pull-right">
 
-                                <span ng-click="toggleShowValue(incorrectHarmony, true);" ng-class="{activeToggle: incorrectHarmony[1]}">Show</span>
+                                <span ng-click="toggleShowValue(incorrectHarmony, true);" class="toggle" ng-class="{activeToggle: incorrectHarmony[1]}">Show</span>
                                 <span>|</span>
-                                <span ng-click="toggleShowValue(incorrectHarmony, false);" ng-class="{activeToggle: !incorrectHarmony[1]}">Hide</span>
+                                <span ng-click="toggleShowValue(incorrectHarmony, false);" class="toggle" ng-class="{activeToggle: !incorrectHarmony[1]}">Hide</span>
 
                             </div>
 
@@ -137,9 +136,9 @@
                             <p class="pull-left">Too many note repetitions</p>
                             <div class="pull-right">
 
-                                <span ng-click="toggleShowValue(repeatedNotes, true);" ng-class="{activeToggle: repeatedNotes[1]}">Show</span>
+                                <span ng-click="toggleShowValue(repeatedNotes, true);" class="toggle" ng-class="{activeToggle: repeatedNotes[1]}">Show</span>
                                 <span>|</span>
-                                <span ng-click="toggleShowValue(repeatedNotes, false);" ng-class="{activeToggle: !repeatedNotes[1]}">Hide</span>
+                                <span ng-click="toggleShowValue(repeatedNotes, false);" class="toggle" ng-class="{activeToggle: !repeatedNotes[1]}">Hide</span>
 
                             </div>
 
@@ -150,9 +149,9 @@
                             <p class="pull-left">Parallel perfect intervals</p>
                             <div class="pull-right">
 
-                                <span ng-click="toggleShowValue(parallelPerfect, true);" ng-class="{activeToggle: parallelPerfect[1]}">Show</span>
+                                <span ng-click="toggleShowValue(parallelPerfect, true);" class="toggle" ng-class="{activeToggle: parallelPerfect[1]}">Show</span>
                                 <span>|</span>
-                                <span ng-click="toggleShowValue(parallelPerfect, false);" ng-class="{activeToggle: !parallelPerfect[1]}">Hide</span>
+                                <span ng-click="toggleShowValue(parallelPerfect, false);" class="toggle" ng-class="{activeToggle: !parallelPerfect[1]}">Hide</span>
 
                             </div>
 
@@ -163,9 +162,9 @@
                             <p class="pull-left">Too many consecutive parallel intervals</p>
                             <div class="pull-right">
 
-                                <span ng-click="toggleShowValue(tooManyParallelIntervals, true);" ng-class="{activeToggle: tooManyParallelIntervals[1]}">Show</span>
+                                <span ng-click="toggleShowValue(tooManyParallelIntervals, true);" class="toggle" ng-class="{activeToggle: tooManyParallelIntervals[1]}">Show</span>
                                 <span>|</span>
-                                <span ng-click="toggleShowValue(tooManyParallelIntervals, false);" ng-class="{activeToggle: !tooManyParallelIntervals[1]}">Hide</span>
+                                <span ng-click="toggleShowValue(tooManyParallelIntervals, false);" class="toggle" ng-class="{activeToggle: !tooManyParallelIntervals[1]}">Hide</span>
 
                             </div>
 
@@ -176,9 +175,9 @@
                             <p class="pull-left">Perfect interval approached by similar motion</p>
                             <div class="pull-right">
 
-                                <span ng-click="toggleShowValue(perfectApproachedBySimilarMotion, true);" ng-class="{activeToggle: perfectApproachedBySimilarMotion[1]}">Show</span>
+                                <span ng-click="toggleShowValue(perfectApproachedBySimilarMotion, true);" class="toggle" ng-class="{activeToggle: perfectApproachedBySimilarMotion[1]}">Show</span>
                                 <span>|</span>
-                                <span ng-click="toggleShowValue(perfectApproachedBySimilarMotion, false);" ng-class="{activeToggle: !perfectApproachedBySimilarMotion[1]}">Hide</span>
+                                <span ng-click="toggleShowValue(perfectApproachedBySimilarMotion, false);" class="toggle" ng-class="{activeToggle: !perfectApproachedBySimilarMotion[1]}">Hide</span>
 
                             </div>
 
@@ -201,9 +200,9 @@
                             <p class="pull-left">Too many consecutive skips</p>
                             <div class="pull-right">
 
-                                <span ng-click="toggleShowValue(consecutiveSkips, true);" ng-class="{activeToggle: consecutiveSkips[1]}">Show</span>
+                                <span ng-click="toggleShowValue(consecutiveSkips, true);" class="toggle" ng-class="{activeToggle: consecutiveSkips[1]}">Show</span>
                                 <span>|</span>
-                                <span ng-click="toggleShowValue(consecutiveSkips, false);" ng-class="{activeToggle: !consecutiveSkips[1]}">Hide</span>
+                                <span ng-click="toggleShowValue(consecutiveSkips, false);" class="toggle" ng-class="{activeToggle: !consecutiveSkips[1]}">Hide</span>
 
                             </div>
 
@@ -214,9 +213,9 @@
                             <p class="pull-left">Interval larger than a 12th</p>
                             <div class="pull-right">
 
-                                <span ng-click="toggleShowValue(largerThan12th, true);" ng-class="{activeToggle: largerThan12th[1]}">Show</span>
+                                <span ng-click="toggleShowValue(largerThan12th, true);" class="toggle" ng-class="{activeToggle: largerThan12th[1]}">Show</span>
                                 <span>|</span>
-                                <span ng-click="toggleShowValue(largerThan12th, false);" ng-class="{activeToggle: !largerThan12th[1]}">Hide</span>
+                                <span ng-click="toggleShowValue(largerThan12th, false);" class="toggle" ng-class="{activeToggle: !largerThan12th[1]}">Hide</span>
 
                             </div>
 
@@ -227,9 +226,9 @@
                             <p class="pull-left">Large skip above smaller skip</p>
                             <div class="pull-right">
 
-                                <span ng-click="toggleShowValue(largeSkipOnTop, true);" ng-class="{activeToggle: largeSkipOnTop[1]}">Show</span>
+                                <span ng-click="toggleShowValue(largeSkipOnTop, true);" class="toggle" ng-class="{activeToggle: largeSkipOnTop[1]}">Show</span>
                                 <span>|</span>
-                                <span ng-click="toggleShowValue(largeSkipOnTop, false);" ng-class="{activeToggle: !largeSkipOnTop[1]}">Hide</span>
+                                <span ng-click="toggleShowValue(largeSkipOnTop, false);" class="toggle" ng-class="{activeToggle: !largeSkipOnTop[1]}">Hide</span>
 
                             </div>
 
@@ -240,9 +239,9 @@
                             <p class="pull-left">Crossed voices</p>
                             <div class="pull-right">
 
-                                <span ng-click="toggleShowValue(voiceCrossing, true);" ng-class="{activeToggle: voiceCrossing[1]}">Show</span>
+                                <span ng-click="toggleShowValue(voiceCrossing, true);" class="toggle" ng-class="{activeToggle: voiceCrossing[1]}">Show</span>
                                 <span>|</span>
-                                <span ng-click="toggleShowValue(voiceCrossing, false);" ng-class="{activeToggle: !voiceCrossing[1]}">Hide</span>
+                                <span ng-click="toggleShowValue(voiceCrossing, false);" class="toggle" ng-class="{activeToggle: !voiceCrossing[1]}">Hide</span>
 
                             </div>
 
@@ -253,9 +252,9 @@
                             <p class="pull-left">Consecutive perfect intervals</p>
                             <div class="pull-right">
 
-                                <span ng-click="toggleShowValue(consecutivePerfect, true);" ng-class="{activeToggle: consecutivePerfect[1]}">Show</span>
+                                <span ng-click="toggleShowValue(consecutivePerfect, true);" class="toggle" ng-class="{activeToggle: consecutivePerfect[1]}">Show</span>
                                 <span>|</span>
-                                <span ng-click="toggleShowValue(consecutivePerfect, false);" ng-class="{activeToggle: !consecutivePerfect[1]}">Hide</span>
+                                <span ng-click="toggleShowValue(consecutivePerfect, false);" class="toggle" ng-class="{activeToggle: !consecutivePerfect[1]}">Hide</span>
 
                             </div>
 
