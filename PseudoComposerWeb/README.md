@@ -31,7 +31,6 @@ Rules To Implement:
 	* Make m6 descending and M6 ascending and descending a soft rule
 	* Avoid skipping to and from a temporary high point
 	* Accidental Bb's followed by descending motion
-	* Avoid unisons (on strong beats in 2nd and 3rd species)
 	* Avoid skipping in both voices - not as bad if 3rds
 	* Change direction after a large skip (larger than a 4th) with a step
 	* Try to fill in skips
@@ -60,3 +59,6 @@ Aesthetic:
 
 Rules to fix:
 * Make repeated intervals check for enharmonic spellings of intervals
+
+Questions for Richards
+* In the case that the user put in incorrect rhythmic values (i.e. not proper to species selected) how should I determine strong v/ weak beats?

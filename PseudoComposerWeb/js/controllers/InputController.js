@@ -19,6 +19,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         /*soft rules*/
         $scope.consecutivePerfect = [ false, false ];
         $scope.consecutiveSkips = [ false, false ];
+        $scope.internalUnison = [ false, false ];
         $scope.largeSkipOnTop = [ false, false ];
         $scope.voiceCrossing = [ false, false ];
         $scope.hasMoreSkipsThanSteps = [ false ];
@@ -488,6 +489,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             * Perfect first and last intervals
             * Equality of length of voices
             * Nothing wider than a 12th
+            * Internal unisons
         */
 
         function checkVerticallyBeatByBeat() {
@@ -509,10 +511,8 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 checkVoiceCrossing( i, j );
 
                 if( !isConsonantHarmonically( $rootScope.notes[ 0 ][ i ], $rootScope.notes[ 1 ][ j ] ) ) {
-                    if( $rootScope.inputParams.species == 1 || ( ( $rootScope.inputParams.species == 2 ) && ( i % 2 == 0 ) ) || 
-                        ( ( $rootScope.inputParams.species == 3 ) && ( i % 4 == 0 ) ) ) {
+                    if( isStrongBeat( i ) )
                         markHarmony( 'harmonic', i, j );
-                    }
                 }
 
                 if( ( beatOfI == 0 ) || ( beatOfJ == 0 ) ) {
@@ -535,6 +535,8 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                     }
 
                     if( notes[ 0 ][ i ] [ 1 ] == notes[ 1 ][ j ][ 1 ] ) {
+                        if( isStrongBeat( i ) )
+                            markHarmony( 'internalUnison', i, j );
                         if( isApproachedBySimilarMotion( i, j ) )
                             markConsecutiveVerticalIntervals( 'perfectApproachedBySimilarMotion', i, j );
 
@@ -585,6 +587,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                     else {
                         prevWasFifth = false;
                         prevWasOctave = false;
+                        prevWasUnison = false;
                     }
                 }
 
@@ -874,6 +877,8 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 $scope.imperfectStartingOrEndingInterval[ 0 ] = true;
             else if( className == 'largerThan12th' )
                 $scope.largerThan12th[ 0 ] = true;
+            else if( className == 'internalUnison' )
+                $scope.internalUnison[ 0 ] = true;
         };
 
         function markInvalidAccidental( i, j ) {
@@ -965,12 +970,20 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             currentLeftPos[ staffNumber ] += 20;
         };
 
+        function isStrongBeat ( beat ) {
+            if( $rootScope.inputParams.species == 1 || 
+                ( ( $rootScope.inputParams.species == 2 ) && ( i % 2 == 0 ) ) || 
+                ( ( $rootScope.inputParams.species == 3 ) && ( i % 4 == 0 ) ) )
+                return true;
+            return false;
+        }
+
         function setRulesHeadings() {
             if( $scope.incorrectAccidental[ 0 ] || $scope.incorrectHarmony[ 0 ] || $scope.incorrectMelody[ 0 ] || $scope.repeatedNotes[ 0 ] || 
                 $scope.parallelPerfect[ 0 ] || $scope.perfectApproachedBySimilarMotion[ 0 ] || $scope.tooManyParallelIntervals[ 0 ] || $scope.unequalNumberOfBeats[ 0 ] )
                 $scope.hasBrokenHardRules = true;
             if( $scope.voiceCrossing[ 0 ] || $scope.consecutivePerfect[ 0 ] || $scope.hasMoreSkipsThanSteps[ 0 ] || $scope.consecutiveSkips[ 0 ] || $scope.largeSkipOnTop[ 0 ] ||
-                $scope.largerThan12th[ 0 ] )
+                $scope.largerThan12th[ 0 ] || $scope.internalUnison[ 0 ] )
                 $scope.hasBrokenSoftRules = true;
         };
 
