@@ -102,6 +102,20 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             setUpTaskbar( targetNote );
         };
 
+        $scope.areAllShown = function() {
+            return ( $scope.imperfectStartingOrEndingInterval[ 1 ] && $scope.incorrectAccidental[ 1 ] && $scope.incorrectHarmony[ 1 ] && $scope.incorrectMelody[ 1 ] &&
+                     $scope.largerThan12th[ 1 ] && $scope.parallelPerfect[ 1 ] && $scope.perfectApproachedBySimilarMotion[ 1 ] && $scope.repeatedNotes[ 1 ] &&
+                     $scope.tooManyParallelIntervals[ 1 ] && $scope.consecutivePerfect[ 1 ] && $scope.consecutiveSkips[ 1 ] && $scope.internalUnison[ 1 ] &&
+                     $scope.largeSkipOnTop[ 1 ] && $scope.melodic6th[ 1 ] && $scope.voiceCrossing[ 1 ] );
+        };
+
+        $scope.areAllHidden = function() {
+            return ( !$scope.imperfectStartingOrEndingInterval[ 1 ] && !$scope.incorrectAccidental[ 1 ] && !$scope.incorrectHarmony[ 1 ] && !$scope.incorrectMelody[ 1 ] &&
+                     !$scope.largerThan12th[ 1 ] && !$scope.parallelPerfect[ 1 ] && !$scope.perfectApproachedBySimilarMotion[ 1 ] && !$scope.repeatedNotes[ 1 ] &&
+                     !$scope.tooManyParallelIntervals[ 1 ] && !$scope.consecutivePerfect[ 1 ] && !$scope.consecutiveSkips[ 1 ] && !$scope.internalUnison[ 1 ] &&
+                     !$scope.largeSkipOnTop[ 1 ] && !$scope.melodic6th[ 1 ] && !$scope.voiceCrossing[ 1 ] );
+        };
+
         $scope.changeDuration = function( dur ) {
             var staffIndex, noteIndex, val, prevDur;
 
@@ -318,6 +332,24 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
 
         $scope.toggleActiveStaff = function( staff ) {
             activeStaff = staff;
+        };
+
+        $scope.toggleAll = function( show ) {
+            $scope.imperfectStartingOrEndingInterval[ 1 ] = show;
+            $scope.incorrectAccidental[ 1 ] = show;
+            $scope.incorrectHarmony[ 1 ] = show;
+            $scope.incorrectMelody[ 1 ] = show;
+            $scope.largerThan12th[ 1 ] = show;
+            $scope.parallelPerfect[ 1 ] = show;
+            $scope.perfectApproachedBySimilarMotion[ 1 ] = show;
+            $scope.repeatedNotes[ 1 ] = show;
+            $scope.tooManyParallelIntervals[ 1 ] = show;
+            $scope.consecutivePerfect[ 1 ] = show;
+            $scope.consecutiveSkips[ 1 ] = show;
+            $scope.internalUnison[ 1 ] = show;
+            $scope.largeSkipOnTop[ 1 ] = show;
+            $scope.melodic6th[ 1 ] = show;
+            $scope.voiceCrossing[ 1 ] = show;
         };
 
         /* buttons */

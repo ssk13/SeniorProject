@@ -71,6 +71,12 @@
 
                     <div class="col-md-6 rules" ng-show="counterpointChecked" ng-class="{active: hasBrokenHardRules}">
 
+                        <div>
+                            <span ng-click="toggleAll(true);" class="toggle" ng-class="{activeToggle: areAllShown()}">Show All</span>
+                            <span>|</span>
+                            <span ng-click="toggleAll(false);" class="toggle" ng-class="{activeToggle: areAllHidden()}">Hide All</span>
+                        </div>
+
                         <h2>Hard Rules</h2>
 
                         <div class="row col-md-10 col-md-offset-1" ng-show="unequalNumberOfBeats[0]">

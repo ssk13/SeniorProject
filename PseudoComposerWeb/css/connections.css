@@ -6,19 +6,21 @@ connection {
 	visibility: visible;
 	border: 2px solid rgb(130,137,172);
 	border-radius: 25px;
-	margin-left: 11px;
+	margin-left: 15px;
 }
 
 .showImperfectStartingOrEndingInterval connection.imperfectStartingOrEndingInterval {
 	visibility: visible;
 	border: 2px solid rgb(150,157,192);
 	border-radius: 25px;
+	margin-left: 17px;
 }
 
 .showIncorrectHarmony connection.harmonic {
 	visibility: visible;
 	border: 2px solid rgb(190,197,232);
 	border-radius: 25px;
+	margin-left: 19px;
 }
 
 .showIncorrectMelody connection.melodic {

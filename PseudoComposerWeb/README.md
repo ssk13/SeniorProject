@@ -51,11 +51,9 @@ Features To Implement
 * 4th and 5th species CP
 * Page that just lists all da rulez
 * Add 'start over'
-* Add 'show all' and 'hide all' for rules
 
 Aesthetic:
 * Find way to connect parallel/consecutive perfect intervals horizontally to better group them
-* Make sure that all broken rules are visible over each other
 
 Rules to fix:
 * Make repeated intervals check for enharmonic spellings of intervals
