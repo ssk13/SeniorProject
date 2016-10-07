@@ -4,73 +4,74 @@ connection {
 
 .showConsecutivePerfect connection.consecutivePerfect {
 	visibility: visible;
-	border: 2px solid purple;
+	border: 2px solid rgb(130,137,172);
 	border-radius: 25px;
 	margin-left: 11px;
 }
 
 .showImperfectStartingOrEndingInterval connection.imperfectStartingOrEndingInterval {
 	visibility: visible;
-	border: 2px solid red;
+	border: 2px solid rgb(150,157,192);
 	border-radius: 25px;
 }
 
 .showIncorrectHarmony connection.harmonic {
 	visibility: visible;
-	border: 2px solid orange;
+	border: 2px solid rgb(190,197,232);
 	border-radius: 25px;
 }
 
 .showIncorrectMelody connection.melodic {
 	visibility: visible;
-	border: 2px solid red;
+	border: 2px solid rgb(50,57,92);
 	border-radius: 25px;
 }
 
 .showInternalUnison connection.internalUnison {
 	visibility: visible;
-	border: 2px solid brown;
+	border: 2px solid rgb(60,67,102);
 	border-radius: 25px;
-	margin-left: 7px;
+	margin-left: 1px;
 }
 
 .showLargerThan12th connection.largerThan12th {
 	visibility: visible;
-	border: 2px solid orange;
+	border: 2px solid rgb(70,77,112);
 	border-radius: 25px;
+	margin-left: 3px;
 }
 
 .showMelodic6th connection.melodic6th {
 	visibility: visible;
-	border: 2px solid blue;
+	border: 2px solid rgb(80,87,122);
 	border-radius: 25px;
 	margin-left: 5px;
 }
 
 .showParallelPerfect connection.parallelPerfect {
 	visibility: visible;
-	border: 2px solid brown;
+	border: 2px solid rgb(90,97,132);
 	border-radius: 25px;
 	margin-left: 7px;
 }
 
 .showPerfectApproachedBySimilarMotion connection.perfectApproachedBySimilarMotion {
 	visibility: visible;
-	border: 2px solid purple;
+	border: 2px solid rgb(100,107,142);
 	border-radius: 25px;
-	margin-left: 11px;
+	margin-left: 9px;
 }
 
 .showTooManyParallelIntervals connection.tooManyParallelIntervals {
 	visibility: visible;
-	border: 2px solid brown;
+	border: 2px solid rgb(110,117,152);
 	border-radius: 25px;
-	margin-left: 7px;
+	margin-left: 11px;
 }
 
 .showVoiceCrossing connection.voiceCrossing {
 	visibility: visible;
-	border: 2px solid blue;
+	border: 2px solid rgb(120,127,162);
 	border-radius: 25px;
-	margin-left: 5px;
+	margin-left: 13px;
 }

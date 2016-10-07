@@ -40,39 +40,39 @@
 }
 
 .showConsecutivePerfect .consecutivePerfect {
-	border: 2px solid black !important;
+	border: 2px solid rgb(130,137,172) !important;
 }
 
 .showConsecutiveSkips .consecutiveSkips {
-	border: 2px solid yellow !important;
+	border: 2px solid rgb(140,147,182) !important;
 }
 
 .showimperfectStartingOrEndingInterval .imperfectStartingOrEndingInterval {
-	background-color: purple !important;
+	background-color: rgb(150,157,192) !important;
 }
 
 .showIncorrectAccidentals .invalidAccidental {
-	background-color: purple !important;
+	background-color: rgb(160,167,202) !important;
 }
 
 .showLargeSkipOnTop .largeSkipOnTop {
-	border: 2px solid yellow !important;
+	border: 2px solid rgb(170,177,212) !important;
 }
 
 .showParallelPerfect .parallelPerfect {
-	border: 2px solid brown !important;
+	border: 2px solid rgb(90,97,132) !important;
 }
 
 .showPerfectApproachedBySimilarMotion .perfectApproachedBySimilarMotion {
-	border: 2px solid black !important;
+	border: 2px solid rgb(100,107,142) !important;
 }
 
 .showRepeatedNotes .repeatedNote {
-	border: 2px solid yellow !important;
+	border: 2px solid rgb(180,187,222) !important;
 }
 
 .showTooManyParallelIntervals .tooManyParallelIntervals {
-	border: 2px solid brown !important;
+	border: 2px solid rgb(110,117,152) !important;
 }
 
 .notehead {
