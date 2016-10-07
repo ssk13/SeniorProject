@@ -312,6 +312,10 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             setUpTaskbar( noteheadEl );
         };
 
+        $scope.setDefinition = function( ruleDefinition ) {
+            $rootScope.ruleDefinition = ruleDefinition;
+        };
+
         $scope.toggleActiveStaff = function( staff ) {
             activeStaff = staff;
         };

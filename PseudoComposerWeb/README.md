@@ -28,7 +28,6 @@ Rules To Implement:
 		* cambiata, echappee, double neighbor allowed allowed
 	* Check cadence
 * Soft rules
-	* Make m6 descending and M6 ascending and descending a soft rule
 	* Avoid skipping to and from a temporary high point
 	* Accidental Bb's followed by descending motion
 	* Avoid skipping in both voices - not as bad if 3rds
@@ -45,6 +44,7 @@ Rules To Implement:
 
 Features To Implement
 * Information about rules broken
+	* Add information
 * MIDI playback
 * MusicXML
 * Check if invertible (just omit the 5ths if invertible at the octave...)

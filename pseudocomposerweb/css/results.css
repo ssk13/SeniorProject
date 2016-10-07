@@ -13,10 +13,21 @@
 
 .toggle {
 	padding: 0px 4px 0px 4px;
+	border-radius: 6px;
 	cursor: pointer;
 }
 
 .toggle:hover {
 	background-color: rgba(50,57,92,0.1);
-	border-radius: 6px;
+}
+
+.help-icon {
+	width: 20px;
+	margin: 2px;
+	border-radius: 10px;
+	cursor: pointer;
+}
+
+.help-icon:hover {
+	background-color: rgba(50,57,92,0.1);
 }
