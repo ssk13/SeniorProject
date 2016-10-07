@@ -40,6 +40,13 @@ connection {
 	border-radius: 25px;
 }
 
+.showMelodic6th connection.melodic6th {
+	visibility: visible;
+	border: 2px solid blue;
+	border-radius: 25px;
+	margin-left: 5px;
+}
+
 .showParallelPerfect connection.parallelPerfect {
 	visibility: visible;
 	border: 2px solid brown;

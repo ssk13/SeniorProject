@@ -4,7 +4,7 @@
 
         <div class="modal-content" ng-controller="inputController">
 
-            <div class="modal-body" ng-class="{showIncorrectMelody: incorrectMelody[1], showIncorrectAccidentals: incorrectAccidental[1], showRepeatedNotes: repeatedNotes[1], showIncorrectHarmony: incorrectHarmony[1], showVoiceCrossing: voiceCrossing[1], showParallelPerfect: parallelPerfect[1], showConsecutivePerfect: consecutivePerfect[1], showPerfectApproachedBySimilarMotion: perfectApproachedBySimilarMotion[1], showTooManyParallelIntervals: tooManyParallelIntervals[1], showImperfectStartingOrEndingInterval: imperfectStartingOrEndingInterval[1], showConsecutiveSkips: consecutiveSkips[1], showLargeSkipOnTop: largeSkipOnTop[1], showLargerThan12th: largerThan12th[1], showInternalUnison: internalUnison[1]}">
+            <div class="modal-body" ng-class="{showIncorrectMelody: incorrectMelody[1], showIncorrectAccidentals: incorrectAccidental[1], showRepeatedNotes: repeatedNotes[1], showIncorrectHarmony: incorrectHarmony[1], showVoiceCrossing: voiceCrossing[1], showParallelPerfect: parallelPerfect[1], showConsecutivePerfect: consecutivePerfect[1], showPerfectApproachedBySimilarMotion: perfectApproachedBySimilarMotion[1], showTooManyParallelIntervals: tooManyParallelIntervals[1], showImperfectStartingOrEndingInterval: imperfectStartingOrEndingInterval[1], showConsecutiveSkips: consecutiveSkips[1], showLargeSkipOnTop: largeSkipOnTop[1], showLargerThan12th: largerThan12th[1], showInternalUnison: internalUnison[1], showMelodic6th: melodic6th[1]}">
 
                 <div class="row toolbar">
 
@@ -255,6 +255,19 @@
                                 <span ng-click="toggleShowValue(voiceCrossing, true);" class="toggle" ng-class="{activeToggle: voiceCrossing[1]}">Show</span>
                                 <span>|</span>
                                 <span ng-click="toggleShowValue(voiceCrossing, false);" class="toggle" ng-class="{activeToggle: !voiceCrossing[1]}">Hide</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row col-md-10 col-md-offset-1" ng-show="melodic6th[0]">
+
+                            <p class="pull-left">Melodic 6th used</p>
+                            <div class="pull-right">
+
+                                <span ng-click="toggleShowValue(melodic6th, true);" class="toggle" ng-class="{activeToggle: melodic6th[1]}">Show</span>
+                                <span>|</span>
+                                <span ng-click="toggleShowValue(melodic6th, false);" class="toggle" ng-class="{activeToggle: !melodic6th[1]}">Hide</span>
 
                             </div>
 

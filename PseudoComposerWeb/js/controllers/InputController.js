@@ -21,6 +21,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         $scope.consecutiveSkips = [ false, false ];
         $scope.internalUnison = [ false, false ];
         $scope.largeSkipOnTop = [ false, false ];
+        $scope.melodic6th = [ false, false ];
         $scope.voiceCrossing = [ false, false ];
         $scope.hasMoreSkipsThanSteps = [ false ];
 
@@ -408,14 +409,11 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 for( j = 0; j < $rootScope.notes[ i ].length; ++j ) {
                     if( j < ( $rootScope.notes[ i ].length - 1 ) ) {
                         if( !isValidMelodically( $rootScope.notes[ i ][ j + 1 ], $rootScope.notes[ i ][ j ] ) ) {
-                            noteEl = $( document.querySelector( '[data-note-index="' + ( j + 1 ) + '"][data-staff-index="' + i + '"]' ) );
-                            classA = "invalidMelodicInterval" + connectionNumber++;
-                            classB = "invalidMelodicInterval" + connectionNumber++;
-                            noteEl.addClass( classA );
-                            noteEl = $( document.querySelector( '[data-note-index="' + j + '"][data-staff-index="' + i + '"]' ) );
-                            noteEl.addClass( classB );
-                            $( '.' + classA ).connections( { to: '.' + classB, 'class': 'connections melodic' } );
-                            $scope.incorrectMelody[ 0 ] = true;
+                            diff = Math.abs( $rootScope.notes[ i ][ j + 1 ][ 1 ] - $rootScope.notes[ i ][ j ][ 1 ] );
+                            if( ( diff == 8 ) || ( diff == 9 ) )
+                                markTwoConsecutiveNotes( i, j, 'melodic6th' );
+                            else
+                                markTwoConsecutiveNotes( i, j, 'melodic' );
                         }
 
                         if( $rootScope.notes[ i ][ j + 1 ][ 1 ] == $rootScope.notes[ i ][ j ][ 1 ] ) {
@@ -905,6 +903,22 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 $scope.largeSkipOnTop[ 0 ] = true;
         };
 
+        function markTwoConsecutiveNotes( i, j, className ) {
+            var noteEl = $( document.querySelector( '[data-note-index="' + ( j + 1 ) + '"][data-staff-index="' + i + '"]' ) ),
+                classA = className + connectionNumber++,
+                classB = className + connectionNumber++;
+
+            noteEl.addClass( classA );
+            noteEl = $( document.querySelector( '[data-note-index="' + j + '"][data-staff-index="' + i + '"]' ) );
+            noteEl.addClass( classB );
+            $( '.' + classA ).connections( { to: '.' + classB, 'class': 'connections ' + className } );
+
+            if( className == 'melodic' )
+                $scope.incorrectMelody[ 0 ] = true;
+            else if( className == 'melodic6th' )
+                $scope.melodic6th[ 0 ] = true;
+        };
+
         /* helpers */
 
         function getNoteFromDurationAndValue( dur, val ) {
@@ -983,7 +997,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 $scope.parallelPerfect[ 0 ] || $scope.perfectApproachedBySimilarMotion[ 0 ] || $scope.tooManyParallelIntervals[ 0 ] || $scope.unequalNumberOfBeats[ 0 ] )
                 $scope.hasBrokenHardRules = true;
             if( $scope.voiceCrossing[ 0 ] || $scope.consecutivePerfect[ 0 ] || $scope.hasMoreSkipsThanSteps[ 0 ] || $scope.consecutiveSkips[ 0 ] || $scope.largeSkipOnTop[ 0 ] ||
-                $scope.largerThan12th[ 0 ] || $scope.internalUnison[ 0 ] )
+                $scope.largerThan12th[ 0 ] || $scope.internalUnison[ 0 ] || $scope.melodic6th[ 0 ] )
                 $scope.hasBrokenSoftRules = true;
         };
 
