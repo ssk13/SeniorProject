@@ -172,9 +172,17 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
 
             var noteEls = $( document.querySelectorAll( '[data-staff-index="' + activeStaff + '"].static' ) ),
                 index = targetNote[ 0 ].getAttribute( 'data-note-index' ),
+                prevDur = notes[ activeStaff ][ index ][ 2 ],
                 hasAccidental = $( targetNote ).hasClass( 'hasAccidental' ),
                 offset = 40,
                 note, acc, i;
+
+            if( prevDur == 'whole' )
+                beatIndex[ activeStaff ] -= 4;
+            else if( prevDur == 'half' )
+                beatIndex[ activeStaff ] -= 2;
+            else
+                beatIndex[ activeStaff ] -= 1;
 
             if( hasAccidental )
                 offset = 60;
@@ -547,6 +555,10 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 if( !isConsonantHarmonically( $rootScope.notes[ 0 ][ i ], $rootScope.notes[ 1 ][ j ] ) ) {
                     if( isStrongBeat( i ) )
                         markHarmony( 'harmonic', i, j );
+                    else if( !isPassing( j ) ) {
+                        if( $rootScope.inputParams.species == 2 )
+                            markHarmony( 'harmonic', i, j );
+                    }
                 }
 
                 if( ( beatOfI == 0 ) || ( beatOfJ == 0 ) ) {
@@ -1020,6 +1032,30 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             currentLeftPos[ staffNumber ] += 20;
         };
 
+        /*
+            Checks if this note in the counterpoint is a passing tone
+        */
+        function isPassing( j ) {
+            if( !isSkip( $rootScope.notes[ 1 ][ j - 1 ], $rootScope.notes[ 1 ][ j ] ) ) {
+                if( ( ( j + 1 ) < $rootScope.notes[ 1 ].length ) && ( !isSkip( $rootScope.notes[ 1 ][ j ], $rootScope.notes[ 1 ][ j + 1 ] ) ) ) {
+                    if( ( $rootScope.notes[ 1 ][ j ] - $rootScope.notes[ 1 ][ j - 1 ] ) < 0 ) {
+                        if( ( $rootScope.notes[ 1 ][ j + 1 ] - $rootScope.notes[ 1 ][ j ] ) > 0 )
+                            return true;
+                        else
+                            return false;
+                    }
+                    if( ( $rootScope.notes[ 1 ][ j ] - $rootScope.notes[ 1 ][ j - 1 ] ) > 0 ) {
+                        if( ( $rootScope.notes[ 1 ][ j + 1 ] - $rootScope.notes[ 1 ][ j ] ) < 0 )
+                            return true;
+                        else
+                            return false;
+                    }
+                }
+            }
+
+            return false;
+        };
+
         function isStrongBeat ( beat ) {
             if( $rootScope.inputParams.species == 1 || 
                 ( ( $rootScope.inputParams.species == 2 ) && ( i % 2 == 0 ) ) || 
@@ -1030,7 +1066,8 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
 
         function setRulesHeadings() {
             if( $scope.incorrectAccidental[ 0 ] || $scope.incorrectHarmony[ 0 ] || $scope.incorrectMelody[ 0 ] || $scope.repeatedNotes[ 0 ] || 
-                $scope.parallelPerfect[ 0 ] || $scope.perfectApproachedBySimilarMotion[ 0 ] || $scope.tooManyParallelIntervals[ 0 ] || $scope.unequalNumberOfBeats[ 0 ] )
+                $scope.parallelPerfect[ 0 ] || $scope.perfectApproachedBySimilarMotion[ 0 ] || $scope.tooManyParallelIntervals[ 0 ] || $scope.unequalNumberOfBeats[ 0 ] || 
+                $scope.imperfectStartingOrEndingInterval[ 0 ] )
                 $scope.hasBrokenHardRules = true;
             if( $scope.voiceCrossing[ 0 ] || $scope.consecutivePerfect[ 0 ] || $scope.hasMoreSkipsThanSteps[ 0 ] || $scope.consecutiveSkips[ 0 ] || $scope.largeSkipOnTop[ 0 ] ||
                 $scope.largerThan12th[ 0 ] || $scope.internalUnison[ 0 ] || $scope.melodic6th[ 0 ] )

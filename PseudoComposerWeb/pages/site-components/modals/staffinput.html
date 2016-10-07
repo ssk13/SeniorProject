@@ -67,15 +67,15 @@
 
                 </div>
 
-                <div class="row">
+                <div class="row" ng-show="counterpointChecked">
 
-                    <div class="col-md-6 rules" ng-show="counterpointChecked" ng-class="{active: hasBrokenHardRules}">
+                    <div class="row">
+                        <span ng-click="toggleAll(true);" class="toggle" ng-class="{activeToggle: areAllShown()}">Show All</span>
+                        <span>|</span>
+                        <span ng-click="toggleAll(false);" class="toggle" ng-class="{activeToggle: areAllHidden()}">Hide All</span>
+                    </div>
 
-                        <div>
-                            <span ng-click="toggleAll(true);" class="toggle" ng-class="{activeToggle: areAllShown()}">Show All</span>
-                            <span>|</span>
-                            <span ng-click="toggleAll(false);" class="toggle" ng-class="{activeToggle: areAllHidden()}">Hide All</span>
-                        </div>
+                    <div class="col-md-6 rules" ng-class="{active: hasBrokenHardRules}">
 
                         <h2>Hard Rules</h2>
 

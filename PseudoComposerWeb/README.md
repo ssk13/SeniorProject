@@ -51,6 +51,7 @@ Features To Implement
 * 4th and 5th species CP
 * Page that just lists all da rulez
 * Add 'start over'
+* Let user set which is the cantus firmus
 
 Aesthetic:
 * Find way to connect parallel/consecutive perfect intervals horizontally to better group them
