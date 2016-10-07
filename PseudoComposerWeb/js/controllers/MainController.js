@@ -4,7 +4,7 @@ PseudoComposer.controller( 'mainController', [ '$scope', '$rootScope', '$locatio
         $rootScope.inputParams = {
             numberOfVoices: 0,
             species: 0,
-            cantusFirmusType: 0,
+            voiceType: [ 'Cantus Firmus', 'Counterpoint', 'Counterpoint', 'Counterpoint' ],
             clef: [ 'img/trebleclef.png', 'img/trebleclef.png', 'img/trebleclef.png', 'img/trebleclef.png' ]
         };
 

@@ -23,6 +23,8 @@
 
                     <div class="staffEntry" ng-class="isActiveStaff($index)" ng-click="toggleActiveStaff($index)">
 
+                        <h4>Voice {{($index+1)}} - {{inputParams.voiceType[$index]}}</h4>
+
                         <div class="staff">
 
                             <div class="clef"><img class="clef" ng-class="getClefName(inputParams.clef[$index])" ng-src="{{inputParams.clef[$index]}}" alt="img/trebleclef.png"></div>

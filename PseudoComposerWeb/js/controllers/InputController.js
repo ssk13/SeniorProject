@@ -312,7 +312,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             noteheadEl[ 0 ].setAttribute( 'data-staff-index', staffNumber );
             noteheadEl.css( {
                  marginLeft: ( currentLeftPos[ staffNumber ] ) + 'px',
-                 top: ( topPosValue + 65 + ( 250 * staffNumber ) ) + 'px'
+                 top: ( topPosValue + 105 + ( 199 * staffNumber ) ) + 'px'
             } ); 
 
             noteheadDiv = $( '<div></div>' );
@@ -553,9 +553,9 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 checkVoiceCrossing( i, j );
 
                 if( !isConsonantHarmonically( $rootScope.notes[ 0 ][ i ], $rootScope.notes[ 1 ][ j ] ) ) {
-                    if( isStrongBeat( i ) )
+                    if( isStrongBeat( i, j ) )
                         markHarmony( 'harmonic', i, j );
-                    else if( !isPassing( j ) ) {
+                    else if( !isPassing( i, j ) ) {
                         if( $rootScope.inputParams.species == 2 )
                             markHarmony( 'harmonic', i, j );
                     }
@@ -581,7 +581,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                     }
 
                     if( notes[ 0 ][ i ] [ 1 ] == notes[ 1 ][ j ][ 1 ] ) {
-                        if( isStrongBeat( i ) )
+                        if( isStrongBeat( i, j ) )
                             markHarmony( 'internalUnison', i, j );
                         if( isApproachedBySimilarMotion( i, j ) )
                             markConsecutiveVerticalIntervals( 'perfectApproachedBySimilarMotion', i, j );
@@ -1035,17 +1035,26 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         /*
             Checks if this note in the counterpoint is a passing tone
         */
-        function isPassing( j ) {
-            if( !isSkip( $rootScope.notes[ 1 ][ j - 1 ], $rootScope.notes[ 1 ][ j ] ) ) {
-                if( ( ( j + 1 ) < $rootScope.notes[ 1 ].length ) && ( !isSkip( $rootScope.notes[ 1 ][ j ], $rootScope.notes[ 1 ][ j + 1 ] ) ) ) {
-                    if( ( $rootScope.notes[ 1 ][ j ] - $rootScope.notes[ 1 ][ j - 1 ] ) < 0 ) {
-                        if( ( $rootScope.notes[ 1 ][ j + 1 ] - $rootScope.notes[ 1 ][ j ] ) > 0 )
+        function isPassing( topVoiceBeat, bottomVoiceBeat ) {
+            var beatInCounterpoint = topVoiceBeat,
+                counterpointStaff = 0;
+
+            if( $rootScope.inputParams.voiceType[ 1 ] == 'Counterpoint' ) {
+                beatInCounterpoint = bottomVoiceBeat;
+                counterpointStaff = 1;
+            }
+
+            if( !isSkip( $rootScope.notes[ counterpointStaff ][ beatInCounterpoint - 1 ], $rootScope.notes[ counterpointStaff ][ beatInCounterpoint ] ) ) {
+                if( ( ( beatInCounterpoint + 1 ) < $rootScope.notes[ counterpointStaff ].length ) && 
+                    ( !isSkip( $rootScope.notes[ counterpointStaff ][ beatInCounterpoint ], $rootScope.notes[ counterpointStaff ][ beatInCounterpoint + 1 ] ) ) ) {
+                    if( ( $rootScope.notes[ counterpointStaff ][ beatInCounterpoint ][ 1 ] - $rootScope.notes[ counterpointStaff ][ beatInCounterpoint - 1 ][ 1 ] ) < 0 ) {
+                        if( ( $rootScope.notes[ counterpointStaff ][ beatInCounterpoint + 1 ][ 1 ] - $rootScope.notes[ counterpointStaff ][ beatInCounterpoint ][ 1 ] ) < 0 )
                             return true;
                         else
                             return false;
                     }
-                    if( ( $rootScope.notes[ 1 ][ j ] - $rootScope.notes[ 1 ][ j - 1 ] ) > 0 ) {
-                        if( ( $rootScope.notes[ 1 ][ j + 1 ] - $rootScope.notes[ 1 ][ j ] ) < 0 )
+                    if( ( $rootScope.notes[ counterpointStaff ][ beatInCounterpoint ][ 1 ] - $rootScope.notes[ counterpointStaff ][ beatInCounterpoint - 1 ][ 1 ] ) > 0 ) {
+                        if( ( $rootScope.notes[ counterpointStaff ][ beatInCounterpoint + 1 ][ 1 ] - $rootScope.notes[ counterpointStaff ][ beatInCounterpoint ][ 1 ] ) > 0 )
                             return true;
                         else
                             return false;
@@ -1056,11 +1065,16 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             return false;
         };
 
-        function isStrongBeat ( beat ) {
-            if( $rootScope.inputParams.species == 1 || 
-                ( ( $rootScope.inputParams.species == 2 ) && ( i % 2 == 0 ) ) || 
-                ( ( $rootScope.inputParams.species == 3 ) && ( i % 4 == 0 ) ) )
-                return true;
+        function isStrongBeat ( topVoiceBeat, bottomVoiceBeat ) {
+            var beatInCounterpoint = topVoiceBeat;
+
+            if( $rootScope.inputParams.voiceType[ 1 ] == 'Counterpoint' )
+                beatInCounterpoint = bottomVoiceBeat;
+
+            if( $rootScope.inputParams.species == 1 || ( ( $rootScope.inputParams.species == 2 ) && ( beatInCounterpoint % 2 == 0 ) ) || 
+                ( ( $rootScope.inputParams.species == 3 ) && ( beatInCounterpoint % 4 == 0 ) ) )
+                return true
+
             return false;
         }
 

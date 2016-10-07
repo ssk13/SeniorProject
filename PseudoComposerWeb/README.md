@@ -16,7 +16,6 @@ Rules To Implement:
 	* Outline of diminished 5th must be filled in and followed by step in the opposite direction
 	* Direct repetition of contrapuntal combinaiton is forbidden - only 2 sequential repetitions allowed
 	* 2nd species
-		* off-beats can only be dissonant if passing
 		* successive downbeats can be parallel perfect intervals if 'broken up' by a weak beat
 		* repeated notes are not allowed in added voice
 		* may begin with a half-note rest, but first sounding note must be perfect consonance
@@ -51,7 +50,8 @@ Features To Implement
 * 4th and 5th species CP
 * Page that just lists all da rulez
 * Add 'start over'
-* Let user set which is the cantus firmus
+* Don't let users add 2 cantus firmuses
+* Add elaboration on "is this voice the cantus firmus or the counterpoint" dialogue
 
 Aesthetic:
 * Find way to connect parallel/consecutive perfect intervals horizontally to better group them
