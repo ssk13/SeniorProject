@@ -23,7 +23,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         $scope.largeSkipOnTop = [ false, false ];
         $scope.melodic6th = [ false, false ];
         $scope.voiceCrossing = [ false, false ];
-        $scope.hasMoreSkipsThanSteps = [ false ];
+        $scope.hasTooManySkips = [ false ];
 
         $scope.hasBrokenHardRules = false;
         $scope.hasBrokenSoftRules = false;
@@ -540,7 +540,11 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             }
 
             if( numberOfSteps < numberOfSkips )
-                $scope.hasMoreSkipsThanSteps[ 0 ] = true;
+                $scope.hasTooManySkips[ 0 ] = true;
+            else if( $rootScope.inputParams.species == 3 ) {
+                if( numberOfSteps < ( numberOfSkips * 4 ) )
+                    $scope.hasTooManySkips[ 0 ] = true;
+            }
         };
 
         /*
@@ -1140,7 +1144,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 $scope.parallelPerfect[ 0 ] || $scope.perfectApproachedBySimilarMotion[ 0 ] || $scope.tooManyParallelIntervals[ 0 ] || $scope.unequalNumberOfBeats[ 0 ] || 
                 $scope.imperfectStartingOrEndingInterval[ 0 ] )
                 $scope.hasBrokenHardRules = true;
-            if( $scope.voiceCrossing[ 0 ] || $scope.consecutivePerfect[ 0 ] || $scope.hasMoreSkipsThanSteps[ 0 ] || $scope.consecutiveSkips[ 0 ] || $scope.largeSkipOnTop[ 0 ] ||
+            if( $scope.voiceCrossing[ 0 ] || $scope.consecutivePerfect[ 0 ] || $scope.hasTooManySkips[ 0 ] || $scope.consecutiveSkips[ 0 ] || $scope.largeSkipOnTop[ 0 ] ||
                 $scope.largerThan12th[ 0 ] || $scope.internalUnison[ 0 ] || $scope.melodic6th[ 0 ] )
                 $scope.hasBrokenSoftRules = true;
         };
