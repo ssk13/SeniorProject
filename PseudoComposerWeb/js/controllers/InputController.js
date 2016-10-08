@@ -218,6 +218,10 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 targetNote = undefined;
         };
 
+        $scope.enableEditing = function() {
+            $scope.counterpointChecked = false;
+        };
+
         $scope.floatingNoteheadClicked = function( $event, staffNumber ) {
             var target;
 
@@ -394,7 +398,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         };
 
         $scope.isActiveStaff = function( staff ) {
-            return activeStaff == staff ? 'activeStaff' : '';
+            return ( ( activeStaff == staff ) || $scope.counterpointChecked ) ? 'activeStaff' : '';
         };
 
         $scope.showFloatingNotehead = function( value ) {
@@ -771,10 +775,13 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             return false;
         };
 
+        /*
+            Returns whether an interval is a perfect 5th or octave (omits 4th)
+        */
         function isPerfectInterval( topNote, bottomNote ) {
             var diff = ( topNote[ 1 ] - bottomNote[ 1 ] ),
                 validityTable = [
-                                    [ -12, 0 ], [ -7, -4 ], [ -7, 3 ], [ -5, 4 ], [ -5, -3 ], [ 0, 0 ], [ 5, -4 ], [ 5, 3 ], [ 7, -3 ], [ 7, 4 ], [ 12, 0 ]
+                                    [ -12, 0 ], [ -7, -4 ], [ -7, 3 ], [ 0, 0 ], [ 7, -3 ], [ 7, 4 ], [ 12, 0 ]
                                 ],
                 i = 0,
                 swap = ( diff < 0 );

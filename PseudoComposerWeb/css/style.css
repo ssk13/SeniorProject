@@ -69,6 +69,10 @@ nav .clickable:hover {
 	opacity: 0.5;
 }
 
+.forceHide {
+	visibility: hidden !important;
+}
+
 .get-started-button {
 	border: 2px solid rgb(216,214,218) !important;
 	padding: 10px;

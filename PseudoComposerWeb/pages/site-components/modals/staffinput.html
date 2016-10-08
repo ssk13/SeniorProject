@@ -6,16 +6,26 @@
 
             <div class="modal-body" ng-class="{showIncorrectMelody: incorrectMelody[1], showIncorrectAccidentals: incorrectAccidental[1], showRepeatedNotes: repeatedNotes[1], showIncorrectHarmony: incorrectHarmony[1], showVoiceCrossing: voiceCrossing[1], showParallelPerfect: parallelPerfect[1], showConsecutivePerfect: consecutivePerfect[1], showPerfectApproachedBySimilarMotion: perfectApproachedBySimilarMotion[1], showTooManyParallelIntervals: tooManyParallelIntervals[1], showImperfectStartingOrEndingInterval: imperfectStartingOrEndingInterval[1], showConsecutiveSkips: consecutiveSkips[1], showLargeSkipOnTop: largeSkipOnTop[1], showLargerThan12th: largerThan12th[1], showInternalUnison: internalUnison[1], showMelodic6th: melodic6th[1]}">
 
-                <div class="row toolbar">
+                <div class="row">
 
-                    <div ng-click="addAccidental('sharp')" class="pull-left toolbar-item accidental-item sharp" ><img src="img/sharp.png"></div>
-                    <div ng-click="addAccidental('flat')" class="pull-left toolbar-item accidental-item flat"><img src="img/flat.png"></div>
-                    <div ng-click="addAccidental('natural')" class="pull-left toolbar-item accidental-item natural"><img src="img/natural.png"></div>
-                    <div ng-click="deleteNote()" class="pull-left toolbar-item"><img class="delete" src="img/delete.png"></div>
-                    <div class="pull-left toolbar-item break"></div>
-                    <div ng-click="changeDuration('quarter')" class="pull-left toolbar-item quarter-item" ng-class="duration === 'quarter' ? 'active' : ''"><img src="img/quarterup.png"></div>
-                    <div ng-click="changeDuration('half')" class="pull-left toolbar-item half-item" ng-class="duration === 'half' ? 'active' : ''"><img src="img/halfup.png"></div>
-                    <div ng-click="changeDuration('whole')" class="pull-left toolbar-item whole-item" ng-class="duration === 'whole' ? 'active' : ''"><img class="whole" src="img/whole.png"></div>
+                    <div class="row toolbar pull-left" ng-class="{forceHide: counterpointChecked}">
+
+                        <div ng-click="addAccidental('sharp')" class="pull-left toolbar-item accidental-item sharp" ><img src="img/sharp.png"></div>
+                        <div ng-click="addAccidental('flat')" class="pull-left toolbar-item accidental-item flat"><img src="img/flat.png"></div>
+                        <div ng-click="addAccidental('natural')" class="pull-left toolbar-item accidental-item natural"><img src="img/natural.png"></div>
+                        <div ng-click="deleteNote()" class="pull-left toolbar-item"><img class="delete" src="img/delete.png"></div>
+                        <div class="pull-left toolbar-item break"></div>
+                        <div ng-click="changeDuration('quarter')" class="pull-left toolbar-item quarter-item" ng-class="duration === 'quarter' ? 'active' : ''"><img src="img/quarterup.png"></div>
+                        <div ng-click="changeDuration('half')" class="pull-left toolbar-item half-item" ng-class="duration === 'half' ? 'active' : ''"><img src="img/halfup.png"></div>
+                        <div ng-click="changeDuration('whole')" class="pull-left toolbar-item whole-item" ng-class="duration === 'whole' ? 'active' : ''"><img class="whole" src="img/whole.png"></div>
+
+                    </div>
+
+                    <div class="pull-right">
+                        <h4 ng-if="inputParams.species == 1">First Species</h4>
+                        <h4 ng-if="inputParams.species == 2">Second Species</h4>
+                        <h4 ng-if="inputParams.species == 3">Third Species</h4>
+                    </div>
 
                 </div>
 
@@ -29,7 +39,7 @@
 
                             <div class="clef"><img class="clef" ng-class="getClefName(inputParams.clef[$index])" ng-src="{{inputParams.clef[$index]}}" alt="img/trebleclef.png"></div>
 
-                            <div class="notehead floating" ng-style="{'top': floatingNoteheadTopPos + 'px', 'left': getLeftPos($index) + 'px'}" ng-click="floatingNoteheadClicked($event, $index);"></div>
+                            <div class="notehead floating" ng-class="{forceHide: counterpointChecked}" ng-style="{'top': floatingNoteheadTopPos + 'px', 'left': getLeftPos($index) + 'px'}" ng-click="floatingNoteheadClicked($event, $index);"></div>
 
                             <div class="space hoverable slot0" data-staff-index="{{$index}}" ng-mouseover="showFloatingNotehead(19)" ng-click="insertNote('.slot0', 19, $event, $index)"></div>
 
@@ -337,7 +347,8 @@
             <div class="modal-footer">
       
                 <button type="button" class="btn btn-default pull-left" data-dismiss="modal" data-toggle="modal" data-target="#counterpoint-type-input">Back</button>
-                <button type="button" class="btn btn-default pull-right" ng-click="checkCounterpoint()">Check My Homework</button>
+                <button type="button" class="btn btn-default pull-right" ng-if="!counterpointChecked" ng-click="checkCounterpoint()">Check My Homework</button>
+                <button type="button" class="btn btn-default pull-right" ng-if="counterpointChecked" ng-click="enableEditing()">Edit this entry</button>
       
             </div>
 
