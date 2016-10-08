@@ -16,7 +16,6 @@ Rules To Implement:
 	* Outline of diminished 5th must be filled in and followed by step in the opposite direction
 	* Direct repetition of contrapuntal combinaiton is forbidden - only 2 sequential repetitions allowed
 	* 2nd species
-		* repeated notes are not allowed in added voice
 		* may begin with a half-note rest, but first sounding note must be perfect consonance
 	* 3rd species
 		* Do not use same neighbor twice in a row

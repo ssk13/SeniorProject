@@ -64,6 +64,12 @@ connection {
 	margin-left: 9px;
 }
 
+.showRepeatedNoteInCounterpoint connection.repeatedNoteInCounterpoint {
+	visibility: visible;
+	border: 2px solid rgb(200,207,242);
+	border-radius: 25px;
+}
+
 .showTooManyParallelIntervals connection.tooManyParallelIntervals {
 	visibility: visible;
 	border: 2px solid rgb(110,117,152);
