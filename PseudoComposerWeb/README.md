@@ -20,7 +20,6 @@ Rules To Implement:
 		* repeated notes are not allowed in added voice
 		* may begin with a half-note rest, but first sounding note must be perfect consonance
 	* 3rd species
-		* lower neighbors
 		* Skips should be less than 1/4 of melodic motion
 		* Do not use same neighbor twice in a row
 		* Do not change direction more than 3 times in 6 quarter notes

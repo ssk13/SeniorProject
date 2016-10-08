@@ -558,6 +558,10 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                     else if( !isPassing( i, j ) ) {
                         if( $rootScope.inputParams.species == 2 )
                             markHarmony( 'harmonic', i, j );
+                        else if( $rootScope.inputParams.species == 3 ) {
+                            if( !isLowerNeighbor( i, j ) )
+                                markHarmony( 'harmonic', i, j );
+                        }
                     }
                 }
 
@@ -1030,6 +1034,33 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             myEl.append( "<div class='notehead static' style='margin-left:" + ( currentLeftPos[ staffNumber ] ) + "px; top: " + 
                          ( notesConversion[ noteIndex ][ 1 ] + ( 300 * staffNumber ) ) + "px;'><img src='img/whole.png'></div>" );
             currentLeftPos[ staffNumber ] += 20;
+        };
+
+        /*
+            Checks if this note in the counterpoint is a lower neighbor tone
+        */
+        function isLowerNeighbor( topVoiceBeat, bottomVoiceBeat ) {
+            var beatInCounterpoint = topVoiceBeat,
+                counterpointStaff = 0;
+
+            if( $rootScope.inputParams.voiceType[ 1 ] == 'Counterpoint' ) {
+                beatInCounterpoint = bottomVoiceBeat;
+                counterpointStaff = 1;
+            }
+
+            if( !isSkip( $rootScope.notes[ counterpointStaff ][ beatInCounterpoint - 1 ], $rootScope.notes[ counterpointStaff ][ beatInCounterpoint ] ) ) {
+                if( ( ( beatInCounterpoint + 1 ) < $rootScope.notes[ counterpointStaff ].length ) && 
+                    ( !isSkip( $rootScope.notes[ counterpointStaff ][ beatInCounterpoint ], $rootScope.notes[ counterpointStaff ][ beatInCounterpoint + 1 ] ) ) ) {
+                    if( ( $rootScope.notes[ counterpointStaff ][ beatInCounterpoint ][ 1 ] - $rootScope.notes[ counterpointStaff ][ beatInCounterpoint - 1 ][ 1 ] ) < 0 ) {
+                        if( ( $rootScope.notes[ counterpointStaff ][ beatInCounterpoint + 1 ][ 1 ] - $rootScope.notes[ counterpointStaff ][ beatInCounterpoint ][ 1 ] ) > 0 )
+                            return true;
+                        else
+                            return false;
+                    }
+                }
+            }
+
+            return false;
         };
 
         /*
