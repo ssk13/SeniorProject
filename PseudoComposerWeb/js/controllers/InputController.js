@@ -342,6 +342,25 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             $rootScope.ruleDefinition = ruleDefinition;
         };
 
+        $scope.startOver = function() {
+            $rootScope.inputParams = {
+                numberOfVoices: 0,
+                species: 0,
+                voiceType: [ 'Cantus Firmus', 'Counterpoint', 'Counterpoint', 'Counterpoint' ],
+                clef: [ 'img/trebleclef.png', 'img/trebleclef.png', 'img/trebleclef.png', 'img/trebleclef.png' ]
+            };
+
+            $scope.duration = 'whole';
+            $scope.floatingNoteheadTopPos = 59;
+            $scope.counterpointChecked = false;
+
+            currentLeftPos = [ 90, 90, 90 ];
+            noteIndex = [ 0, 0, 0 ];
+            beatIndex = [ 0, 0, 0 ];
+            notes = [ [],[],[] ];
+            activeStaff = 0;
+        };
+
         $scope.toggleActiveStaff = function( staff ) {
             activeStaff = staff;
         };

@@ -66,21 +66,25 @@
 
                     </div>
 
-                    <div>
-                        <p>Is voice {{$index + 1}} the cantus firmus or the counterpoint?</p>
-                    </div>
+                    <div ng-if="inputParams.numberOfVoices > 1">
 
-                    <div>
+                        <div>
+                            <p>Is voice {{$index + 1}} the cantus firmus or the counterpoint?</p>
+                        </div>
 
-                        <input type="radio" ng-model="inputParams.voiceType[$index]" ng-value="'Cantus Firmus'" value="'Cantus Firmus'" name="voiceTypeForVoice{{$index}}">
-                        <span ng-class="inputParams.voiceType[$index] === 'Cantus Firmus' ? 'active' : ''">Cantus Firmus</span>
+                        <div>
 
-                    </div>
+                            <input type="radio" ng-model="inputParams.voiceType[$index]" ng-value="'Cantus Firmus'" value="'Cantus Firmus'" name="voiceTypeForVoice{{$index}}">
+                            <span ng-class="inputParams.voiceType[$index] === 'Cantus Firmus' ? 'active' : ''">Cantus Firmus</span>
 
-                    <div>
+                        </div>
 
-                        <input type="radio" ng-model="inputParams.voiceType[$index]" ng-value="'Counterpoint'" value="'Counterpoint'" name="voiceTypeForVoice{{$index}}">
-                        <span ng-class="inputParams.voiceType[$index] === 'Counterpoint' ? 'active' : ''">Counterpoint</span>
+                        <div>
+
+                            <input type="radio" ng-model="inputParams.voiceType[$index]" ng-value="'Counterpoint'" value="'Counterpoint'" name="voiceTypeForVoice{{$index}}">
+                            <span ng-class="inputParams.voiceType[$index] === 'Counterpoint' ? 'active' : ''">Counterpoint</span>
+
+                        </div>
 
                     </div>
 

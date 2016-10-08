@@ -346,10 +346,11 @@
         
             <div class="modal-footer">
       
-                <button type="button" class="btn btn-default pull-left" data-dismiss="modal" data-toggle="modal" data-target="#counterpoint-type-input">Back</button>
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal" data-toggle="modal" data-target="#counterpoint-type-input" ng-click="startOver()">Start Over</button>
                 <button type="button" class="btn btn-default pull-right" ng-if="!counterpointChecked" ng-click="checkCounterpoint()">Check My Homework</button>
-                <button type="button" class="btn btn-default pull-right" ng-if="counterpointChecked" ng-click="enableEditing()">Edit this entry</button>
-      
+                <button type="button" class="btn btn-default pull-right" ng-if="counterpointChecked" ng-click="enableEditing()">Edit This Entry</button>
+                <!--button type="button" class="btn btn-default pull-right" data-dismiss="modal" data-toggle="modal" data-target="#counterpoint-type-input" ng-if="counterpointChecked" ng-click="startOver()">Start over</button-->
+
             </div>
 
         </div>

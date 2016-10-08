@@ -48,7 +48,6 @@ Features To Implement
 * Check if invertible (just omit the 5ths if invertible at the octave...)
 * 4th and 5th species CP
 * Page that just lists all da rulez
-* Add 'start over'
 * Don't let users add 2 cantus firmuses
 * Add elaboration on "is this voice the cantus firmus or the counterpoint" dialogue
 
