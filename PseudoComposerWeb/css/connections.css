@@ -43,6 +43,12 @@ connection {
 	margin-left: 3px;
 }
 
+.showLeapIn3rdSpecies connection.leapIn3rdSpecies {
+	visibility: visible;
+	border: 2px solid rgb(210,217,252);
+	border-radius: 25px;
+}
+
 .showMelodic6th connection.melodic6th {
 	visibility: visible;
 	border: 2px solid rgb(80,87,122);

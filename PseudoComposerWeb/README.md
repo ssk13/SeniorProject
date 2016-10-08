@@ -34,7 +34,6 @@ Rules To Implement:
 	* 3rd
 		* Avoid skipping up to a weak quarter
 		* avoid temporary high note on weak quarter
-		* rarely exceed a 3rd in this species
 		* avoid breaking up parallel intervals with only one quarter
 
 Features To Implement

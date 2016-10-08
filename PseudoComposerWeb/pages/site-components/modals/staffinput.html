@@ -4,7 +4,7 @@
 
         <div class="modal-content" ng-controller="inputController">
 
-            <div class="modal-body" ng-class="{showIncorrectMelody: incorrectMelody[1], showIncorrectAccidentals: incorrectAccidental[1], showRepeatedNotes: repeatedNotes[1], showIncorrectHarmony: incorrectHarmony[1], showVoiceCrossing: voiceCrossing[1], showParallelPerfect: parallelPerfect[1], showConsecutivePerfect: consecutivePerfect[1], showPerfectApproachedBySimilarMotion: perfectApproachedBySimilarMotion[1], showTooManyParallelIntervals: tooManyParallelIntervals[1], showImperfectStartingOrEndingInterval: imperfectStartingOrEndingInterval[1], showConsecutiveSkips: consecutiveSkips[1], showLargeSkipOnTop: largeSkipOnTop[1], showLargerThan12th: largerThan12th[1], showInternalUnison: internalUnison[1], showMelodic6th: melodic6th[1], showRepeatedNoteInCounterpoint: repeatedNoteInCounterpoint[1]}">
+            <div class="modal-body" ng-class="{showIncorrectMelody: incorrectMelody[1], showIncorrectAccidentals: incorrectAccidental[1], showRepeatedNotes: repeatedNotes[1], showIncorrectHarmony: incorrectHarmony[1], showVoiceCrossing: voiceCrossing[1], showParallelPerfect: parallelPerfect[1], showConsecutivePerfect: consecutivePerfect[1], showPerfectApproachedBySimilarMotion: perfectApproachedBySimilarMotion[1], showTooManyParallelIntervals: tooManyParallelIntervals[1], showImperfectStartingOrEndingInterval: imperfectStartingOrEndingInterval[1], showConsecutiveSkips: consecutiveSkips[1], showLargeSkipOnTop: largeSkipOnTop[1], showLargerThan12th: largerThan12th[1], showInternalUnison: internalUnison[1], showMelodic6th: melodic6th[1], showRepeatedNoteInCounterpoint: repeatedNoteInCounterpoint[1], showLeapIn3rdSpecies: leapIn3rdSpecies[1]}">
 
                 <div class="row">
 
@@ -288,6 +288,21 @@
                                 <span ng-click="toggleShowValue(largerThan12th, true);" class="toggle" ng-class="{activeToggle: largerThan12th[1]}">Show</span>
                                 <span>|</span>
                                 <span ng-click="toggleShowValue(largerThan12th, false);" class="toggle" ng-class="{activeToggle: !largerThan12th[1]}">Hide</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row col-md-10 col-md-offset-1" ng-show="leapIn3rdSpecies[0]">
+
+                            <img class="pull-left help-icon" src="img/help.png" ng-click="setDefinition('leapIn3rdSpecies')" data-toggle="modal" data-target="#counterpoint-rule-definition">
+
+                            <p class="pull-left">Large leap in 3rd species</p>
+                            <div class="pull-right">
+
+                                <span ng-click="toggleShowValue(leapIn3rdSpecies, true);" class="toggle" ng-class="{activeToggle: leapIn3rdSpecies[1]}">Show</span>
+                                <span>|</span>
+                                <span ng-click="toggleShowValue(leapIn3rdSpecies, false);" class="toggle" ng-class="{activeToggle: !leapIn3rdSpecies[1]}">Hide</span>
 
                             </div>
 

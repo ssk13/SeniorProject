@@ -22,6 +22,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         $scope.consecutiveSkips = [ false, false ];
         $scope.internalUnison = [ false, false ];
         $scope.largeSkipOnTop = [ false, false ];
+        $scope.leapIn3rdSpecies = [ false, false ];
         $scope.melodic6th = [ false, false ];
         $scope.voiceCrossing = [ false, false ];
         $scope.hasTooManySkips = [ false ];
@@ -107,14 +108,16 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             return ( $scope.imperfectStartingOrEndingInterval[ 1 ] && $scope.incorrectAccidental[ 1 ] && $scope.incorrectHarmony[ 1 ] && $scope.incorrectMelody[ 1 ] &&
                      $scope.largerThan12th[ 1 ] && $scope.parallelPerfect[ 1 ] && $scope.perfectApproachedBySimilarMotion[ 1 ] && $scope.repeatedNotes[ 1 ] &&
                      $scope.tooManyParallelIntervals[ 1 ] && $scope.consecutivePerfect[ 1 ] && $scope.consecutiveSkips[ 1 ] && $scope.internalUnison[ 1 ] &&
-                     $scope.largeSkipOnTop[ 1 ] && $scope.melodic6th[ 1 ] && $scope.voiceCrossing[ 1 ] && $scope.repeatedNoteInCounterpoint[ 1 ] );
+                     $scope.largeSkipOnTop[ 1 ] && $scope.melodic6th[ 1 ] && $scope.voiceCrossing[ 1 ] && $scope.repeatedNoteInCounterpoint[ 1 ] &&
+                     $scope.leapIn3rdSpecies[ 1 ] );
         };
 
         $scope.areAllHidden = function() {
             return ( !$scope.imperfectStartingOrEndingInterval[ 1 ] && !$scope.incorrectAccidental[ 1 ] && !$scope.incorrectHarmony[ 1 ] && !$scope.incorrectMelody[ 1 ] &&
                      !$scope.largerThan12th[ 1 ] && !$scope.parallelPerfect[ 1 ] && !$scope.perfectApproachedBySimilarMotion[ 1 ] && !$scope.repeatedNotes[ 1 ] &&
                      !$scope.tooManyParallelIntervals[ 1 ] && !$scope.consecutivePerfect[ 1 ] && !$scope.consecutiveSkips[ 1 ] && !$scope.internalUnison[ 1 ] &&
-                     !$scope.largeSkipOnTop[ 1 ] && !$scope.melodic6th[ 1 ] && !$scope.voiceCrossing[ 1 ] && !$scope.repeatedNoteInCounterpoint[ 1 ] );
+                     !$scope.largeSkipOnTop[ 1 ] && !$scope.melodic6th[ 1 ] && !$scope.voiceCrossing[ 1 ] && !$scope.repeatedNoteInCounterpoint[ 1 ] &&
+                     !$scope.leapIn3rdSpecies[ 1 ] );
         };
 
         $scope.changeDuration = function( dur ) {
@@ -380,6 +383,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             $scope.consecutiveSkips[ 1 ] = show;
             $scope.internalUnison[ 1 ] = show;
             $scope.largeSkipOnTop[ 1 ] = show;
+            $scope.leapIn3rdSpecies[ 1 ] = show;
             $scope.melodic6th[ 1 ] = show;
             $scope.voiceCrossing[ 1 ] = show;
             $scope.repeatedNoteInCounterpoint[ 1 ] = show;
@@ -466,6 +470,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             * too many horizontal repeated notes
             * too many consecutive skips if one is large
             * consecutive skips with larger on top
+            * large leaps in 3rd species
         */
         function checkHorizontallyBeatByBeat() {
             var numberOfSkips = 0,
@@ -499,8 +504,11 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                         if( isSkip( $rootScope.notes[ i ][ j + 1 ], $rootScope.notes[ i ][ j ] ) ) {
                             ++numberOfSkips;
                             ++numberOfConsecutiveSkips;
-                            if( isLargeSkip( $rootScope.notes[ i ][ j + 1 ], $rootScope.notes[ i ][ j ] ) )
+                            if( isLargeSkip( $rootScope.notes[ i ][ j + 1 ], $rootScope.notes[ i ][ j ] ) ) {
                                 hadLargeSkip = true;
+                                if( $rootScope.inputParams.species == 3 )
+                                    markTwoConsecutiveNotes( i, j, 'leapIn3rdSpecies' );
+                            }
                             if( numberOfConsecutiveSkips > 1 ) {
                                 if( ( $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) < ( $rootScope.notes[ i ][ j + 1 ][ 1 ] - 
                                       $rootScope.notes[ i ][ j ][ 1 ] ) )
@@ -1005,6 +1013,8 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 $scope.melodic6th[ 0 ] = true;
             else if( className == 'repeatedNoteInCounterpoint' )
                 $scope.repeatedNoteInCounterpoint[ 0 ] = true;
+            else if( className == 'leapIn3rdSpecies' )
+                $scope.leapIn3rdSpecies[ 0 ] = true;
         };
 
         /* helpers */
@@ -1151,7 +1161,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 $scope.imperfectStartingOrEndingInterval[ 0 ] || $scope.repeatedNoteInCounterpoint[ 0 ] )
                 $scope.hasBrokenHardRules = true;
             if( $scope.voiceCrossing[ 0 ] || $scope.consecutivePerfect[ 0 ] || $scope.hasTooManySkips[ 0 ] || $scope.consecutiveSkips[ 0 ] || $scope.largeSkipOnTop[ 0 ] ||
-                $scope.largerThan12th[ 0 ] || $scope.internalUnison[ 0 ] || $scope.melodic6th[ 0 ] )
+                $scope.largerThan12th[ 0 ] || $scope.internalUnison[ 0 ] || $scope.melodic6th[ 0 ] || $scope.leapIn3rdSpecies[ 0 ] )
                 $scope.hasBrokenSoftRules = true;
         };
 

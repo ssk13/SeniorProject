@@ -59,6 +59,10 @@
 	border: 2px solid rgb(170,177,212) !important;
 }
 
+.showLeapIn3rdSpecies .leapIn3rdSpecies {
+	border: 2px solid rgb(210,217,252) !important;
+}
+
 .showParallelPerfect .parallelPerfect {
 	border: 2px solid rgb(90,97,132) !important;
 }
