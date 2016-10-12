@@ -4,7 +4,7 @@
 
         <div class="modal-content" ng-controller="inputController">
 
-            <div class="modal-body" ng-class="{showIncorrectMelody: incorrectMelody[1], showIncorrectAccidentals: incorrectAccidental[1], showRepeatedNotes: repeatedNotes[1], showIncorrectHarmony: incorrectHarmony[1], showVoiceCrossing: voiceCrossing[1], showParallelPerfect: parallelPerfect[1], showConsecutivePerfect: consecutivePerfect[1], showPerfectApproachedBySimilarMotion: perfectApproachedBySimilarMotion[1], showTooManyParallelIntervals: tooManyParallelIntervals[1], showImperfectStartingOrEndingInterval: imperfectStartingOrEndingInterval[1], showConsecutiveSkips: consecutiveSkips[1], showLargeSkipOnTop: largeSkipOnTop[1], showLargerThan12th: largerThan12th[1], showInternalUnison: internalUnison[1], showMelodic6th: melodic6th[1], showRepeatedNoteInCounterpoint: repeatedNoteInCounterpoint[1], showLeapIn3rdSpecies: leapIn3rdSpecies[1]}">
+            <div class="modal-body" ng-class="{showIncorrectMelody: incorrectMelody[1], showIncorrectAccidentals: incorrectAccidental[1], showRepeatedNotes: repeatedNotes[1], showIncorrectHarmony: incorrectHarmony[1], showVoiceCrossing: voiceCrossing[1], showParallelPerfect: parallelPerfect[1], showConsecutivePerfect: consecutivePerfect[1], showPerfectApproachedBySimilarMotion: perfectApproachedBySimilarMotion[1], showTooManyParallelIntervals: tooManyParallelIntervals[1], showImperfectStartingOrEndingInterval: imperfectStartingOrEndingInterval[1], showConsecutiveSkips: consecutiveSkips[1], showLargeSkipOnTop: largeSkipOnTop[1], showLargerThan12th: largerThan12th[1], showInternalUnison: internalUnison[1], showMelodic6th: melodic6th[1], showRepeatedNoteInCounterpoint: repeatedNoteInCounterpoint[1], showLeapIn3rdSpecies: leapIn3rdSpecies[1], showOutlineOfTritone: outlineOfTritone[1], showSurroundSkipWithStepsInOppositeDirection: surroundSkipWithStepsInOppositeDirection[1], showSkippingToOrFromExtreme: skippingToOrFromExtreme[1], showRepeatedNoteInBothVoices: repeatedNoteInBothVoices[1], showMotivicRepetition: motivicRepetition[1], showSkippingInBothVoices: skippingInBothVoices[1], showChangeDirectionAfterLargeSkip: changeDirectionAfterLargeSkip[1], showFillInSkips: fillInSkips[1], showCoverOctave: coverOctave[1], showOverusedVerticalIntervalSecondSpecies: overusedVerticalIntervalSecondSpecies[1], showTooMuchChangingDirection: tooMuchChangingDirection[1], showSkippingUpToWeakQuarter: skippingUpToWeakQuarter[1], showTempHighOnWeakQuarter: tempHighOnWeakQuarter[1]}">
 
                 <div class="row">
 
@@ -99,6 +99,14 @@
 
                         </div>
 
+                        <div class="row col-md-10 col-md-offset-1" ng-show="hasTooManySkips[0]">
+
+                            <img class="pull-left help-icon" src="img/help.png" ng-click="setDefinition('hasTooManySkips')" data-toggle="modal" data-target="#counterpoint-rule-definition">
+
+                            <p class="pull-left">Too many skips</p>
+
+                        </div>
+
                         <div class="row col-md-10 col-md-offset-1" ng-show="imperfectStartingOrEndingInterval[0]">
 
                             <img class="pull-left help-icon" src="img/help.png" ng-click="setDefinition('imperfectStartingOrEndingInterval')" data-toggle="modal" data-target="#counterpoint-rule-definition">
@@ -189,6 +197,36 @@
 
                         </div>
 
+                        <div class="row col-md-10 col-md-offset-1" ng-show="repeatedNoteInBothVoices[0]">
+
+                            <img class="pull-left help-icon" src="img/help.png" ng-click="setDefinition('repeatedNoteInBothVoices')" data-toggle="modal" data-target="#counterpoint-rule-definition">
+
+                            <p class="pull-left">Repeated pitch in both voices simultaneously</p>
+                            <div class="pull-right">
+
+                                <span ng-click="toggleShowValue(repeatedNoteInBothVoices, true);" class="toggle" ng-class="{activeToggle: repeatedNoteInBothVoices[1]}">Show</span>
+                                <span>|</span>
+                                <span ng-click="toggleShowValue(repeatedNoteInBothVoices, false);" class="toggle" ng-class="{activeToggle: !repeatedNoteInBothVoices[1]}">Hide</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row col-md-10 col-md-offset-1" ng-show="slowTrill[0]">
+
+                            <img class="pull-left help-icon" src="img/help.png" ng-click="setDefinition('slowTrill')" data-toggle="modal" data-target="#counterpoint-rule-definition">
+
+                            <p class="pull-left">Slow trill</p>
+                            <div class="pull-right">
+
+                                <span ng-click="toggleShowValue(slowTrill, true);" class="toggle" ng-class="{activeToggle: slowTrill[1]}">Show</span>
+                                <span>|</span>slowTrill
+                                <span ng-click="toggleShowValue(slowTrill, false);" class="toggle" ng-class="{activeToggle: !slowTrill[1]}">Hide</span>
+
+                            </div>
+
+                        </div>
+
                         <div class="row col-md-10 col-md-offset-1" ng-show="parallelPerfect[0]">
 
                             <img class="pull-left help-icon" src="img/help.png" ng-click="setDefinition('parallelPerfect')" data-toggle="modal" data-target="#counterpoint-rule-definition">
@@ -199,6 +237,21 @@
                                 <span ng-click="toggleShowValue(parallelPerfect, true);" class="toggle" ng-class="{activeToggle: parallelPerfect[1]}">Show</span>
                                 <span>|</span>
                                 <span ng-click="toggleShowValue(parallelPerfect, false);" class="toggle" ng-class="{activeToggle: !parallelPerfect[1]}">Hide</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row col-md-10 col-md-offset-1" ng-show="tooMuchChangingDirection[0]">
+
+                            <img class="pull-left help-icon" src="img/help.png" ng-click="setDefinition('tooMuchChangingDirection')" data-toggle="modal" data-target="#counterpoint-rule-definition">
+
+                            <p class="pull-left">Too much changing direction</p>
+                            <div class="pull-right">
+
+                                <span ng-click="toggleShowValue(tooMuchChangingDirection, true);" class="toggle" ng-class="{activeToggle: tooMuchChangingDirection[1]}">Show</span>
+                                <span>|</span>
+                                <span ng-click="toggleShowValue(tooMuchChangingDirection, false);" class="toggle" ng-class="{activeToggle: !tooMuchChangingDirection[1]}">Hide</span>
 
                             </div>
 
@@ -221,7 +274,7 @@
 
                         <div class="row col-md-10 col-md-offset-1" ng-show="perfectApproachedBySimilarMotion[0]">
 
-                            <img class="pull-left help-icon" src="img/help.png" ng-click="setDefinition('tooManyParallelIntervals')" data-toggle="modal" data-target="#counterpoint-rule-definition">
+                            <img class="pull-left help-icon" src="img/help.png" ng-click="setDefinition('perfectApproachedBySimilarMotion')" data-toggle="modal" data-target="#counterpoint-rule-definition">
 
                             <p class="pull-left">Perfect interval approached by similar motion</p>
                             <div class="pull-right">
@@ -234,19 +287,41 @@
 
                         </div>
 
+                        <div class="row col-md-10 col-md-offset-1" ng-show="outlineOfTritone[0]">
+
+                            <img class="pull-left help-icon" src="img/help.png" ng-click="setDefinition('outlineOfTritone')" data-toggle="modal" data-target="#counterpoint-rule-definition">
+
+                            <p class="pull-left">Outline of a tritone</p>
+                            <div class="pull-right">
+
+                                <span ng-click="toggleShowValue(outlineOfTritone, true);" class="toggle" ng-class="{activeToggle: outlineOfTritone[1]}">Show</span>
+                                <span>|</span>
+                                <span ng-click="toggleShowValue(outlineOfTritone, false);" class="toggle" ng-class="{activeToggle: !outlineOfTritone[1]}">Hide</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row col-md-10 col-md-offset-1" ng-show="motivicRepetition[0]">
+
+                            <img class="pull-left help-icon" src="img/help.png" ng-click="setDefinition('motivicRepetition')" data-toggle="modal" data-target="#counterpoint-rule-definition">
+
+                            <p class="pull-left">Motivic repetition</p>
+                            <div class="pull-right">
+
+                                <span ng-click="toggleShowValue(motivicRepetition, true);" class="toggle" ng-class="{activeToggle: motivicRepetition[1]}">Show</span>
+                                <span>|</span>
+                                <span ng-click="toggleShowValue(motivicRepetition, false);" class="toggle" ng-class="{activeToggle: !motivicRepetition[1]}">Hide</span>
+
+                            </div>
+
+                        </div>
+
                     </div>
 
                     <div class="col-md-6 rules" ng-show="counterpointChecked" ng-class="{active: hasBrokenSoftRules}">
 
                         <h2>Soft Rules</h2>
-
-                        <div class="row col-md-10 col-md-offset-1" ng-show="hasTooManySkips[0]">
-
-                            <img class="pull-left help-icon" src="img/help.png" ng-click="setDefinition('hasTooManySkips')" data-toggle="modal" data-target="#counterpoint-rule-definition">
-
-                            <p class="pull-left">Too many skips</p>
-
-                        </div>
 
                         <div class="row col-md-10 col-md-offset-1" ng-show="internalUnison[0]">
 
@@ -258,6 +333,141 @@
                                 <span ng-click="toggleShowValue(internalUnison, true);" class="toggle" ng-class="{activeToggle: internalUnison[1]}">Show</span>
                                 <span>|</span>
                                 <span ng-click="toggleShowValue(internalUnison, false);" class="toggle" ng-class="{activeToggle: !internalUnison[1]}">Hide</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row col-md-10 col-md-offset-1" ng-show="surroundSkipWithStepsInOppositeDirection[0]">
+
+                            <img class="pull-left help-icon" src="img/help.png" ng-click="setDefinition('surroundSkipWithStepsInOppositeDirection')" data-toggle="modal" data-target="#counterpoint-rule-definition">
+
+                            <p class="pull-left">Surround skips with steps in opposite direction(s)</p>
+                            <div class="pull-right">
+
+                                <span ng-click="toggleShowValue(surroundSkipWithStepsInOppositeDirection, true);" class="toggle" ng-class="{activeToggle: surroundSkipWithStepsInOppositeDirection[1]}">Show</span>
+                                <span>|</span>
+                                <span ng-click="toggleShowValue(surroundSkipWithStepsInOppositeDirection, false);" class="toggle" ng-class="{activeToggle: !surroundSkipWithStepsInOppositeDirection[1]}">Hide</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row col-md-10 col-md-offset-1" ng-show="overusedVerticalIntervalSecondSpecies[0]">
+
+                            <img class="pull-left help-icon" src="img/help.png" ng-click="setDefinition('overusedVerticalIntervalSecondSpecies')" data-toggle="modal" data-target="#counterpoint-rule-definition">
+
+                            <p class="pull-left">Vertical interval used too frequently</p>
+                            <div class="pull-right">
+
+                                <span ng-click="toggleShowValue(overusedVerticalIntervalSecondSpecies, true);" class="toggle" ng-class="{activeToggle: overusedVerticalIntervalSecondSpecies[1]}">Show</span>
+                                <span>|</span>
+                                <span ng-click="toggleShowValue(overusedVerticalIntervalSecondSpecies, false);" class="toggle" ng-class="{activeToggle: !overusedVerticalIntervalSecondSpecies[1]}">Hide</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row col-md-10 col-md-offset-1" ng-show="skippingInBothVoices[0]">
+
+                            <img class="pull-left help-icon" src="img/help.png" ng-click="setDefinition('skippingInBothVoices')" data-toggle="modal" data-target="#counterpoint-rule-definition">
+
+                            <p class="pull-left">Skipping simultaneously in both voices</p>
+                            <div class="pull-right">
+
+                                <span ng-click="toggleShowValue(skippingInBothVoices, true);" class="toggle" ng-class="{activeToggle: skippingInBothVoices[1]}">Show</span>
+                                <span>|</span>
+                                <span ng-click="toggleShowValue(skippingInBothVoices, false);" class="toggle" ng-class="{activeToggle: !skippingInBothVoices[1]}">Hide</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row col-md-10 col-md-offset-1" ng-show="coverOctave[0]">
+
+                            <img class="pull-left help-icon" src="img/help.png" ng-click="setDefinition('coverOctave')" data-toggle="modal" data-target="#counterpoint-rule-definition">
+
+                            <p class="pull-left">Cover modal octave more frequently</p>
+                            <div class="pull-right">
+
+                                <span ng-click="toggleShowValue(coverOctave, true);" class="toggle" ng-class="{activeToggle: coverOctave[1]}">Show</span>
+                                <span>|</span>
+                                <span ng-click="toggleShowValue(coverOctave, false);" class="toggle" ng-class="{activeToggle: !coverOctave[1]}">Hide</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row col-md-10 col-md-offset-1" ng-show="fillInSkips[0]">
+
+                            <img class="pull-left help-icon" src="img/help.png" ng-click="setDefinition('fillInSkips')" data-toggle="modal" data-target="#counterpoint-rule-definition">
+
+                            <p class="pull-left">Fill in skips</p>
+                            <div class="pull-right">
+
+                                <span ng-click="toggleShowValue(fillInSkips, true);" class="toggle" ng-class="{activeToggle: fillInSkips[1]}">Show</span>
+                                <span>|</span>
+                                <span ng-click="toggleShowValue(fillInSkips, false);" class="toggle" ng-class="{activeToggle: !fillInSkips[1]}">Hide</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row col-md-10 col-md-offset-1" ng-show="changeDirectionAfterLargeSkip[0]">
+
+                            <img class="pull-left help-icon" src="img/help.png" ng-click="setDefinition('changeDirectionAfterLargeSkip')" data-toggle="modal" data-target="#counterpoint-rule-definition">
+
+                            <p class="pull-left">Change direction after large skip and move in steps</p>
+                            <div class="pull-right">
+
+                                <span ng-click="toggleShowValue(changeDirectionAfterLargeSkip, true);" class="toggle" ng-class="{activeToggle: changeDirectionAfterLargeSkip[1]}">Show</span>
+                                <span>|</span>
+                                <span ng-click="toggleShowValue(changeDirectionAfterLargeSkip, false);" class="toggle" ng-class="{activeToggle: !changeDirectionAfterLargeSkip[1]}">Hide</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row col-md-10 col-md-offset-1" ng-show="tempHighOnWeakQuarter[0]">
+
+                            <img class="pull-left help-icon" src="img/help.png" ng-click="setDefinition('tempHighOnWeakQuarter')" data-toggle="modal" data-target="#counterpoint-rule-definition">
+
+                            <p class="pull-left">Temporary high point on weak quarter</p>
+                            <div class="pull-right">
+
+                                <span ng-click="toggleShowValue(tempHighOnWeakQuarter, true);" class="toggle" ng-class="{activeToggle: tempHighOnWeakQuarter[1]}">Show</span>
+                                <span>|</span>
+                                <span ng-click="toggleShowValue(tempHighOnWeakQuarter, false);" class="toggle" ng-class="{activeToggle: !tempHighOnWeakQuarter[1]}">Hide</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row col-md-10 col-md-offset-1" ng-show="skippingUpToWeakQuarter[0]">
+
+                            <img class="pull-left help-icon" src="img/help.png" ng-click="setDefinition('skippingUpToWeakQuarter')" data-toggle="modal" data-target="#counterpoint-rule-definition">
+
+                            <p class="pull-left">Skipping up to weak quarter</p>
+                            <div class="pull-right">
+
+                                <span ng-click="toggleShowValue(skippingUpToWeakQuarter, true);" class="toggle" ng-class="{activeToggle: skippingUpToWeakQuarter[1]}">Show</span>
+                                <span>|</span>
+                                <span ng-click="toggleShowValue(skippingUpToWeakQuarter, false);" class="toggle" ng-class="{activeToggle: !skippingUpToWeakQuarter[1]}">Hide</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row col-md-10 col-md-offset-1" ng-show="skippingToOrFromExtreme[0]">
+
+                            <img class="pull-left help-icon" src="img/help.png" ng-click="setDefinition('skippingToOrFromExtreme')" data-toggle="modal" data-target="#counterpoint-rule-definition">
+
+                            <p class="pull-left">Skipping to or from temporary high or low point</p>
+                            <div class="pull-right">
+
+                                <span ng-click="toggleShowValue(skippingToOrFromExtreme, true);" class="toggle" ng-class="{activeToggle: skippingToOrFromExtreme[1]}">Show</span>
+                                <span>|</span>
+                                <span ng-click="toggleShowValue(skippingToOrFromExtreme, false);" class="toggle" ng-class="{activeToggle: !skippingToOrFromExtreme[1]}">Hide</span>
 
                             </div>
 

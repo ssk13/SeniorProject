@@ -11,21 +11,35 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         $scope.incorrectHarmony = [ false, false ];
         $scope.incorrectMelody = [ false, false ];
         $scope.largerThan12th = [ false, false ];
+        $scope.motivicRepetition = [ false, false ];
+        $scope.outlineOfTritone = [ false, false ];
         $scope.parallelPerfect = [ false, false ];
         $scope.perfectApproachedBySimilarMotion = [ false, false ];
         $scope.repeatedNotes = [ false, false ];
+        $scope.repeatedNoteInBothVoices = [ false, false ];
         $scope.repeatedNoteInCounterpoint = [ false, false ];
+        $scope.slowTrill = [ false, false ];
         $scope.tooManyParallelIntervals = [ false, false ];
+        $scope.tooMuchChangingDirection = [ false, false ];
+        $scope.hasTooManySkips = [ false ];
         $scope.unequalNumberOfBeats = [ false ];
         /*soft rules*/
+        $scope.changeDirectionAfterLargeSkip = [ false, false ];
         $scope.consecutivePerfect = [ false, false ];
         $scope.consecutiveSkips = [ false, false ];
+        $scope.coverOctave = [ false, false ];
+        $scope.fillInSkips = [ false, false ];
         $scope.internalUnison = [ false, false ];
         $scope.largeSkipOnTop = [ false, false ];
         $scope.leapIn3rdSpecies = [ false, false ];
         $scope.melodic6th = [ false, false ];
+        $scope.overusedVerticalIntervalSecondSpecies = [ false, false ];
+        $scope.skippingInBothVoices = [false, false ];
+        $scope.skippingToOrFromExtreme = [ false, false ];
+        $scope.skippingUpToWeakQuarter = [ false, false ];
+        $scope.surroundSkipWithStepsInOppositeDirection = [ false, false ];
+        $scope.tempHighOnWeakQuarter = [ false, false ];
         $scope.voiceCrossing = [ false, false ];
-        $scope.hasTooManySkips = [ false ];
 
         $scope.hasBrokenHardRules = false;
         $scope.hasBrokenSoftRules = false;
@@ -109,7 +123,10 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                      $scope.largerThan12th[ 1 ] && $scope.parallelPerfect[ 1 ] && $scope.perfectApproachedBySimilarMotion[ 1 ] && $scope.repeatedNotes[ 1 ] &&
                      $scope.tooManyParallelIntervals[ 1 ] && $scope.consecutivePerfect[ 1 ] && $scope.consecutiveSkips[ 1 ] && $scope.internalUnison[ 1 ] &&
                      $scope.largeSkipOnTop[ 1 ] && $scope.melodic6th[ 1 ] && $scope.voiceCrossing[ 1 ] && $scope.repeatedNoteInCounterpoint[ 1 ] &&
-                     $scope.leapIn3rdSpecies[ 1 ] );
+                     $scope.leapIn3rdSpecies[ 1 ] && $scope.outlineOfTritone[ 1 ] && $scope.surroundSkipWithStepsInOppositeDirection[ 1 ] &&
+                     $scope.skippingToOrFromExtreme[ 1 ] && $scope.repeatedNoteInBothVoices[ 1 ] && $scope.motivicRepetition[ 1 ] && $scope.skippingInBothVoices[ 1 ] &&
+                     $scope.changeDirectionAfterLargeSkip[ 1 ] && $scope.fillInSkips[ 1 ] && $scope.coverOctave[ 1 ] && $scope.overusedVerticalIntervalSecondSpecies[ 1 ] &&
+                     $scope.slowTrill[ 1 ] && $scope.tooMuchChangingDirection[ 1 ] && $scope.skippingUpToWeakQuarter[ 1 ] && $scope.tempHighOnWeakQuarter[ 1 ] );
         };
 
         $scope.areAllHidden = function() {
@@ -117,7 +134,10 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                      !$scope.largerThan12th[ 1 ] && !$scope.parallelPerfect[ 1 ] && !$scope.perfectApproachedBySimilarMotion[ 1 ] && !$scope.repeatedNotes[ 1 ] &&
                      !$scope.tooManyParallelIntervals[ 1 ] && !$scope.consecutivePerfect[ 1 ] && !$scope.consecutiveSkips[ 1 ] && !$scope.internalUnison[ 1 ] &&
                      !$scope.largeSkipOnTop[ 1 ] && !$scope.melodic6th[ 1 ] && !$scope.voiceCrossing[ 1 ] && !$scope.repeatedNoteInCounterpoint[ 1 ] &&
-                     !$scope.leapIn3rdSpecies[ 1 ] );
+                     !$scope.leapIn3rdSpecies[ 1 ] && !$scope.outlineOfTritone[ 1 ] && !$scope.surroundSkipWithStepsInOppositeDirection[ 1 ] &&
+                     !$scope.skippingToOrFromExtreme[ 1 ] && !$scope.repeatedNoteInBothVoices[ 1 ] && !$scope.motivicRepetition[ 1 ] && !$scope.skippingInBothVoices[ 1 ] &&
+                     !$scope.changeDirectionAfterLargeSkip[ 1 ] && !$scope.fillInSkips[ 1 ] && !$scope.coverOctave[ 1 ] && !$scope.overusedVerticalIntervalSecondSpecies[ 1 ] &&
+                     !$scope.slowTrill[ 1 ] && !$scope.tooMuchChangingDirection[ 1 ] && !$scope.skippingUpToWeakQuarter[ 1 ] && !$scope.tempHighOnWeakQuarter[ 1 ] );
         };
 
         $scope.changeDuration = function( dur ) {
@@ -370,23 +390,37 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         };
 
         $scope.toggleAll = function( show ) {
+            $scope.changeDirectionAfterLargeSkip[ 1 ] = show;
+            $scope.consecutivePerfect[ 1 ] = show;
+            $scope.consecutiveSkips[ 1 ] = show;
+            $scope.coverOctave[ 1 ] = show;
+            $scope.fillInSkips[ 1 ] = show;
             $scope.imperfectStartingOrEndingInterval[ 1 ] = show;
             $scope.incorrectAccidental[ 1 ] = show;
             $scope.incorrectHarmony[ 1 ] = show;
             $scope.incorrectMelody[ 1 ] = show;
-            $scope.largerThan12th[ 1 ] = show;
-            $scope.parallelPerfect[ 1 ] = show;
-            $scope.perfectApproachedBySimilarMotion[ 1 ] = show;
-            $scope.repeatedNotes[ 1 ] = show;
-            $scope.tooManyParallelIntervals[ 1 ] = show;
-            $scope.consecutivePerfect[ 1 ] = show;
-            $scope.consecutiveSkips[ 1 ] = show;
             $scope.internalUnison[ 1 ] = show;
+            $scope.largerThan12th[ 1 ] = show;
             $scope.largeSkipOnTop[ 1 ] = show;
             $scope.leapIn3rdSpecies[ 1 ] = show;
             $scope.melodic6th[ 1 ] = show;
-            $scope.voiceCrossing[ 1 ] = show;
+            $scope.motivicRepetition[ 1 ] = show;
+            $scope.outlineOfTritone[ 1 ] = show;
+            $scope.overusedVerticalIntervalSecondSpecies[ 1 ] = show;
+            $scope.parallelPerfect[ 1 ] = show;
+            $scope.perfectApproachedBySimilarMotion[ 1 ] = show;
+            $scope.repeatedNoteInBothVoices[ 1 ] = show;
             $scope.repeatedNoteInCounterpoint[ 1 ] = show;
+            $scope.repeatedNotes[ 1 ] = show;
+            $scope.skippingInBothVoices[ 1 ] = show;
+            $scope.skippingToOrFromExtreme[ 1 ] = show;
+            $scope.skippingUpToWeakQuarter[ 1 ] = show;
+            $scope.slowTrill[ 1 ] = show;
+            $scope.surroundSkipWithStepsInOppositeDirection[ 1 ] = show;
+            $scope.tempHighOnWeakQuarter[ 1 ] = show;
+            $scope.tooManyParallelIntervals[ 1 ] = show;
+            $scope.tooMuchChangingDirection[ 1 ] = show;
+            $scope.voiceCrossing[ 1 ] = show;
         };
 
         /* buttons */
@@ -513,8 +547,12 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                                 if( ( $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) < ( $rootScope.notes[ i ][ j + 1 ][ 1 ] - 
                                       $rootScope.notes[ i ][ j ][ 1 ] ) )
                                     markThreeConsecutiveNotes( i, j, 'largeSkipOnTop' );
-                                if( ( numberOfConsecutiveSkips > 2 ) && hadLargeSkip )
+
+                                if( ( numberOfConsecutiveSkips > 2 ) ) {
                                     markThreeConsecutiveNotes( i, j, 'consecutiveSkips' );
+                                    if(  hadLargeSkip )
+                                        //markTwoConsecutiveNotes( i, j, 'consecutiveSkips' );
+                                }
                             }
                         }
                         else {
@@ -1148,20 +1186,22 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             if( $rootScope.inputParams.voiceType[ 1 ] == 'Counterpoint' )
                 beatInCounterpoint = bottomVoiceBeat;
 
-            if( $rootScope.inputParams.species == 1 || ( ( $rootScope.inputParams.species == 2 ) && ( beatInCounterpoint % 2 == 0 ) ) || 
-                ( ( $rootScope.inputParams.species == 3 ) && ( beatInCounterpoint % 4 == 0 ) ) )
+            if( $rootScope.inputParams.species == 1 || ( ( $rootScope.inputParams.species > 1 ) && ( beatInCounterpoint % 2 == 0 ) ) )
                 return true
 
             return false;
         }
 
         function setRulesHeadings() {
-            if( $scope.incorrectAccidental[ 0 ] || $scope.incorrectHarmony[ 0 ] || $scope.incorrectMelody[ 0 ] || $scope.repeatedNotes[ 0 ] || 
-                $scope.parallelPerfect[ 0 ] || $scope.perfectApproachedBySimilarMotion[ 0 ] || $scope.tooManyParallelIntervals[ 0 ] || $scope.unequalNumberOfBeats[ 0 ] || 
-                $scope.imperfectStartingOrEndingInterval[ 0 ] || $scope.repeatedNoteInCounterpoint[ 0 ] )
+            if( $scope.incorrectAccidental[ 0 ] || $scope.incorrectHarmony[ 0 ] || $scope.incorrectMelody[ 0 ] || $scope.repeatedNotes[ 0 ] ||
+                $scope.parallelPerfect[ 0 ] || $scope.perfectApproachedBySimilarMotion[ 0 ] || $scope.tooManyParallelIntervals[ 0 ] || $scope.unequalNumberOfBeats[ 0 ] ||
+                $scope.imperfectStartingOrEndingInterval[ 0 ] || $scope.repeatedNoteInCounterpoint[ 0 ] || $scope.outlineOfTritone[ 0 ] || $scope.repeatedNoteInBothVoices[ 0 ] ||
+                $scope.hasTooManySkips[ 0 ] || $scope.motivicRepetition[ 0 ] || $scope.tooMuchChangingDirection[ 0 ] )
                 $scope.hasBrokenHardRules = true;
-            if( $scope.voiceCrossing[ 0 ] || $scope.consecutivePerfect[ 0 ] || $scope.hasTooManySkips[ 0 ] || $scope.consecutiveSkips[ 0 ] || $scope.largeSkipOnTop[ 0 ] ||
-                $scope.largerThan12th[ 0 ] || $scope.internalUnison[ 0 ] || $scope.melodic6th[ 0 ] || $scope.leapIn3rdSpecies[ 0 ] )
+            if( $scope.voiceCrossing[ 0 ] || $scope.consecutivePerfect[ 0 ] || $scope.consecutiveSkips[ 0 ] || $scope.largeSkipOnTop[ 0 ] ||
+                $scope.largerThan12th[ 0 ] || $scope.internalUnison[ 0 ] || $scope.melodic6th[ 0 ] || $scope.leapIn3rdSpecies[ 0 ] ||
+                $scope.surroundSkipWithStepsInOppositeDirection[ 0 ] || $scope.skippingToOrFromExtreme[ 0 ] || $scope.skippingInBothVoices[ 0 ] ||
+                $scope.overusedVerticalIntervalSecondSpecies[ 0 ] || $scope.skippingUpToWeakQuarter[ 0 ] || $scope.tempHighOnWeakQuarter[ 0 ] )
                 $scope.hasBrokenSoftRules = true;
         };
 

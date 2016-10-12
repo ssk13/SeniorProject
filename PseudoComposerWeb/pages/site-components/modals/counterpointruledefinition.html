@@ -6,76 +6,181 @@
 
             <div class="modal-body">
 
-                <div ng-if="ruleDefinition == 'unequalNumberOfBeats'">
-                    <p>TO WRITE</p>
+                <!-- Hard Rules -->
+
+                <div ng-if="ruleDefinition == 'hasTooManySkips'">
+                    <h1>Hard Rule Violation</h1>
+                    <p>In <i>first</i> and <i>second species</i>, skips must account for less than half the melodic motions. In <i>third species</i>, skips must account for less than a quarter of the melodic motions.</p>
                 </div>
 
                 <div ng-if="ruleDefinition == 'imperfectStartingOrEndingInterval'">
-                    <p>TO WRITE</p>
+                    <h1>Hard Rule Violation</h1>
+                    <p>Begin and end with perfect consonances between two parts. This means you may begin at the unison, fifth, or octave (and rarely, a twelfth) above or below. In species where you are allowed to begin with a rest, the first sounding note must form a perfect consonance.</p>
                 </div>
 
                 <div ng-if="ruleDefinition == 'incorrectAccidental'">
-                    <p>TO WRITE</p>
-                </div>
-
-                <div ng-if="ruleDefinition == 'incorrectMelody'">
-                    <p>TO WRITE</p>
+                    <h1>Hard Rule Violation</h1>
+                    <p>Use only natural notes and B-flat, where B-flat is used as an upper neighbor to A or to avoid a melodic or vertical tritone or diminished fifth. Sharps may be used leading into cadences. When there is a B-flat in the key signature, E-flat may be used in the same manner as B-flat. In this case, B-natural may not be used.</p>
                 </div>
 
                 <div ng-if="ruleDefinition == 'incorrectHarmony'">
-                    <p>TO WRITE</p>
+                    <h1>Hard Rule Violation</h1>
+                    <p>All downbeats must be consonant.</p>
+                    <p>In <i>first species</i>, all vertical intervals will be consonant, as there <i>are</i> only downbeats in first species.</p>
+                    <p>In <i>second species</i>, the upbeat half note may be dissonant if it is passing. A <i>passing tone</i> is one that is approached and left by step in the same direction. This means that there are no dissonant neighbor tones, and that any skips to and from dissonances are prohibited. If you have a consonance on the weak beat, you connect it to the next strong-beat consonance using the same principles as in first species. It is possibe to have perfect intervals of the same type (e.g., two fifths) on two successive downbeats if contrary motion to the second is caused by the weak beat. We say the weak beat "breaks up" the parallel fifths.</p>
+                    <p>In <i>third species</i>, the first and third quarters must be consonant. These are the "strong" quarters, one on the downbeat, the other halfway through the measure. Note that ascending four notes from a third to a sixth above the cantus firmus is not the same as descending four notes from a sixth to a third, because of the dissonant third quarter. The second and fourth quarters may be dissonant if they are passing or <i>lower neighbors</i>, which means that it is approached by step from above and isfollowed by the note that preceded it. Dissonant lower neighbors were not allowed in second species. No dissonant upper neighbors are allowed.</p>
+                    <p>In <i>third species</i>, these rules can be broken by the use of a <i>cambiata</i>, <i>echapp&eacute;e</i>, or a <i>double neighbor</i>.</p>
+                    <p>In the case of a <i>cambiata</i>, the dissonance must be approached by descending step and must be on the second quarter; it must then skip from this dissonance in a descending third to a consonance, and it must be followed by at least two ascending steps, making a five-note figure minimum. The cambiata spans a descending second from one downbeat to the next.</p>
+                    <p>In the case of an <i>echapp&eacute;e</i>, a descending step is delayed by a step up to a dissonance on a weak beat. It is completed by a skip of a third down. It is fairly infrequent.</p>
+                    <p>A <i>double neighbor</i> involves skips from and to dissonances; it consists of four quarters, starting on the downbeat. It may be inverted (step up, then skkip down).</p>
                 </div>
 
-                <div ng-if="ruleDefinition == 'repeatedNotes'">
-                    <p>TO WRITE</p>
+                <div ng-if="ruleDefinition == 'incorrectMelody'">
+                    <h1>Hard Rule Violation</h1>
+                    <p>Skips of augmented and diminished intervals, and skips larger than a sixth are prohibited (except that octaves are allowed). This means that no chromatic motions (i.e., augmented unisons) are allowed, no leaps of augmented fourths (tritones) or diminished fifths, no augmented seconds, diminished fourths, etc.</p>
+                </div>
+
+                <div ng-if="ruleDefinition == 'motivicRepetition'">
+                    <h1>Hard Rule Violation</h1>
+                    <p>Direct repeptition of the whole contrapuntal combination (two or more simultaneities) is forbidden, and only two sequential repetitions are allowed. A <i>combination</i> consists of melodic motions and vertical intervals. It is legal to repeat a combination if other material intervenes, but this intervening material must last at least two whole notes. <i>Sequential</i> repetitions are those in which the combination is transposed; "two repetitions" means three occurrences: an original and two repetitions. This error occurs only when there is direct repetition of a melodic pattern in the cantus firmus, so check the cantus firmus before beginning to compose a solution.</p>
+                </div>
+
+                <div ng-if="ruleDefinition == 'outlineOfTritone'">
+                    <h1>Hard Rule Violation</h1>
+                    <p>Outlines of an augmented fourth are forbidden, and a diminished fifth outline must be completely filled in and followed by a step in the oppositie direction. An <u>outline</u> is the interval from a temporary high point in a line to the next temporary low point, or vice versa.</p>
                 </div>
 
                 <div ng-if="ruleDefinition == 'parallelPerfect'">
-                    <p>TO WRITE</p>
+                    <h1>Hard Rule Violation</h1>
+                    <p>You may not have two consecutive parallel perfect intervals. Perfect intervals include unisons, fifths, octaves and (rarely), twelfths.</p>
+                    <p>In <i>second species</i>, it is possbile to have perfect intervals of the same type on two successive downbeats if contrary motion to the second is caused by the weak beat. We say the weak beat "breaks up" the parallel fifths.</p>
                 </div>
 
-                <div ng-if="ruleDefinition == 'tooMsnyParallelIntervals'">
-                    <p>TO WRITE</p>
-                </div>
-
-                <div ng-if="ruleDefinition == 'hasTooManySkips'">
-                    <p>TO WRITE</p>
-                </div>
-
-                <div ng-if="ruleDefinition == 'internalUnison'">
-                    <p>TO WRITE</p>
-                </div>
-
-                <div ng-if="ruleDefinition == 'consecutiveSkips'">
-                    <p>TO WRITE</p>
-                </div>
-
-                <div ng-if="ruleDefinition == 'largerThan12th'">
-                    <p>TO WRITE</p>
-                </div>
-
-                <div ng-if="ruleDefinition == 'largeSkipOnTop'">
-                    <p>TO WRITE</p>
-                </div>
-
-                <div ng-if="ruleDefinition == 'voiceCrossing'">
-                    <p>TO WRITE</p>
-                </div>
-
-                <div ng-if="ruleDefinition == 'melodic6th'">
-                    <p>TO WRITE</p>
+                <div ng-if="ruleDefinition == 'perfectApproachedBySimilarMotion'">
+                    <h1>Hard Rule Violation</h1>
+                    <p>All perfect intervals must be approached by contrary or oblique motion. This means you cannot use any parallel or similar motion to approach a perfect vertical interval. Such motions are described as "parallel fifths" ( successive vertical fifths made by voices moving in parallel motion) and "similar octave" (a vertical octave approached by similar motion - some teachers also call this a "direct" or "hidden" octave). Oblique motion is possbile in first species when notes are repeated in one voice.</p>
                 </div>
 
                 <div ng-if="ruleDefinition == 'repeatedNoteInCounterpoint'">
-                    <p>TO WRITE</p>
+                    <h1>Hard Rule Violation</h1>
+                    <p>Repeated notes are not allowed in the counterpoint in any species except <i>first species</i>. Octave skips, however, are allowed.</p>
                 </div>
 
-                <div ng-if="ruleDefinition == 'leapIn3rdSpecies'">
-                    <p>TO WRITE</p>
+                <div ng-if="ruleDefinition == 'repeatedNoteInBothVoices'">
+                    <h1>Hard Rule Violation</h1>
+                    <p>Repeated notes in the counterpoint may not occur against repeated notes in the cantus firmus. Repeated notes may occur <i>either</i> in the cantus firmus <i>or</i> in the added line, but never in both at the same time. However, you may occasionally skip an octave in the contrapuntal voice even if the cantus firmus is stationary.</p>
+                </div>
+
+                <div ng-if="ruleDefinition == 'repeatedNotes'">
+                    <h1>Hard Rule Violation</h1>
+                    <p>More than two repetitions of the same pitch are not permitted.</p>
+                </div>
+
+                <div ng-if="ruleDefinition == 'slowTrill'">
+                    <h1>Hard Rule Violation</h1>
+                    <p>In <i>third species</i>, do not use the same neighbor twice in a row.</p>
+                </div>
+
+                <div ng-if="ruleDefinition == 'tooManyParallelIntervals'">
+                    <h1>Hard Rule Violation</h1>
+                    <p>Counterpoint may run parallel to the cantus firmus for four notes maximum. Any more, and the counterpoint ceases to be an independent line. Remember that the only parallel intervals allowed are thirds and sixths.</p>
+                </div>
+
+                <div ng-if="ruleDefinition == 'tooMuchChangingDirection'">
+                    <h1>Hard Rule Violation</h1>
+                    <p>In <i>third species</i>, do not change direction more than three times in six quarters. The effect of changing direction is intensified by the use of more and/or larger skips, which should be taken into account as well.</p>
+                </div>
+
+                <div ng-if="ruleDefinition == 'unequalNumberOfBeats'">
+                    <h1>Hard Rule Violation</h1>
+                    <p>Both voices should have an equal number of beats, inclusive of the permissable rests in all species except first species.</p>
+                </div>
+
+                <!-- Soft Rules -->
+
+                <div ng-if="ruleDefinition == 'changeDirectionAfterLargeSkip'">
+                    <h1>Soft Rule Violation</h1>
+                    <p>It is generally better to change direction after a large skip (bigger than a fourth), and move in steps.</p>
                 </div>
 
                 <div ng-if="ruleDefinition == 'consecutivePerfect'">
-                    <p>TO WRITE</p>
+                    <h1>Soft Rule Violation</h1>
+                    <p>Avoid more than two perfect vertical intervals in a row. Use a mixture of perfect and imperfect, or mostly imperfect intervals.</p>
+                </div>
+
+                <div ng-if="ruleDefinition == 'consecutiveSkips'">
+                    <h1>Soft Rule Violation</h1>
+                    <p>Do not use more than two skips in succession (whether in the same direction or not).</p>
+                </div>
+
+                <div ng-if="ruleDefinition == 'coverOctave'">
+                    <h1>Soft Rule Violation</h1>
+                    <p>In <i>first species</i>, you should try to cover the whole modal octave approximately every 10-20 cantus firmus notes (except for octave skips). In <i>second species</i>, try to cover the modal octave every 4-8 whole notes. This will ensure that your line keeps moving and doesn't get bogged down in a narrow range or leap about wildly.</p>
+                </div>
+
+                <div ng-if="ruleDefinition == 'voiceCrossing'">
+                    <h1>Soft Rule Violation</h1>
+                    <p>Crossed voices are to be avoided wherever possible, particularly on strong beats.</p>
+                </div>
+
+                <div ng-if="ruleDefinition == 'fillInSkips'">
+                    <h1>Soft Rule Violation</h1>
+                    <p>It is best to connect extremes of register with smooth, mostly stepwise motion; even if skips are not immediately filled in, try to fill them in before or after.</p>
+                </div>
+
+                <div ng-if="ruleDefinition == 'internalUnison'">
+                    <h1>Soft Rule Violation</h1>
+                    <p>Avoid unisons, except on the first and last notes. One of the voices appears to vanish.</p>
+                </div>
+
+                <div ng-if="ruleDefinition == 'largerThan12th'">
+                    <h1>Soft Rule Violation</h1>
+                    <p>Widely separated voices (more than a twelfth) should be avoided, and should be done as briefly as possible.</p>
+                </div>
+
+                <div ng-if="ruleDefinition == 'largeSkipOnTop'">
+                    <h1>Soft Rule Violation</h1>
+                    <p>When you use skips or steps <i>in the same direction</i>, the larger intervals should be below the smaller ones. This is called the "pyriamid" rule, on the theory that larger intervals are heavier and support smaler ones.</p>
+                </div>
+
+                <div ng-if="ruleDefinition == 'leapIn3rdSpecies'">
+                    <h1>Soft Rule Violation</h1>
+                    <p>In <i>third species</i>, skips should rarely exceed a third.</p>
+                </div>
+
+                <div ng-if="ruleDefinition == 'melodic6th'">
+                    <h1>Soft Rule Violation</h1>
+                    <p>Avoid skipping a major sixth in either direction, and avoid minor sixths descending (minor sixths ascending are fine). These skips are occasionally found in late Renaissance madrigals whose texts deal with extravagant and harsh emotions.</p>
+                </div>
+
+                <div ng-if="ruleDefinition == 'overusedVerticalIntervalSecondSpecies'">
+                    <h1>Soft Rule Violation</h1>
+                    <p>In <i>second</i> and <i>third species</i>, the same vertical interval should not be used in more than four successive whole-note unites. (Note that it makes no difference on what beat the repeated interval falls.)</p>
+                </div>
+
+                <div ng-if="ruleDefinition == 'skippingInBothVoices'">
+                    <h1>Soft Rule Violation</h1>
+                    <p>Avoid skipping simultaneously in both parts (in any direction); this is not so serious if both voices move only a third.</p>
+                </div>
+
+                <div ng-if="ruleDefinition == 'skippingToOrFromExtreme'">
+                    <h1>Soft Rule Violation</h1>
+                    <p>Avoid skipping both to and from a temporary high or low point. This leaves one note "hanging," detached from the rest of the line.</p>
+                </div>
+
+                <div ng-if="ruleDefinition == 'skippingUpToWeakQuarter'">
+                    <h1>Soft Rule Violation</h1>
+                    <p>Avoid skipping up to a weak quarter.</p>
+                </div>
+
+                <div ng-if="ruleDefinition == 'surroundSkipWithStepsInOppositeDirection'">
+                    <h1>Soft Rule Violation</h1>
+                    <p>It is preferable to precede and/or follow a skip with a step or steps in the opposite direction.</p>
+                </div>
+
+                <div ng-if="ruleDefinition == 'tempHighOnWeakQuarter'">
+                    <h1>Soft Rule Violation</h1>
+                    <p>Avoid having a temporary high point on a weak quarter, even in stepwise motion. This is very rare in Renaissance style because it creates a sense of syncopation that results from the conflict of a <i>tonic accent</i>i> with a relatively weak metric position. This effect is intensified if the motion up to the weak quarter is by skip. However, we often find weak-quarter high points in instrumental music.</p>
                 </div>
 
             </div>
