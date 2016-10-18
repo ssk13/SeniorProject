@@ -16,7 +16,6 @@ Rules To Implement:
 	* 2nd species
 		* may begin with a half-note rest, but first sounding note must be perfect consonance
 	* 3rd species
-		* Do not use same neighbor twice in a row
 		* Do not change direction more than 3 times in 6 quarter notes (account for larger leaps too, p58)
 		* cambiata, echappee, double neighbor allowed allowed
 	* Check cadence

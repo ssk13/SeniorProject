@@ -550,7 +550,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
 
                                 if( ( numberOfConsecutiveSkips > 2 ) ) {
                                     markThreeConsecutiveNotes( i, j, 'consecutiveSkips' );
-                                    if(  hadLargeSkip )
+                                    //if(  hadLargeSkip )
                                         //markTwoConsecutiveNotes( i, j, 'consecutiveSkips' );
                                 }
                             }
@@ -624,7 +624,8 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 prevWasUnison = false,
                 prevInterval = -1,
                 numberOfParallelIntervals = 1,
-                currInterval, note, classA, classB;
+                counterpointStaff = $rootScope.inputParams.voiceType[ 1 ] == 'Counterpoint' ? 1 : 0,
+                currInterval, note, classA, classB, prevNeighbor;
 
             while( ( i < $rootScope.notes[ 0 ].length ) && ( j < $rootScope.notes[ 1 ].length ) ) {
                 checkVoiceCrossing( i, j );
@@ -638,9 +639,26 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                         else if( $rootScope.inputParams.species == 3 ) {
                             if( !isLowerNeighbor( i, j ) )
                                 markHarmony( 'harmonic', i, j );
+                            else {
+                                if( ( counterpointStaff == 0 ) && ( $rootScope.notes[ counterpointStaff ][ i ][ 0 ] == prevNeighbor ) ||
+                                    ( counterpointStaff == 1 ) && ( $rootScope.notes[ counterpointStaff ][ j ][ 0 ] == prevNeighbor ) ) {
+                                    markFourConsecutiveNotes( 'slowTrill', counterpointStaff, i, j );
+                                }
+                                else {
+                                    if( counterpointStaff == 0 )
+                                        prevNeighbor = $rootScope.notes[ counterpointStaff ][ i ][ 0 ];
+                                    else
+                                        prevNeighbor = $rootScope.notes[ counterpointStaff ][ j ][ 0 ];
+                                }
+                            }
                         }
                     }
+                    else
+                        prevNeighbor = '';
+
                 }
+                else if( !isStrongBeat( i, j ) )
+                    prevNeighbor = '';
 
                 if( ( beatOfI == 0 ) || ( beatOfJ == 0 ) ) {
                     if( Math.abs( notes[ 0 ][ i ][ 1 ] - notes[ 1 ][ j ][ 1 ] ) > 16 )
@@ -1033,6 +1051,19 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 $scope.consecutiveSkips[ 0 ] = true;
             else if( className == 'largeSkipOnTop' )
                 $scope.largeSkipOnTop[ 0 ] = true;
+        };
+
+        function markFourConsecutiveNotes( className, staffNumber, i, j ) {
+            var index = staffNumber == 0 ? i : j,
+                noteEl;
+
+            for( k = -3; k < 1; k++) {
+                noteEl = $( document.querySelector( '[data-note-index="' + ( index + k ) + '"][data-staff-index="' + staffNumber + '"]' ) );
+                noteEl.addClass( className );
+            }
+
+            if( className == 'slowTrill')
+                $scope.slowTrill[ 0 ] = true;
         };
 
         function markTwoConsecutiveNotes( i, j, className ) {
