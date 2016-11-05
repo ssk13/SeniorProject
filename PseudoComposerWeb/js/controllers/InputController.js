@@ -71,7 +71,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                                         [ 99, 'a2', 7, '.slot8' ], [ 111, 'g2', 5, '.slot9' ], [ 119, 'f2', 3, '.slot10' ]
                                     ],
             activeStaff = 0,
-            connections = $('connection, inner'),
+            connections = $('connection'),
             connectionNumber = 0,
             targetNote;
 
@@ -381,6 +381,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             beatIndex = [ 0, 0, 0 ];
             notes = [ [],[],[] ];
             activeStaff = 0;
+            connections.connections('remove');
         };
 
         $scope.toggleActiveStaff = function( staff ) {

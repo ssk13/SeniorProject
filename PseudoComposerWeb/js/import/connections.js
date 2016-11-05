@@ -1,9 +1,9 @@
 (function($) {
 	$.fn.connections = function(options) {
 		if (options === 'update') {
-			return processConnections(update, this);
+			return processConnections(update);
 		} else if (options === 'remove') {
-			return processConnections(destroy, this);
+			return processConnections(destroy);
 		} else {
 			options = $.extend(true, {
 				borderClasses: {},
@@ -200,8 +200,9 @@
 				css(data.css);
 	}
 
-	var processConnections = function(method, elements) {
-		return elements.each(function() {
+	var processConnections = function(method) {
+		var els = $('connection');
+		return els.each(function() {
 			var connections = $.data(this, 'connections');
 			if (connections instanceof Array) {
 				for (var i = 0, len = connections.length; i < len; i++) {
