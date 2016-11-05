@@ -59,7 +59,6 @@ Rules to fix:
 * Make repeated intervals check for enharmonic spellings of intervals
 * For violation of a melodic/harmonic interval, outline *what* the illegal interval is and indicate it
 * For violation of parallels, indicate *what* the intervals are
-* Similar motion into perfect intervals - only check on the beat
 
 Questions for Richards
 * In the case that the user put in incorrect rhythmic values (i.e. not proper to species selected) how should I determine strong v/ weak beats?

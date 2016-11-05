@@ -224,6 +224,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
 
         $scope.enableEditing = function() {
             $scope.counterpointChecked = false;
+            connections.connections('remove');
         };
 
         $scope.floatingNoteheadClicked = function( $event, staffNumber ) {
@@ -667,10 +668,11 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                     }
 
                     if( notes[ 0 ][ i ] [ 1 ] == notes[ 1 ][ j ][ 1 ] ) {
-                        if( isStrongBeat( i, j ) )
+                        if( isStrongBeat( i, j ) ) {
                             markHarmony( 'internalUnison', i, j );
-                        if( isApproachedBySimilarMotion( i, j ) )
-                            markConsecutiveVerticalIntervals( 'perfectApproachedBySimilarMotion', i, j );
+                            if( isApproachedBySimilarMotion( i, j ) )
+                                markConsecutiveVerticalIntervals( 'perfectApproachedBySimilarMotion', i, j );
+                        }
 
                         if( prevWasOctave || prevWasFifth ) {
                             markConsecutiveVerticalIntervals( 'consecutivePerfect', i, j );
@@ -685,7 +687,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                         prevWasFifth = false;
                     }
                     else if( ( ( notes[ 0 ][ i ][ 1 ] - notes[ 1 ][ j ][ 1 ] ) % 7 ) == 0 ) {
-                        if( isApproachedBySimilarMotion( i, j ) )
+                        if( isStrongBeat( i, j ) && isApproachedBySimilarMotion( i, j ) )
                             markConsecutiveVerticalIntervals( 'perfectApproachedBySimilarMotion', i, j );
 
                         if( prevWasOctave || prevWasUnison ) {
@@ -701,7 +703,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                         prevWasUnison = false;
                     }
                     else if( ( ( notes[ 0 ][ i ][ 1 ] - notes[ 1 ][ j ][ 1 ] ) % 12 ) == 0 )  {
-                        if( isApproachedBySimilarMotion( i, j ) )
+                        if( isStrongBeat( i, j ) && isApproachedBySimilarMotion( i, j ) )
                             markConsecutiveVerticalIntervals( 'perfectApproachedBySimilarMotion', i, j );
 
                         if( prevWasFifth || prevWasUnison ) {
