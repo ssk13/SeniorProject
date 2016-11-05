@@ -54,7 +54,6 @@ Features intentionally omitted
 
 Aesthetic:
 * Find way to connect parallel/consecutive perfect intervals horizontally to better group them
-* Fix stem direction in other clefs
 
 Rules to fix:
 * Make repeated intervals check for enharmonic spellings of intervals

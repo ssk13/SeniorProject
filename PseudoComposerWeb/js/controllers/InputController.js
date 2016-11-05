@@ -140,7 +140,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         };
 
         $scope.changeDuration = function( dur ) {
-            var staffIndex, noteIndex, val, prevDur;
+            var staffIndex, noteIndex, val, prevDur, noteVal;
 
             $scope.duration = dur;
 
@@ -158,33 +158,17 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 else
                     beatIndex[ staffIndex ] -= 1;
 
-                if( dur == 'quarter' ) {
-                    if( val < 35 ){
-                        $( targetNote )[ 0 ].setAttribute( 'src', 'img/quarterup.png' );  
-                        $( targetNote ).addClass( 'quarterup' );         
-                    }
-                    else{
-                        $( targetNote )[ 0 ].setAttribute( 'src', 'img/quarterdown.png' );
-                        $( targetNote ).addClass( 'quarterdown' ); 
-                    }
+                noteVal = getNoteFromDurationAndValue( dur, val, $rootScope.inputParams.clef[ staffIndex ] );
+
+                $( targetNote )[ 0 ].setAttribute( 'src', 'img/' + noteVal + '.png' );
+                $( targetNote ).addClass( noteVal );
+                if( dur == 'quarter' )
                     beatIndex[ staffIndex ] += 1;
-                }
-                else if( dur == 'half' ) {
-                    if( val < 35 ){
-                        $( targetNote )[ 0 ].setAttribute( 'src', 'img/halfup.png' );
-                        $( targetNote ).addClass( 'halfup' ); 
-                    }
-                    else{
-                        $( targetNote )[ 0 ].setAttribute( 'src', 'img/halfdown.png' );
-                        $( targetNote ).addClass( 'halfdown' ); 
-                    }
+                else if( dur == 'half' )
                     beatIndex[ staffIndex ] += 2;
-                }
-                else {
-                    $( targetNote )[ 0 ].setAttribute( 'src', 'img/whole.png' );
-                    $( targetNote ).addClass( 'whole' ); 
+                else
                     beatIndex[ staffIndex ] += 4;
-                }
+
                 notes[ staffIndex ][ noteIndex ][ 2 ] = dur;
             }
 
@@ -279,7 +263,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
 
         $scope.insertNote = function( classname, topPosValue, $event, staffNumber ) {
             var otherStaffNumber = Math.abs( staffNumber - 1 ),
-                spaceEl, noteheadDiv, noteheadEl, note, target, i, numericValue, noteName;
+                spaceEl, noteheadDiv, noteheadEl, note, target, i, numericValue, noteName, noteVal;
 
             if( $event.target === undefined ) //inserting from click of floating notehead
                 target = $event[ 0 ];
@@ -330,8 +314,11 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 }
             }
 
+            noteVal = getNoteFromDurationAndValue( $scope.duration, numericValue, $rootScope.inputParams.clef[ staffNumber ] );
             spaceEl = $( document.querySelector( '.activeStaff' ).querySelector( classname ) );
-            noteheadEl = getNoteFromDurationAndValue( $scope.duration, numericValue );
+            noteheadEl = $( '<img class="notehead static">' )
+            $( noteheadEl )[ 0 ].setAttribute( 'src', 'img/' + noteVal + '.png' );
+            $( noteheadEl ).addClass( noteVal );
             noteheadEl[ 0 ].setAttribute( 'data-note-index', noteIndex[ activeStaff ] );
             noteheadEl[ 0 ].setAttribute( 'data-staff-index', staffNumber );
             noteheadEl.css( {
@@ -381,6 +368,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             beatIndex = [ 0, 0, 0 ];
             notes = [ [],[],[] ];
             activeStaff = 0;
+            targetNote = '';
             connections.connections('remove');
         };
 
@@ -1178,34 +1166,61 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
 
         /* helpers */
 
-        function getNoteFromDurationAndValue( dur, val ) {
-            var noteEl = $( '<img class="notehead static">' )
+        function getNoteFromDurationAndValue( dur, val, clef ) {
             if( dur == 'quarter' ) {
-                if( val < 33 ){
-                    $( noteEl )[ 0 ].setAttribute( 'src', 'img/quarterup.png' );  
-                    $( noteEl ).addClass( 'quarterup' );         
+                if( clef == 'img/trebleclef.png' ) {
+                    if( val < 33 )
+                        return 'quarterup';
+                    else
+                        return 'quarterdown';
                 }
-                else{
-                    $( noteEl )[ 0 ].setAttribute( 'src', 'img/quarterdown.png' );
-                    $( noteEl ).addClass( 'quarterdown' ); 
+                else if( clef == 'img/altoclef.png' ) {
+                    if( val < 22 )
+                        return 'quarterup';
+                    else
+                        return 'quarterdown';
+                }
+                else if( clef == 'img/tenorclef.png' ) {
+                    if( val < 19 )
+                        return 'quarterup';
+                    else
+                        return 'quarterdown';
+                }
+                else {
+                    if( val < 12 )
+                        return 'quarterup';
+                    else
+                        return 'quarterdown';
                 }
             }
-            else if( dur == 'half' ) {
-                if( val < 33 ){
-                    $( noteEl )[ 0 ].setAttribute( 'src', 'img/halfup.png' );
-                    $( noteEl ).addClass( 'halfup' ); 
+            if( dur == 'half' ) {
+                if( clef == 'img/trebleclef.png' ) {
+                    if( val < 33 )
+                        return 'halfup';
+                    else
+                        return 'halfdown';
                 }
-                else{
-                    $( noteEl )[ 0 ].setAttribute( 'src', 'img/halfdown.png' );
-                    $( noteEl ).addClass( 'halfdown' ); 
+                else if( clef == 'img/altoclef.png' ) {
+                    if( val < 22 )
+                        return 'halfup';
+                    else
+                        return 'halfdown';
+                }
+                else if( clef == 'img/tenorclef.png' ) {
+                    if( val < 19 )
+                        return 'halfup';
+                    else
+                        return 'halfdown';
+                }
+                else {
+                    if( val < 12 )
+                        return 'halfup';
+                    else
+                        return 'halfdown';
                 }
             }
-            else {
-                $( noteEl )[ 0 ].setAttribute( 'src', 'img/whole.png' );
-                $( noteEl ).addClass( 'whole' ); 
-            }
-
-            return noteEl;
+            else
+                return 'whole';
         };
 
         function insertPreComposedNote( value, staffNumber ) {
