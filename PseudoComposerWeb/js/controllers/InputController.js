@@ -103,19 +103,18 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 if( accClass == acc ) {
                     $( targetNote ).removeClass( 'hasAccidental' );
                     setUpTaskbar( targetNote );
-                    shiftNotes( -20 );
+                    checkSpacing();
                     return;
                 }
             }
 
             addAccidentalToNote( margin, acc, index );
 
-            if( !$( targetNote ).hasClass( 'hasAccidental' ) ) {
+            if( !$( targetNote ).hasClass( 'hasAccidental' ) )
                 $( targetNote ).addClass( 'hasAccidental' );
-                shiftNotes( 20 );
-            }
             
             setUpTaskbar( targetNote );
+            checkSpacing();
         };
 
         $scope.areAllShown = function() {
@@ -188,6 +187,8 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 }
                 notes[ staffIndex ][ noteIndex ][ 2 ] = dur;
             }
+
+            checkSpacing();
         };
 
         $scope.deleteNote = function() {
@@ -221,13 +222,6 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             for( i = parseInt( index ); i != noteEls.length - 1; ++i ) {
                 note = $( document.querySelector( '[data-note-index="' + ( i + 1 ) + '"][data-staff-index="' + activeStaff + '"]' ) );
                 note[ 0 ].setAttribute( 'data-note-index', i );
-                note[ 0 ].style.marginLeft = ( parseInt( note[ 0 ].style.marginLeft ) - offset ) + 'px';
-                if( note.hasClass( 'hasAccidental' ) ) {
-                    acc = note[ 0 ].previousElementSibling;
-                    margin = $( acc )[ 0 ].getAttribute( 'style' );
-                    margin = parseInt( margin.slice( 13, margin.indexOf( 'px' ) ) ) - offset;
-                    $( acc )[ 0 ].style = 'margin-left: ' + margin + 'px;';
-                }
             }
 
             currentLeftPos[ activeStaff ] -= offset;
@@ -240,6 +234,8 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             }
             else
                 targetNote = undefined;
+
+            checkSpacing();
         };
 
         $scope.enableEditing = function() {
@@ -360,6 +356,8 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 beatIndex[ activeStaff ] += 1;
 
             setUpTaskbar( noteheadEl );
+
+            checkSpacing();
         };
 
         $scope.setDefinition = function( ruleDefinition ) {
@@ -788,6 +786,97 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
 
             if( beatIndex[ 0 ] !=  beatIndex[ 1 ] )
                 $scope.unequalNumberOfBeats[ 0 ] = true;
+        };
+
+        function checkSpacing() {
+            if( $rootScope.inputParams.numberOfVoices < 2 )
+                return;
+
+            var i = 0,
+                j = 0,
+                beatOfI = 0,
+                beatOfJ = 0,
+                marginOfI = 90,
+                marginOfJ = 90,
+                topNote, bottomNote, acc;
+
+            while( ( i < notes[ 0 ].length ) || ( j < notes[ 1 ].length ) ) {
+                topNote = $( document.querySelector( '[data-note-index="' + ( i ) + '"][data-staff-index="0"]' ) );
+                bottomNote = $( document.querySelector( '[data-note-index="' + ( j ) + '"][data-staff-index="1"]' ) );
+                if( ( ( beatOfI == 0 ) && ( i < notes[ 0 ].length ) && topNote.hasClass( 'hasAccidental' ) ) ||
+                    ( ( beatOfJ == 0 ) && ( i < notes[ 1 ].length ) && bottomNote.hasClass( 'hasAccidental' ) ) ) {
+                    marginOfI += 20;
+                    marginOfJ += 20;
+                }
+                if( ( beatOfI == 0 ) && ( i < notes[ 0 ].length ) ) {
+                    if( beatOfJ != 0 )
+                        marginOfJ += 40;
+                    topNote[ 0 ].style.marginLeft = marginOfI + 'px';
+                    if( topNote.hasClass( 'hasAccidental' ) ) {
+                        acc = topNote[ 0 ].previousElementSibling;
+                        $( acc )[ 0 ].style = 'margin-left: ' + ( marginOfI - 105 ) + 'px;';
+                    }
+                    marginOfI += 40;
+                }
+                if( ( beatOfJ == 0 ) && ( j < notes[ 1 ].length ) ) {
+                    if( beatOfI != 0 )
+                        marginOfI += 40;
+                    bottomNote[ 0 ].style.marginLeft = marginOfJ + 'px';
+                    if( bottomNote.hasClass( 'hasAccidental' ) ) {
+                        acc = bottomNote[ 0 ].previousElementSibling;
+                        $( acc )[ 0 ].style = 'margin-left: ' + ( marginOfJ - 105 ) + 'px;';
+                    }
+                    marginOfJ += 40;
+                }
+
+                if( i < notes[ 0 ].length ) {
+                    if( notes[ 0 ][ i ][ 2 ] == 'whole' ) {
+                        if( beatOfI == 3 ) {
+                            beatOfI = 0;
+                            ++i;
+                        }
+                        else
+                            ++beatOfI;
+                    }
+                    else if( notes[ 0 ][ i ][ 2 ] == 'half' ) {
+                        if( beatOfI == 1 ) {
+                            beatOfI = 0;
+                            ++i;
+                        }
+                        else
+                            ++beatOfI;
+                    }
+                    else
+                       ++i;
+                }
+
+                if( j < notes[ 1 ].length ) {
+                    if( notes[ 1 ][ j ][ 2 ] == 'whole' ) {
+                        if( beatOfJ == 3 ) {
+                            beatOfJ = 0;
+                            ++j;
+                        }
+                        else
+                            ++beatOfJ;
+                    }
+                    else if( notes[ 1 ][ j ][ 2 ] == 'half' ) {
+                        if( beatOfJ == 1 ) {
+                            beatOfJ = 0;
+                            ++j;
+                        }
+                        else
+                            ++beatOfJ;
+                    }
+                    else
+                       ++j;
+                }
+
+                if( i == notes[ 0 ].length )
+                    currentLeftPos[ 0 ] = marginOfI;
+                if( j == notes[ 1 ].length )
+                    currentLeftPos[ 1 ] = marginOfJ;
+
+            }
         };
 
         function checkVoiceCrossing( firstNoteIndex, secondNoteIndex ) {
@@ -1261,25 +1350,6 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 $scope.duration = 'quarter';
             else
                 $scope.duration = 'half';
-        };
-
-        function shiftNotes( offset ) {
-            var notesArr = $( document.querySelectorAll( '[data-staff-index="' + activeStaff + '"].static' ) ),
-                index = parseInt( targetNote[0].getAttribute( 'data-note-index' ) ),
-                note, acc, margin;
-
-            for( i = index; i != notesArr.length ; ++i ) {
-                note = $( document.querySelector( '[data-note-index="' + ( i ) + '"][data-staff-index="' + activeStaff + '"]' ) );
-                note[ 0 ].style.marginLeft = ( parseInt( note[ 0 ].style.marginLeft ) + offset ) + 'px';
-                if( note.hasClass( 'hasAccidental' ) ) {
-                    acc = note[ 0 ].previousElementSibling;
-                    margin = $( acc )[ 0 ].getAttribute( 'style' );
-                    margin = parseInt( margin.slice( 13, margin.indexOf( 'px' ) ) ) + offset;
-                    $( acc )[ 0 ].style = 'margin-left: ' + margin + 'px;';
-                }
-            }
-
-            currentLeftPos[ activeStaff ] += offset;
         };
 
         $rootScope.$on( 'printMusic', function( event, args ) {

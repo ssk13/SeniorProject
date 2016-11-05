@@ -43,23 +43,35 @@ Features To Implement
 * MusicXML
 * Check if invertible (just omit the 5ths if invertible at the octave...)
 * 4th and 5th species CP
-* Page that just lists all da rulez
 * Don't let users add 2 cantus firmuses
 * Add elaboration on "is this voice the cantus firmus or the counterpoint" dialogue
 * Create a form that sends me the composition and a brief message about what is mistaken
 * Verify mode
 * Let users change clef/species later
 
+Features intentionally omitted
+* Page that just lists all da rulez	- nah just direct to schubert
+
 Aesthetic:
 * Find way to connect parallel/consecutive perfect intervals horizontally to better group them
+* Make it reset connections when you restart
+* Fix stem direction in other clefs
 
 Rules to fix:
 * Make repeated intervals check for enharmonic spellings of intervals
 * For violation of a melodic/harmonic interval, outline *what* the illegal interval is and indicate it
 * For violation of parallels, indicate *what* the intervals are
+* Similar motion into perfect intervals - only check on the beat
 
 Questions for Richards
 * In the case that the user put in incorrect rhythmic values (i.e. not proper to species selected) how should I determine strong v/ weak beats?
+	nah just go ahead and assume that they want it checked anyway
 * In the rule enumerations, should I cater it to the species that they're using?
 	Such as, for harmonic violations, should I only discuss passing tones and such when relevant?
+		make it specific
 * How to account for larger leaps in 3rd species regarding excessively changing direction
+
+change 'change duration' so the next note changes ,not the current one
+
+Bank of cantus firmuses - to practice with
+Practice exercises with randomly generated cantus firmuses
