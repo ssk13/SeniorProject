@@ -11,12 +11,11 @@ Rules To Implement:
 * Hard rules
 	* Circumstances for Eb
 	* Bb as upper neighbor to A or to avoid tritone ONLY
-	* No outline of augmented fourth, outline of diminished 5th must be filled in and followed by step in the opposite direction
 	* Direct repetition of contrapuntal combinaiton is forbidden - only 2 sequential repetitions allowed (p26)
 	* 2nd species
 		* may begin with a half-note rest, but first sounding note must be perfect consonance
 	* 3rd species
-		* Do not change direction more than 3 times in 6 quarter notes (account for larger leaps too, p58)
+		* account for larger leaps in changing directions, p58
 		* cambiata, echappee, double neighbor allowed allowed
 	* Check cadence
 	* Repeated notes in counterpoint can't ocur against repeated notes in cf
@@ -59,6 +58,7 @@ Rules to fix:
 * Make repeated intervals check for enharmonic spellings of intervals
 * For violation of a melodic/harmonic interval, outline *what* the illegal interval is and indicate it
 * For violation of parallels, indicate *what* the intervals are
+* For tritone outline, outline of diminished 5th must be filled in and followed by step in the opposite direction
 
 Questions for Richards
 * In the case that the user put in incorrect rhythmic values (i.e. not proper to species selected) how should I determine strong v/ weak beats?

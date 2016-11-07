@@ -56,6 +56,13 @@ connection {
 	margin-left: 5px;
 }
 
+.showOutlineOfTritone connection.outlineOfTritone {
+	visibility: visible;
+	border: 2px solid rgb(80,87,122);
+	border-radius: 25px;
+	margin-left: 5px;
+}
+
 .showParallelPerfect connection.parallelPerfect {
 	visibility: visible;
 	border: 2px solid rgb(90,97,132);

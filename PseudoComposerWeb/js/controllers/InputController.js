@@ -498,12 +498,50 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             var numberOfSkips = 0,
                 numberOfConsecutiveSkips = 0,
                 hadLargeSkip = false,
+                isAscending = false,
+                numberOfTimesChangedDirections = 0,
                 numberOfSteps = 0,
-                i, j, k, noteEl, classA, classB, diff, note, accEl, nextNote, repeatedNote;
+                i, j, k, noteEl, classA, classB, diff, note, accEl, nextNote, repeatedNote, firstNoteOfOutline;
 
             for( i = 0; i < $rootScope.notes.length; ++i ) {
+                firstNoteOfOutline = 0;
                 for( j = 0; j < $rootScope.notes[ i ].length; ++j ) {
                     if( j < ( $rootScope.notes[ i ].length - 1 ) ) {
+                        if( $rootScope.inputParams.species == 3 ) {
+                            if( j < ( $rootScope.notes[ i ].length - 5 ) ) {
+                                diff = $rootScope.notes[ i ][ j + 1 ][ 1 ] - $rootScope.notes[ i ][ j ][ 1 ];
+                                numberOfTimesChangedDirections = ( diff != 0 ) ? 1 : 0;
+                                isAscending = diff > 0;
+                                for( k = 1; k < 5; ++k ) {
+                                    diff = $rootScope.notes[ i ][ j + k + 1 ][ 1 ] - $rootScope.notes[ i ][ j + k ][ 1 ];
+                                    if( diff > 0 ) {
+                                        if( !isAscending ) {
+                                            ++numberOfTimesChangedDirections;
+                                            isAscending = true;
+                                        }
+                                    }
+                                    else {
+                                        if( isAscending ) {
+                                            ++numberOfTimesChangedDirections;
+                                            isAscending = false;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if( numberOfTimesChangedDirections > 3 )
+                                markSixConsecutiveNotes( 'tooMuchChangingDirection', i, j );
+                        }
+
+                        if( j > 1 ) {
+                            if( ( ( $rootScope.notes[ i ][ j - 1 ][ 1 ] - $rootScope.notes[ i ][ j ][ 1 ] ) ) *
+                                ( $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ j + 1 ][ 1 ] ) < 0 ) {
+                                if( $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ firstNoteOfOutline ][ 1 ] == 6 )
+                                    markIllegalOutline( i, firstNoteOfOutline, j, 'outlineOfTritone')
+                                firstNoteOfOutline = j;
+                            }
+                        }
+
                         if( !isValidMelodically( $rootScope.notes[ i ][ j + 1 ], $rootScope.notes[ i ][ j ] ) ) {
                             diff = Math.abs( $rootScope.notes[ i ][ j + 1 ][ 1 ] - $rootScope.notes[ i ][ j ][ 1 ] );
                             if( ( diff == 8 ) || ( diff == 9 ) )
@@ -547,6 +585,12 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                             ++numberOfSteps;
                             numberOfConsecutiveSkips = 0;
                             hadLargeSkip = false;
+                        }
+                    }
+                    else {
+                        if( j > 1 ) {
+                            if( $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ firstNoteOfOutline ][ 1 ] == 6 )
+                                markIllegalOutline( i, firstNoteOfOutline, j, 'outlineOfTritone')
                         }
                     }
 
@@ -1146,10 +1190,22 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 $scope.slowTrill[ 0 ] = true;
         };
 
+        function markSixConsecutiveNotes( className, i, j ) {
+            var noteEl;
+
+            for( k = 0; k < 6; k++) {
+                noteEl = $( document.querySelector( '[data-note-index="' + ( j + k ) + '"][data-staff-index="' + i + '"]' ) );
+                noteEl.addClass( className );
+            }
+
+            if( className == 'tooMuchChangingDirection')
+                $scope.tooMuchChangingDirection[ 0 ] = true;
+        };
+
         function markTwoConsecutiveNotes( i, j, className ) {
             var noteEl = $( document.querySelector( '[data-note-index="' + ( j + 1 ) + '"][data-staff-index="' + i + '"]' ) ),
-                classA = className + ' ' + className + connectionNumber++,
-                classB = className + ' ' + className + connectionNumber++;
+                classA = className + connectionNumber++,
+                classB = className + connectionNumber++;
 
             noteEl.addClass( classA );
             noteEl = $( document.querySelector( '[data-note-index="' + j + '"][data-staff-index="' + i + '"]' ) );
@@ -1164,6 +1220,20 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 $scope.repeatedNoteInCounterpoint[ 0 ] = true;
             else if( className == 'leapIn3rdSpecies' )
                 $scope.leapIn3rdSpecies[ 0 ] = true;
+        };
+
+        function markIllegalOutline( i, j, k, className ) {
+            var noteEl = $( document.querySelector( '[data-note-index="' + j + '"][data-staff-index="' + i + '"]' ) ),
+                classA = className + connectionNumber++,
+                classB = className + connectionNumber++;
+
+            noteEl.addClass( classA );
+            noteEl = $( document.querySelector( '[data-note-index="' + k + '"][data-staff-index="' + i + '"]' ) );
+            noteEl.addClass( classB );
+            $( '.' + classA ).connections( { to: '.' + classB, 'class': 'connections ' + className } );
+
+            if( className == 'outlineOfTritone' )
+                $scope.outlineOfTritone[ 0 ] = true;
         };
 
         /* helpers */

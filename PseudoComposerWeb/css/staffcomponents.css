@@ -87,6 +87,10 @@
 	border: 2px solid rgb(110,117,152) !important;
 }
 
+.showTooMuchChangingDirection .tooMuchChangingDirection {
+	border: 2px solid rgb(110,117,152) !important;
+}
+
 .notehead {
     width: 30px;
     height: 20px;
