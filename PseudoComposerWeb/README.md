@@ -10,7 +10,6 @@ app location: localhost:8080
 Rules To Implement:
 * Hard rules
 	* Circumstances for Eb
-	* Bb as upper neighbor to A or to avoid tritone ONLY
 	* Direct repetition of contrapuntal combinaiton is forbidden - only 2 sequential repetitions allowed (p26)
 	* 2nd species
 		* may begin with a half-note rest, but first sounding note must be perfect consonance
@@ -53,12 +52,14 @@ Features intentionally omitted
 
 Aesthetic:
 * Find way to connect parallel/consecutive perfect intervals horizontally to better group them
+* Make accidentals add padding for one-voice composition
 
 Rules to fix:
 * Make repeated intervals check for enharmonic spellings of intervals
 * For violation of a melodic/harmonic interval, outline *what* the illegal interval is and indicate it
 * For violation of parallels, indicate *what* the intervals are
 * For tritone outline, outline of diminished 5th must be filled in and followed by step in the opposite direction
+* Make melodic intervals check for legal Bb
 
 Questions for Richards
 * In the case that the user put in incorrect rhythmic values (i.e. not proper to species selected) how should I determine strong v/ weak beats?

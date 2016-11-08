@@ -612,8 +612,9 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                     }
 
                     if( note[ 0 ].indexOf( 'flat' ) > 0 ) {
-                        if( note[ 0 ].indexOf( 'b' ) === -1 )
-                            markInvalidAccidental( i, j )
+                        if( ( note[ 0 ].indexOf( 'b' ) === -1 ) || ( j == 0 ) || !( ( ( note[ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) == 1 ) ||
+                                                                                    ( ( note[ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) == 5 ) ) )
+                            markInvalidAccidental( i, j );
                     }
                 }
 
