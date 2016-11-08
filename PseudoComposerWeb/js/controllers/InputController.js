@@ -825,9 +825,6 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         };
 
         function checkSpacing() {
-            if( $rootScope.inputParams.numberOfVoices < 2 )
-                return;
-
             var i = 0,
                 j = 0,
                 beatOfI = 0,
@@ -835,6 +832,46 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 marginOfI = 90,
                 marginOfJ = 90,
                 topNote, bottomNote, acc;
+
+            if( $rootScope.inputParams.numberOfVoices < 2 ) {
+                while( i < notes[ 0 ].length ) {
+                    topNote = $( document.querySelector( '[data-note-index="' + ( i ) + '"][data-staff-index="0"]' ) );
+                    if( beatOfI == 0 ) {
+                        if( topNote.hasClass( 'hasAccidental' ) ) {
+                            marginOfI += 20;
+                            acc = topNote[ 0 ].previousElementSibling;
+                            $( acc )[ 0 ].style = 'margin-left: ' + ( marginOfI - 105 ) + 'px;';
+                        }
+                        topNote[ 0 ].style.marginLeft = marginOfI + 'px';
+                        marginOfI += 40;
+                    }
+
+                    if( i < notes[ 0 ].length ) {
+                        if( notes[ 0 ][ i ][ 2 ] == 'whole' ) {
+                            if( beatOfI == 3 ) {
+                                beatOfI = 0;
+                                ++i;
+                            }
+                            else
+                                ++beatOfI;
+                        }
+                        else if( notes[ 0 ][ i ][ 2 ] == 'half' ) {
+                            if( beatOfI == 1 ) {
+                                beatOfI = 0;
+                                ++i;
+                            }
+                            else
+                                ++beatOfI;
+                        }
+                        else
+                           ++i;
+                    }
+
+                    if( i == notes[ 0 ].length )
+                        currentLeftPos[ 0 ] = marginOfI;
+                }
+                return;
+            }
 
             while( ( i < notes[ 0 ].length ) || ( j < notes[ 1 ].length ) ) {
                 topNote = $( document.querySelector( '[data-note-index="' + ( i ) + '"][data-staff-index="0"]' ) );
@@ -911,7 +948,6 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                     currentLeftPos[ 0 ] = marginOfI;
                 if( j == notes[ 1 ].length )
                     currentLeftPos[ 1 ] = marginOfJ;
-
             }
         };
 

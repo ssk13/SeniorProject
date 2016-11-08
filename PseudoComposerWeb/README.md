@@ -52,7 +52,6 @@ Features intentionally omitted
 
 Aesthetic:
 * Find way to connect parallel/consecutive perfect intervals horizontally to better group them
-* Make accidentals add padding for one-voice composition
 
 Rules to fix:
 * Make repeated intervals check for enharmonic spellings of intervals
