@@ -35,7 +35,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         $scope.melodic6th = [ false, false ];
         $scope.overusedVerticalIntervalSecondSpecies = [ false, false ];
         $scope.skippingInBothVoices = [false, false ];
-        $scope.skippingToOrFromExtreme = [ false, false ];
+        $scope.skippingToAndFromExtreme = [ false, false ];
         $scope.skippingUpToWeakQuarter = [ false, false ];
         $scope.surroundSkipWithStepsInOppositeDirection = [ false, false ];
         $scope.tempHighOnWeakQuarter = [ false, false ];
@@ -123,7 +123,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                      $scope.tooManyParallelIntervals[ 1 ] && $scope.consecutivePerfect[ 1 ] && $scope.consecutiveSkips[ 1 ] && $scope.internalUnison[ 1 ] &&
                      $scope.largeSkipOnTop[ 1 ] && $scope.melodic6th[ 1 ] && $scope.voiceCrossing[ 1 ] && $scope.repeatedNoteInCounterpoint[ 1 ] &&
                      $scope.leapIn3rdSpecies[ 1 ] && $scope.outlineOfTritone[ 1 ] && $scope.surroundSkipWithStepsInOppositeDirection[ 1 ] &&
-                     $scope.skippingToOrFromExtreme[ 1 ] && $scope.repeatedNoteInBothVoices[ 1 ] && $scope.motivicRepetition[ 1 ] && $scope.skippingInBothVoices[ 1 ] &&
+                     $scope.skippingToAndFromExtreme[ 1 ] && $scope.repeatedNoteInBothVoices[ 1 ] && $scope.motivicRepetition[ 1 ] && $scope.skippingInBothVoices[ 1 ] &&
                      $scope.changeDirectionAfterLargeSkip[ 1 ] && $scope.fillInSkips[ 1 ] && $scope.coverOctave[ 1 ] && $scope.overusedVerticalIntervalSecondSpecies[ 1 ] &&
                      $scope.slowTrill[ 1 ] && $scope.tooMuchChangingDirection[ 1 ] && $scope.skippingUpToWeakQuarter[ 1 ] && $scope.tempHighOnWeakQuarter[ 1 ] );
         };
@@ -134,7 +134,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                      !$scope.tooManyParallelIntervals[ 1 ] && !$scope.consecutivePerfect[ 1 ] && !$scope.consecutiveSkips[ 1 ] && !$scope.internalUnison[ 1 ] &&
                      !$scope.largeSkipOnTop[ 1 ] && !$scope.melodic6th[ 1 ] && !$scope.voiceCrossing[ 1 ] && !$scope.repeatedNoteInCounterpoint[ 1 ] &&
                      !$scope.leapIn3rdSpecies[ 1 ] && !$scope.outlineOfTritone[ 1 ] && !$scope.surroundSkipWithStepsInOppositeDirection[ 1 ] &&
-                     !$scope.skippingToOrFromExtreme[ 1 ] && !$scope.repeatedNoteInBothVoices[ 1 ] && !$scope.motivicRepetition[ 1 ] && !$scope.skippingInBothVoices[ 1 ] &&
+                     !$scope.skippingToAndFromExtreme[ 1 ] && !$scope.repeatedNoteInBothVoices[ 1 ] && !$scope.motivicRepetition[ 1 ] && !$scope.skippingInBothVoices[ 1 ] &&
                      !$scope.changeDirectionAfterLargeSkip[ 1 ] && !$scope.fillInSkips[ 1 ] && !$scope.coverOctave[ 1 ] && !$scope.overusedVerticalIntervalSecondSpecies[ 1 ] &&
                      !$scope.slowTrill[ 1 ] && !$scope.tooMuchChangingDirection[ 1 ] && !$scope.skippingUpToWeakQuarter[ 1 ] && !$scope.tempHighOnWeakQuarter[ 1 ] );
         };
@@ -401,7 +401,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             $scope.repeatedNoteInCounterpoint[ 1 ] = show;
             $scope.repeatedNotes[ 1 ] = show;
             $scope.skippingInBothVoices[ 1 ] = show;
-            $scope.skippingToOrFromExtreme[ 1 ] = show;
+            $scope.skippingToAndFromExtreme[ 1 ] = show;
             $scope.skippingUpToWeakQuarter[ 1 ] = show;
             $scope.slowTrill[ 1 ] = show;
             $scope.surroundSkipWithStepsInOppositeDirection[ 1 ] = show;
@@ -507,9 +507,9 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 firstNoteOfOutline = 0;
                 for( j = 0; j < $rootScope.notes[ i ].length; ++j ) {
                     if( j < ( $rootScope.notes[ i ].length - 1 ) ) {
+                        diff = $rootScope.notes[ i ][ j + 1 ][ 1 ] - $rootScope.notes[ i ][ j ][ 1 ];
                         if( $rootScope.inputParams.species == 3 ) {
                             if( j < ( $rootScope.notes[ i ].length - 5 ) ) {
-                                diff = $rootScope.notes[ i ][ j + 1 ][ 1 ] - $rootScope.notes[ i ][ j ][ 1 ];
                                 numberOfTimesChangedDirections = ( diff != 0 ) ? 1 : 0;
                                 isAscending = diff > 0;
                                 for( k = 1; k < 5; ++k ) {
@@ -533,12 +533,23 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                                 markSixConsecutiveNotes( 'tooMuchChangingDirection', i, j );
                         }
 
-                        if( j > 1 ) {
+                        if( j > 0 ) {
                             if( ( ( $rootScope.notes[ i ][ j - 1 ][ 1 ] - $rootScope.notes[ i ][ j ][ 1 ] ) ) *
                                 ( $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ j + 1 ][ 1 ] ) < 0 ) {
-                                if( $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ firstNoteOfOutline ][ 1 ] == 6 )
-                                    markIllegalOutline( i, firstNoteOfOutline, j, 'outlineOfTritone')
-                                firstNoteOfOutline = j;
+                                //if there are skips on both sides
+                                if( ( Math.abs( $rootScope.notes[ i ][ j - 1 ][ 1 ] - $rootScope.notes[ i ][ j ][ 1 ] ) > 2 ) &&
+                                    ( Math.abs( $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ j + 1 ][ 1 ] ) > 2 ) )
+                                    markThreeConsecutiveNotes( i, j, 'skippingToAndFromExtreme' );
+                            }
+
+                            if( j > 1 ) {
+                            //if this note is changing direction
+                                if( ( ( $rootScope.notes[ i ][ j - 1 ][ 1 ] - $rootScope.notes[ i ][ j ][ 1 ] ) ) *
+                                    ( $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ j + 1 ][ 1 ] ) < 0 ) {
+                                    if( $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ firstNoteOfOutline ][ 1 ] == 6 )
+                                        markIllegalOutline( i, firstNoteOfOutline, j, 'outlineOfTritone')
+                                    firstNoteOfOutline = j;
+                                }
                             }
                         }
 
@@ -1212,6 +1223,8 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 $scope.consecutiveSkips[ 0 ] = true;
             else if( className == 'largeSkipOnTop' )
                 $scope.largeSkipOnTop[ 0 ] = true;
+            else if( className == 'skippingToAndFromExtreme' )
+                $scope.skippingToAndFromExtreme[ 0 ] = true;
         };
 
         function markFourConsecutiveNotes( className, staffNumber, i, j ) {
@@ -1246,8 +1259,10 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
 
             noteEl.addClass( classA );
             noteEl = $( document.querySelector( '[data-note-index="' + j + '"][data-staff-index="' + i + '"]' ) );
+            noteEl.addClass( className );
             noteEl.addClass( classB );
             $( '.' + classA ).connections( { to: '.' + classB, 'class': 'connections ' + className } );
+            noteEl.addClass( className );
 
             if( className == 'melodic' )
                 $scope.incorrectMelody[ 0 ] = true;
@@ -1445,7 +1460,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 $scope.hasBrokenHardRules = true;
             if( $scope.voiceCrossing[ 0 ] || $scope.consecutivePerfect[ 0 ] || $scope.consecutiveSkips[ 0 ] || $scope.largeSkipOnTop[ 0 ] ||
                 $scope.largerThan12th[ 0 ] || $scope.internalUnison[ 0 ] || $scope.melodic6th[ 0 ] || $scope.leapIn3rdSpecies[ 0 ] ||
-                $scope.surroundSkipWithStepsInOppositeDirection[ 0 ] || $scope.skippingToOrFromExtreme[ 0 ] || $scope.skippingInBothVoices[ 0 ] ||
+                $scope.surroundSkipWithStepsInOppositeDirection[ 0 ] || $scope.skippingToAndFromExtreme[ 0 ] || $scope.skippingInBothVoices[ 0 ] ||
                 $scope.overusedVerticalIntervalSecondSpecies[ 0 ] || $scope.skippingUpToWeakQuarter[ 0 ] || $scope.tempHighOnWeakQuarter[ 0 ] )
                 $scope.hasBrokenSoftRules = true;
         };

@@ -19,7 +19,6 @@ Rules To Implement:
 	* Check cadence
 	* Repeated notes in counterpoint can't ocur against repeated notes in cf
 * Soft rules
-	* Avoid skipping to and from a temporary high point
 	* Accidental Bb's followed by descending motion
 	* Avoid skipping in both voices - not as bad if 3rds
 	* Change direction after a large skip (larger than a 4th) with a step
@@ -72,3 +71,10 @@ change 'change duration' so the next note changes ,not the current one
 
 Bank of cantus firmuses - to practice with
 Practice exercises with randomly generated cantus firmuses
+
+
+make the 'active' state more apparent - different color
+
+connection between rules more significant
+similar motion into perfect itnerval - circe them
+	also for repetitions

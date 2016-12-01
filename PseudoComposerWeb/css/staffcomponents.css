@@ -83,6 +83,10 @@
 	border: 2px solid rgb(210,217,252) !important;
 }
 
+.showSkippingToAndFromExtreme .skippingToAndFromExtreme {
+	border: 2px solid rgb(210,217,252) !important;
+}
+
 .showTooManyParallelIntervals .tooManyParallelIntervals {
 	border: 2px solid rgb(110,117,152) !important;
 }

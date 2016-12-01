@@ -4,7 +4,7 @@
 
         <div class="modal-content" ng-controller="inputController">
 
-            <div class="modal-body" ng-class="{showIncorrectMelody: incorrectMelody[1], showIncorrectAccidentals: incorrectAccidental[1], showRepeatedNotes: repeatedNotes[1], showIncorrectHarmony: incorrectHarmony[1], showVoiceCrossing: voiceCrossing[1], showParallelPerfect: parallelPerfect[1], showConsecutivePerfect: consecutivePerfect[1], showPerfectApproachedBySimilarMotion: perfectApproachedBySimilarMotion[1], showTooManyParallelIntervals: tooManyParallelIntervals[1], showImperfectStartingOrEndingInterval: imperfectStartingOrEndingInterval[1], showConsecutiveSkips: consecutiveSkips[1], showLargeSkipOnTop: largeSkipOnTop[1], showLargerThan12th: largerThan12th[1], showInternalUnison: internalUnison[1], showMelodic6th: melodic6th[1], showRepeatedNoteInCounterpoint: repeatedNoteInCounterpoint[1], showLeapIn3rdSpecies: leapIn3rdSpecies[1], showOutlineOfTritone: outlineOfTritone[1], showSurroundSkipWithStepsInOppositeDirection: surroundSkipWithStepsInOppositeDirection[1], showSkippingToOrFromExtreme: skippingToOrFromExtreme[1], showRepeatedNoteInBothVoices: repeatedNoteInBothVoices[1], showMotivicRepetition: motivicRepetition[1], showSkippingInBothVoices: skippingInBothVoices[1], showChangeDirectionAfterLargeSkip: changeDirectionAfterLargeSkip[1], showFillInSkips: fillInSkips[1], showCoverOctave: coverOctave[1], showOverusedVerticalIntervalSecondSpecies: overusedVerticalIntervalSecondSpecies[1], showTooMuchChangingDirection: tooMuchChangingDirection[1], showSkippingUpToWeakQuarter: skippingUpToWeakQuarter[1], showTempHighOnWeakQuarter: tempHighOnWeakQuarter[1], showSlowTrill: slowTrill[1]}">
+            <div class="modal-body" ng-class="{showIncorrectMelody: incorrectMelody[1], showIncorrectAccidentals: incorrectAccidental[1], showRepeatedNotes: repeatedNotes[1], showIncorrectHarmony: incorrectHarmony[1], showVoiceCrossing: voiceCrossing[1], showParallelPerfect: parallelPerfect[1], showConsecutivePerfect: consecutivePerfect[1], showPerfectApproachedBySimilarMotion: perfectApproachedBySimilarMotion[1], showTooManyParallelIntervals: tooManyParallelIntervals[1], showImperfectStartingOrEndingInterval: imperfectStartingOrEndingInterval[1], showConsecutiveSkips: consecutiveSkips[1], showLargeSkipOnTop: largeSkipOnTop[1], showLargerThan12th: largerThan12th[1], showInternalUnison: internalUnison[1], showMelodic6th: melodic6th[1], showRepeatedNoteInCounterpoint: repeatedNoteInCounterpoint[1], showLeapIn3rdSpecies: leapIn3rdSpecies[1], showOutlineOfTritone: outlineOfTritone[1], showSurroundSkipWithStepsInOppositeDirection: surroundSkipWithStepsInOppositeDirection[1], showSkippingToAndFromExtreme: skippingToAndFromExtreme[1], showRepeatedNoteInBothVoices: repeatedNoteInBothVoices[1], showMotivicRepetition: motivicRepetition[1], showSkippingInBothVoices: skippingInBothVoices[1], showChangeDirectionAfterLargeSkip: changeDirectionAfterLargeSkip[1], showFillInSkips: fillInSkips[1], showCoverOctave: coverOctave[1], showOverusedVerticalIntervalSecondSpecies: overusedVerticalIntervalSecondSpecies[1], showTooMuchChangingDirection: tooMuchChangingDirection[1], showSkippingUpToWeakQuarter: skippingUpToWeakQuarter[1], showTempHighOnWeakQuarter: tempHighOnWeakQuarter[1], showSlowTrill: slowTrill[1]}">
 
                 <div class="row">
 
@@ -458,16 +458,16 @@
 
                         </div>
 
-                        <div class="row col-md-10 col-md-offset-1" ng-show="skippingToOrFromExtreme[0]">
+                        <div class="row col-md-10 col-md-offset-1" ng-show="skippingToAndFromExtreme[0]">
 
-                            <img class="pull-left help-icon" src="img/help.png" ng-click="setDefinition('skippingToOrFromExtreme')" data-toggle="modal" data-target="#counterpoint-rule-definition">
+                            <img class="pull-left help-icon" src="img/help.png" ng-click="setDefinition('skippingToAndFromExtreme')" data-toggle="modal" data-target="#counterpoint-rule-definition">
 
-                            <p class="pull-left">Skipping to or from temporary high or low point</p>
+                            <p class="pull-left">Skipping to and from temporary high or low point</p>
                             <div class="pull-right">
 
-                                <span ng-click="toggleShowValue(skippingToOrFromExtreme, true);" class="toggle" ng-class="{activeToggle: skippingToOrFromExtreme[1]}">Show</span>
+                                <span ng-click="toggleShowValue(skippingToAndFromExtreme, true);" class="toggle" ng-class="{activeToggle: skippingToAndFromExtreme[1]}">Show</span>
                                 <span>|</span>
-                                <span ng-click="toggleShowValue(skippingToOrFromExtreme, false);" class="toggle" ng-class="{activeToggle: !skippingToOrFromExtreme[1]}">Hide</span>
+                                <span ng-click="toggleShowValue(skippingToAndFromExtreme, false);" class="toggle" ng-class="{activeToggle: !skippingToAndFromExtreme[1]}">Hide</span>
 
                             </div>
 
