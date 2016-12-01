@@ -83,6 +83,12 @@ connection {
 	border-radius: 25px;
 }
 
+.showSkippingUpToWeakQuarter connection.skippingUpToWeakQuarter {
+	visibility: visible;
+	border: 2px solid rgb(200,207,242);
+	border-radius: 25px;
+}
+
 .showTooManyParallelIntervals connection.tooManyParallelIntervals {
 	visibility: visible;
 	border: 2px solid rgb(110,117,152);

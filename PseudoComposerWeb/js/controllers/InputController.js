@@ -501,6 +501,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 isAscending = false,
                 numberOfTimesChangedDirections = 0,
                 numberOfSteps = 0,
+                counterpointStaff = $rootScope.inputParams.voiceType[ 1 ] == 'Counterpoint' ? 1 : 0,
                 i, j, k, noteEl, classA, classB, diff, note, accEl, nextNote, repeatedNote, firstNoteOfOutline;
 
             for( i = 0; i < $rootScope.notes.length; ++i ) {
@@ -509,6 +510,9 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                     if( j < ( $rootScope.notes[ i ].length - 1 ) ) {
                         diff = $rootScope.notes[ i ][ j + 1 ][ 1 ] - $rootScope.notes[ i ][ j ][ 1 ];
                         if( $rootScope.inputParams.species == 3 ) {
+                            if( ( diff > 2 ) && ( ( j % 2 ) == 0 ) && ( i == counterpointStaff ) )
+                                markTwoConsecutiveNotes( i, j, 'skippingUpToWeakQuarter' );
+
                             if( j < ( $rootScope.notes[ i ].length - 5 ) ) {
                                 numberOfTimesChangedDirections = ( diff != 0 ) ? 1 : 0;
                                 isAscending = diff > 0;
@@ -585,11 +589,8 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                                       $rootScope.notes[ i ][ j ][ 1 ] ) )
                                     markThreeConsecutiveNotes( i, j, 'largeSkipOnTop' );
 
-                                if( ( numberOfConsecutiveSkips > 2 ) ) {
+                                if( ( numberOfConsecutiveSkips > 2 ) )
                                     markThreeConsecutiveNotes( i, j, 'consecutiveSkips' );
-                                    //if(  hadLargeSkip )
-                                        //markTwoConsecutiveNotes( i, j, 'consecutiveSkips' );
-                                }
                             }
                         }
                         else {
@@ -1272,6 +1273,8 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 $scope.repeatedNoteInCounterpoint[ 0 ] = true;
             else if( className == 'leapIn3rdSpecies' )
                 $scope.leapIn3rdSpecies[ 0 ] = true;
+            else if( className == 'skippingUpToWeakQuarter' )
+                $scope.skippingUpToWeakQuarter[ 0 ] = true;
         };
 
         function markIllegalOutline( i, j, k, className ) {

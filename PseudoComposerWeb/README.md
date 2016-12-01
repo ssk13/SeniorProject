@@ -30,7 +30,6 @@ Rules To Implement:
 	* 2nd
 		* The same vertical interval should not be used in more than four successive whole-note units, regardless of what beat if falls on
 	* 3rd
-		* Avoid skipping up to a weak quarter
 		* avoid temporary high note on weak quarter
 		* avoid breaking up parallel intervals with only one quarter
 	* If you're going to skip more than twice in succession, keep them small
