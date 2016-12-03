@@ -509,13 +509,13 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 for( j = 0; j < $rootScope.notes[ i ].length; ++j ) {
                     if( j < ( $rootScope.notes[ i ].length - 1 ) ) {
                         diff = $rootScope.notes[ i ][ j + 1 ][ 1 ] - $rootScope.notes[ i ][ j ][ 1 ];
+                        isAscending = diff > 0;
                         if( $rootScope.inputParams.species == 3 ) {
                             if( ( diff > 2 ) && ( ( j % 2 ) == 0 ) && ( i == counterpointStaff ) )
                                 markTwoConsecutiveNotes( i, j, 'skippingUpToWeakQuarter' );
 
                             if( j < ( $rootScope.notes[ i ].length - 5 ) ) {
                                 numberOfTimesChangedDirections = ( diff != 0 ) ? 1 : 0;
-                                isAscending = diff > 0;
                                 for( k = 1; k < 5; ++k ) {
                                     diff = $rootScope.notes[ i ][ j + k + 1 ][ 1 ] - $rootScope.notes[ i ][ j + k ][ 1 ];
                                     if( diff > 0 ) {
@@ -581,8 +581,15 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                             ++numberOfConsecutiveSkips;
                             if( isLargeSkip( $rootScope.notes[ i ][ j + 1 ], $rootScope.notes[ i ][ j ] ) ) {
                                 hadLargeSkip = true;
-                                if( $rootScope.inputParams.species == 3 )
-                                    markTwoConsecutiveNotes( i, j, 'leapIn3rdSpecies' );
+                                if( ( j < ( $rootScope.notes[ i ].length - 2 ) ) &&
+                                    ( isSkip( $rootScope.notes[ i ][ j + 2 ], $rootScope.notes[ i ][ j + 1 ] ) ||
+                                      ( isAscending == ( ( $rootScope.notes[ i ][ j + 2 ][ 1 ] - $rootScope.notes[ i ][ j + 1 ][ 1 ] ) > 0 ) ) ||
+                                      ( ( $rootScope.notes[ i ][ j + 2 ][ 1 ] - $rootScope.notes[ i ][ j + 1 ][ 1 ] ) == 0 )
+                                    )
+                                  )
+                                        markThreeConsecutiveNotes( i, j + 1, 'surroundSkipWithStepsInOppositeDirection' );
+                                    if( $rootScope.inputParams.species == 3 )
+                                        markTwoConsecutiveNotes( i, j, 'leapIn3rdSpecies' );
                             }
                             if( numberOfConsecutiveSkips > 1 ) {
                                 if( ( $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) < ( $rootScope.notes[ i ][ j + 1 ][ 1 ] - 
@@ -1226,6 +1233,8 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 $scope.largeSkipOnTop[ 0 ] = true;
             else if( className == 'skippingToAndFromExtreme' )
                 $scope.skippingToAndFromExtreme[ 0 ] = true;
+            else if( className == 'surroundSkipWithStepsInOppositeDirection' )
+                $scope.surroundSkipWithStepsInOppositeDirection[ 0 ] = true;
         };
 
         function markFourConsecutiveNotes( className, staffNumber, i, j ) {
