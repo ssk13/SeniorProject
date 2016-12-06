@@ -118,6 +118,16 @@
                     <p>In <i>first species</i>, you should try to cover the whole modal octave approximately every 10-20 cantus firmus notes (except for octave skips). In <i>second species</i>, try to cover the modal octave every 4-8 whole notes. This will ensure that your line keeps moving and doesn't get bogged down in a narrow range or leap about wildly.</p>
                 </div>
 
+                <div ng-if="ruleDefinition == 'dissonantOutline'">
+                    <h1>Soft Rule Violation</h1>
+                    <p>Try not to have an outline of a 7th, 9th, or other dissonant interval.</p>
+                </div>
+
+                <div ng-if="ruleDefinition == 'descendAfterBflate'">
+                    <h1>Soft Rule Violation</h1>
+                    <p>Try to follow a b-flat with descending motion.</p>
+                </div>
+
                 <div ng-if="ruleDefinition == 'voiceCrossing'">
                     <h1>Soft Rule Violation</h1>
                     <p>Crossed voices are to be avoided wherever possible, particularly on strong beats.</p>

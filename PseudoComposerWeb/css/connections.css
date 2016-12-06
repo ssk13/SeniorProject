@@ -9,6 +9,12 @@ connection {
 	margin-left: 15px;
 }
 
+.showDescendAfterBflat connection.descendAfterBflat{
+	visibility: visible;
+	border: 2px solid rgb(200,207,242);
+	border-radius: 25px;
+}
+
 .showImperfectStartingOrEndingInterval connection.imperfectStartingOrEndingInterval {
 	visibility: visible;
 	border: 2px solid rgb(150,157,192);

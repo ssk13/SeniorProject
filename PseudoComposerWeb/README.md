@@ -19,7 +19,6 @@ Rules To Implement:
 	* Check cadence
 	* Repeated notes in counterpoint can't ocur against repeated notes in cf
 * Soft rules
-	* Accidental Bb's followed by descending motion
 	* Avoid skipping in both voices - not as bad if 3rds
 	* It is preferable to precede a skip with a step or steps in the opposite direction.
 	* Try to fill in skips

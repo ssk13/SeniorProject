@@ -47,6 +47,12 @@
 	border: 2px solid rgb(140,147,182) !important;
 }
 
+.showDescendAfterBflat .descendAfterBflat{
+	visibility: visible;
+	border: 2px solid rgb(200,207,242);
+	border-radius: 25px;
+}
+
 .showimperfectStartingOrEndingInterval .imperfectStartingOrEndingInterval {
 	background-color: rgb(150,157,192) !important;
 }
