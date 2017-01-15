@@ -699,7 +699,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                         if( $rootScope.inputParams.species == 2 )
                             markHarmony( 'harmonic', i, j );
                         else if( $rootScope.inputParams.species == 3 ) {
-                            if( !isLowerNeighbor( i, j ) )
+                            if( !isLowerNeighbor( i, j ) && !isCambiata( i, j )/* && !isEchappee( i, j ) && isDoubleNeighbor( i, j )*/ )
                                 markHarmony( 'harmonic', i, j );
                             else {
                                 if( ( counterpointStaff == 0 ) && ( $rootScope.notes[ counterpointStaff ][ i ][ 0 ] == prevNeighbor ) ||
@@ -1405,11 +1405,42 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         };
 
         /*
+            Checks if this note in the counterpoint is a cambiata - is preceded by step in one direction and folowed by third tthen step in other direction
+        */
+        function isCambiata( topVoiceBeat, bottomVoiceBeat ) {
+            var beatInCp = topVoiceBeat,
+                cpStaff = 0;
+
+            if( $rootScope.inputParams.voiceType[ 1 ] == 'Counterpoint' ) {
+                beatInCp = bottomVoiceBeat;
+                cpStaff = 1;
+            }
+
+            if( Math.abs( $rootScope.notes[ cpStaff ][ beatInCp ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp - 1 ][ 1 ] ) < 3 ) {
+                if( ( $rootScope.notes[ cpStaff ][ beatInCp ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp - 1 ][ 1 ] ) < 0 ) {
+                    if( ( ( beatInCp + 1 ) < $rootScope.notes[ cpStaff ].length ) &&
+                        ( ( ( $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp ][ 1 ] ) == -3 ) ||
+                          ( ( $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp ][ 1 ] ) == -4 ) )
+                      )
+                    {
+                        if( ( ( beatInCp + 2 ) < $rootScope.notes[ cpStaff ].length ) &&
+                            ( ( ( $rootScope.notes[ cpStaff ][ beatInCp + 2 ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] ) == 2 ) ||
+                              ( ( $rootScope.notes[ cpStaff ][ beatInCp + 2 ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] ) == 1 ) )
+                          )
+                            return true;
+                    }
+                }
+            }
+            return false;
+        };
+
+        /*
             Checks if this note in the counterpoint is a lower neighbor tone
         */
         function isLowerNeighbor( topVoiceBeat, bottomVoiceBeat ) {
             var beatInCounterpoint = topVoiceBeat,
                 counterpointStaff = 0;
+
 
             if( $rootScope.inputParams.voiceType[ 1 ] == 'Counterpoint' ) {
                 beatInCounterpoint = bottomVoiceBeat;
