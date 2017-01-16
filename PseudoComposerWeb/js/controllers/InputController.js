@@ -1435,7 +1435,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         };
 
         /*
-            Checks if this note in the counterpoint is an echappee - is preceded by step in one direction and folowed by a leap in the following direction,
+            Checks if this note in the counterpoint is an echappee - is preceded by step in one direction and folowed by a leap in the opposite direction,
             and then resolved by step in the first direction
         */
         function isEchappee( topVoiceBeat, bottomVoiceBeat ) {
@@ -1476,6 +1476,41 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             return false;
         };
 
+        /*
+            Checks if this note in the counterpoint is a lower neighbor - is preceded by third in one direction and folowed by a third in the opposite direction,
+            and then resolved by step in the first direction
+        */
+        function isLowerNeighbor( topVoiceBeat, bottomVoiceBeat ) {
+            var beatInCp = topVoiceBeat,
+                cpStaff = 0;
+
+            if( $rootScope.inputParams.voiceType[ 1 ] == 'Counterpoint' ) {
+                beatInCp = bottomVoiceBeat;
+                cpStaff = 1;
+            }
+
+            if( ( ( beatInCp + 2 ) < $rootScope.notes[ cpStaff ].length ) &&
+                ( $rootScope.notes[ cpStaff ][ beatInCp - 1 ][ 1 ] == $rootScope.notes[ cpStaff ][ beatInCp + 2 ][ 1 ] )
+              ) {
+                if( ( ( $rootScope.notes[ cpStaff ][ beatInCp ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp - 1 ][ 1 ] ) == 2 ) ||
+                    ( ( $rootScope.notes[ cpStaff ][ beatInCp ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp - 1 ][ 1 ] ) == 1 )
+                  ) {
+                    if( ( ( $rootScope.notes[ cpStaff ][ beatInCp + 2 ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] ) == -2 ) ||
+                        ( ( $rootScope.notes[ cpStaff ][ beatInCp + 2 ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] ) == -1 )
+                      )
+                        return true;
+                }
+            }
+            else if( ( ( $rootScope.notes[ cpStaff ][ beatInCp ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp - 1 ][ 1 ] ) == -2 ) ||
+                     ( ( $rootScope.notes[ cpStaff ][ beatInCp ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp - 1 ][ 1 ] ) == -1 )
+                   ) {
+                if( ( ( $rootScope.notes[ cpStaff ][ beatInCp + 2 ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] ) == 2 ) ||
+                    ( ( $rootScope.notes[ cpStaff ][ beatInCp + 2 ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] ) == 1 )
+                  )
+                    return true;
+            }
+            return false;
+        };
 
         /*
             Checks if this note in the counterpoint is a lower neighbor tone

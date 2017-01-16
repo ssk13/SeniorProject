@@ -15,7 +15,6 @@ Rules To Implement:
 		* may begin with a half-note rest, but first sounding note must be perfect consonance
 	* 3rd species
 		* account for larger leaps in changing directions, p58
-		* double neighbor allowed
 	* Check cadence
 	* Repeated notes in counterpoint can't ocur against repeated notes in cf
 * Soft rules
