@@ -101,6 +101,10 @@
 	border: 2px solid rgb(110,117,152) !important;
 }
 
+.showTempHighOnWeakQuarter .tempHighOnWeakQuarter {
+	background-color: rgba(160,167,202, .5) !important;
+}
+
 .showTooManyParallelIntervals .tooManyParallelIntervals {
 	border: 2px solid rgb(110,117,152) !important;
 }

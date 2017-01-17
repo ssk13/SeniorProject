@@ -499,6 +499,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             * too many consecutive skips if one is large
             * consecutive skips with larger on top
             * large leaps in 3rd species
+            * temporary high point on weak quarter
         */
         function checkHorizontallyBeatByBeat() {
             var numberOfSkips = 0,
@@ -517,8 +518,12 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                         diff = $rootScope.notes[ i ][ j + 1 ][ 1 ] - $rootScope.notes[ i ][ j ][ 1 ];
                         isAscending = diff > 0;
                         if( $rootScope.inputParams.species == 3 ) {
-                            if( ( diff > 2 ) && ( ( j % 2 ) == 0 ) && ( i == counterpointStaff ) )
-                                markTwoConsecutiveNotes( i, j, 'skippingUpToWeakQuarter' );
+                            if( ( ( j % 4 ) != 0 ) && ( i == counterpointStaff ) ) {
+                                if( diff > 2 )
+                                    markTwoConsecutiveNotes( i, j, 'skippingUpToWeakQuarter' );
+                                if( (diff < 0 ) && ( ( j > 0 ) && ( ( $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) > 0 ) ) )
+                                    markOneNote( i, j, 'tempHighOnWeakQuarter' );
+                            }
 
                             if( j < ( $rootScope.notes[ i ].length - 5 ) ) {
                                 numberOfTimesChangedDirections = ( diff != 0 ) ? 1 : 0;
@@ -630,16 +635,16 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
 
                             if( ( !nextNote[ 0 ] ) || ( nextNote[ 0 ].indexOf( 'd' ) === -1 ) || ( nextNote[ 0 ].indexOf( 'sharp' ) !== -1 ) || 
                                 ( nextNote[ 0 ].indexOf( 'flat' ) !== -1 ) || ( nextNote[ 1 ] - note[ 1 ] != 1 ) )
-                                    markInvalidAccidental( i, j )
+                                    markOneNote( i, j, 'invalidAccidental' )
                         }
                         else
-                            markInvalidAccidental( i, j )
+                            markOneNote( i, j, 'invalidAccidental' )
                     }
 
                     if( note[ 0 ].indexOf( 'flat' ) > 0 ) {
                         if( ( note[ 0 ].indexOf( 'b' ) === -1 ) || ( j == 0 ) || !( ( ( note[ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) == 1 ) ||
                                                                                     ( ( note[ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) == 5 ) ) )
-                            markInvalidAccidental( i, j );
+                            markOneNote( i, j, 'invalidAccidental' );
                         else if( j < ( $rootScope.notes[ i ].length - 2 ) ) {
                             if( $rootScope.notes[ i ][ j + 1 ][ 1 ] > $rootScope.notes[ i ][ j ][ 1 ] )
                                 markTwoConsecutiveNotes( i, j, 'descendAfterBflat' )
@@ -1219,12 +1224,18 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 $scope.internalUnison[ 0 ] = true;
         };
 
-        function markInvalidAccidental( i, j ) {
-            var noteEl = $( document.querySelector( '[data-note-index="' + j + '"][data-staff-index="' + i + '"]' ) ),
-                accEl = $( $( $( $( noteEl )[ 0 ].previousElementSibling )[ 0 ] )[ 0 ].firstElementChild );
+        function markOneNote( i, j, className ) {
+            var targetEl = $( document.querySelector( '[data-note-index="' + j + '"][data-staff-index="' + i + '"]' ) );
 
-            $( accEl ).addClass( 'invalidAccidental' );
-            $scope.incorrectAccidental[ 0 ] = true;
+            if( className == 'invalidAccidental' )
+                targetEl = $( $( $( $( noteEl )[ 0 ].previousElementSibling )[ 0 ] )[ 0 ].firstElementChild );
+
+            $( targetEl ).addClass( className );
+
+            if( className == 'invalidAccidental' )
+                $scope.incorrectAccidental[ 0 ] = true;
+            if( className == 'tempHighOnWeakQuarter' )
+                $scope.tempHighOnWeakQuarter[ 0 ] = true;
         };
 
         function markThreeConsecutiveNotes( i, j, className) {
