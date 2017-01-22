@@ -9,7 +9,6 @@ app location: localhost:8080
 
 Rules To Implement:
 * Hard rules
-	* Circumstances for Eb
 	* Direct repetition of contrapuntal combinaiton is forbidden - only 2 sequential repetitions allowed (p26)
 	* 2nd species
 		* may begin with a half-note rest, but first sounding note must be perfect consonance

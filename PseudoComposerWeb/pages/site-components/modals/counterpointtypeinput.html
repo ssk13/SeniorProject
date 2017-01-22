@@ -17,6 +17,17 @@
 
                 </div>
 
+                <div>
+                    <p>How many flats?</p>
+                </div>
+
+                <div ng-repeat="n in [0,1]">
+
+                    <input type="radio" ng-model="inputParams.keySignature" ng-value="{{n}}" value="{{n}}" name="keySignature">
+                    <span ng-class="inputParams.keySignature === {{n}} ? 'active' : ''">{{n}}</span>
+
+                </div>
+
                 <div ng-if="inputParams.numberOfVoices > 1">
 
                     <div>
