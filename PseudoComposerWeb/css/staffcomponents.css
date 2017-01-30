@@ -167,6 +167,22 @@
     height: 137px;
 }
 
+.keySignature.alto {
+	margin-top: 75px;
+}
+
+.keySignature.treble {
+	margin-top: 86px;
+}
+
+.keySignature.tenor {
+	margin-top: 55px;
+}
+
+.keySignature.treble {
+	margin-top: 56px;
+}
+
 .line {
 	height: 5px;
 	padding-top: 8px;

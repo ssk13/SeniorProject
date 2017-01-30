@@ -84,7 +84,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 note, i, margin, acc, accEl, accClass;
 
                 margin = $( targetNote )[ 0 ].getAttribute( 'style' );
-                margin = margin.slice( margin.indexOf('margin') + 13 );
+                margin = margin.slice( margin.indexOf( 'margin' ) + 13 );
                 margin = margin.slice( 0, margin.indexOf( 'px' ) ) ;
                 margin = parseInt( margin ) - 105;
 
@@ -95,7 +95,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 accEl = $( $( targetNote )[ 0 ].previousElementSibling )[ 0 ];
                 accClass = $( $( accEl )[ 0 ].firstElementChild )[ 0 ].className;
                 accEl.remove();
-                notes[ activeStaff ][ index ][ 0 ] = notes[ activeStaff ][ index ][ 0 ].slice( 0, -1 );
+                notes[ activeStaff ][ index ][ 0 ] = notes[ activeStaff ][ index ][ 0 ].slice( 0, 2 );
 
                 if( accClass == 'sharp' )
                     notes[ activeStaff ][ index ][ 1 ]--;
@@ -109,6 +109,9 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                     return;
                 }
             }
+
+            if( ( $rootScope.inputParams.keySignature == 1 ) && ( notes[ activeStaff ][ index ][ 0 ].indexOf( 'b' ) != -1 ) )
+                notes[ activeStaff ][ index ][ 0 ] = notes[ activeStaff ][ index ][ 0 ].slice( 0, 2 );
 
             addAccidentalToNote( margin, acc, index );
 
@@ -294,6 +297,10 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                         numericValue = topPosToNoteTableTreble[ i ][ 2 ];
                         noteName = topPosToNoteTableTreble[ i ][ 1 ];
                         i = topPosToNoteTableTreble.length;
+                        if( ( noteName.indexOf( 'b' ) != -1 ) && ( $rootScope.inputParams.keySignature == 1 ) ) {
+                            numericValue -= 1;
+                            noteName = noteName.concat( 'flat' );
+                        }
                     }
                 }
                 else if( $rootScope.inputParams.clef[ staffNumber ] == 'img/altoclef.png' ) {
@@ -301,6 +308,10 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                         numericValue = topPosToNoteTableAlto[ i ][ 2 ];
                         noteName = topPosToNoteTableAlto[ i ][ 1 ];
                         i = topPosToNoteTableTreble.length;
+                        if( ( noteName.indexOf( 'b' ) != -1 ) && ( $rootScope.inputParams.keySignature == 1 ) ) {
+                            numericValue -= 1;
+                            noteName = noteName.concat( 'flat' );
+                        }
                     }
                 }
                 else if( $rootScope.inputParams.clef[ staffNumber ] == 'img/tenorclef.png' ) {
@@ -308,6 +319,10 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                         numericValue = topPosToNoteTableTenor[ i ][ 2 ];
                         noteName = topPosToNoteTableTenor[ i ][ 1 ];
                         i = topPosToNoteTableTreble.length;
+                        if( ( noteName.indexOf( 'b' ) != -1 ) && ( $rootScope.inputParams.keySignature == 1 ) ) {
+                            numericValue -= 1;
+                            noteName = noteName.concat( 'flat' );
+                        }
                     }
                 }
                 else {
@@ -315,6 +330,10 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                         numericValue = topPosToNoteTableBass[ i ][ 2 ];
                         noteName = topPosToNoteTableBass[ i ][ 1 ];
                         i = topPosToNoteTableTreble.length;
+                        if( ( noteName.indexOf( 'b' ) != -1 ) && ( $rootScope.inputParams.keySignature == 1 ) ) {
+                            numericValue -= 1;
+                            noteName = noteName.concat( 'flat' );
+                        }
                     }
                 }
             }
@@ -359,6 +378,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         $scope.startOver = function() {
             $rootScope.inputParams = {
                 numberOfVoices: 0,
+                keySignature: 0,
                 species: 0,
                 voiceType: [ 'Cantus Firmus', 'Counterpoint', 'Counterpoint', 'Counterpoint' ],
                 clef: [ 'img/trebleclef.png', 'img/trebleclef.png', 'img/trebleclef.png', 'img/trebleclef.png' ]
@@ -469,7 +489,11 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             if( acc == 'sharp' )
                 notes[ activeStaff ][ index ][ 1 ]++;    
             else if( acc == 'flat' )
-                notes[ activeStaff ][ index ][ 1 ]--;   
+                notes[ activeStaff ][ index ][ 1 ]--;
+            else if( acc == 'natural')
+                if( ( $rootScope.inputParams.keySignature == 1 ) && ( notes[ activeStaff ][ index ][ 0 ].indexOf( 'b' ) != -1 ) )
+                    notes[ activeStaff ][ index ][ 1 ]++;
+
         };
 
         /* counterpoint-checking methods */
@@ -642,9 +666,42 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                     }
 
                     if( note[ 0 ].indexOf( 'flat' ) > 0 ) {
-                        if( ( note[ 0 ].indexOf( 'b' ) === -1 ) || ( j == 0 ) || !( ( ( note[ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) == 1 ) ||
-                                                                                    ( ( note[ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) == 5 ) ) )
+                        if ( ( note[ 0 ].indexOf( 'b' ) === -1 ) && ( note[ 0 ].indexOf( 'e' ) === -1 ) )
                             markOneNote( i, j, 'invalidAccidental' );
+                        else if( note[ 0 ].indexOf( 'b' ) !== -1 ) {
+                            if( j != 0 ) {
+                                if ( !( ( ( note[ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) == 1 ) ||
+                                                                                    ( ( note[ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) == 5 ) ) )
+                                    markOneNote( i, j, 'invalidAccidental' );
+                            }
+                            if( j < ( $rootScope.notes[ i ].length - 2 ) ) {
+                                if( $rootScope.notes[ i ][ j + 1 ][ 1 ] > $rootScope.notes[ i ][ j ][ 1 ] )
+                                    markTwoConsecutiveNotes( i, j, 'descendAfterBflat' )
+                            }
+                        }
+                        else if( note[ 0 ].indexOf( 'e' ) !== -1 ) {
+                            if( $rootScope.inputParams.keySignature != 1 )
+                                markOneNote( i, j, 'invalidAccidental' );
+                            else if( j != 0) {
+                                if ( !( ( ( note[ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) == 1 ) ||
+                                                                                    ( ( note[ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) == 5 ) ) )
+                                    markOneNote( i, j, 'invalidAccidental' );
+                            }
+                            if( j < ( $rootScope.notes[ i ].length - 2 ) ) {
+                                if( $rootScope.notes[ i ][ j + 1 ][ 1 ] > $rootScope.notes[ i ][ j ][ 1 ] )
+                                    markTwoConsecutiveNotes( i, j, 'descendAfterBflat' )
+                            }
+                        }
+                    }
+
+                    if( note[ 0 ].indexOf( 'natural' ) > 0 ) {
+                        if( note[ 0 ].indexOf( 'b' ) === -1 ) {
+                            if( j != 0) {
+                                if ( !( ( ( note[ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) == 1 ) ||
+                                                                                    ( ( note[ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) == 5 ) ) )
+                                    markOneNote( i, j, 'invalidAccidental' );
+                            }
+                        }
                         else if( j < ( $rootScope.notes[ i ].length - 2 ) ) {
                             if( $rootScope.notes[ i ][ j + 1 ][ 1 ] > $rootScope.notes[ i ][ j ][ 1 ] )
                                 markTwoConsecutiveNotes( i, j, 'descendAfterBflat' )
@@ -1228,7 +1285,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             var targetEl = $( document.querySelector( '[data-note-index="' + j + '"][data-staff-index="' + i + '"]' ) );
 
             if( className == 'invalidAccidental' )
-                targetEl = $( $( $( $( noteEl )[ 0 ].previousElementSibling )[ 0 ] )[ 0 ].firstElementChild );
+                targetEl = $( $( $( $( targetEl )[ 0 ].previousElementSibling )[ 0 ] )[ 0 ].firstElementChild );
 
             $( targetEl ).addClass( className );
 
@@ -1667,113 +1724,3 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         } );
     }
 ] );
-
-
-        /*function getNoteAtBeat( beat, staff ) {
-            var currentBeat = 0,
-                noteIndex = 0;
-                console.log(staff);
-
-            while( currentBeat < beat ) {
-                console.log("note index: " + noteIndex);
-                if( notes[ staff ][ noteIndex ][ 2 ] == 'whole' )
-                    currentBeat += 4;
-                else if( notes[ staff ][ noteIndex ][ 2 ] == 'half' )
-                    currentBeat += 2;
-                else
-                    currentBeat += 1;
-
-                ++noteIndex;
-            }
-
-            return noteIndex;
-        };*/
-
-                /*function isFillingInBeat( beat, duration, staffNumber ) {
-            var currentBeat = 0,
-                dur = 1,
-                noteIndex = 0;
-
-            if( duration == 'whole' )
-                dur = 4;
-            else if( duration == 'half' )
-                dur = 2;
-
-            while( ( currentBeat + dur ) <= beat ) {
-                console.log(noteIndex);
-                if( notes[ staffNumber ][ noteIndex ][ 2 ] == 'whole' )
-                    currentBeat += 4;
-                else if( notes[ staffNumber ][ noteIndex ][ 2 ] == 'half' )
-                    currentBeat += 2;
-                else
-                    currentBeat += 1;
-
-                ++noteIndex;
-            }
-
-            if( ( currentBeat == beat ) || ( ( currentBeat + dur ) == beat ) ) {
-                console.log("nope");
-                return false;
-            }
-
-            console.log("yep");
-            return true;
-        };
-
-       /* function isAfterCurrentBeatInOtherLine( beat, duration, staffNumber ) {
-            var currentBeat = 0,
-                dur = 1,
-                noteIndex = 0;
-
-            if( duration == 'whole' )
-                dur = 4;
-            else if( duration == 'half' )
-                dur = 2;
-
-            while( ( currentBeat + dur ) <= beat ) {
-                console.log(noteIndex);
-                if( notes[ staffNumber ][ noteIndex ][ 2 ] == 'whole' )
-                    currentBeat += 4;
-                else if( notes[ staffNumber ][ noteIndex ][ 2 ] == 'half' )
-                    currentBeat += 2;
-                else
-                    currentBeat += 1;
-
-                ++noteIndex;
-            }
-
-            if( ( currentBeat == beat ) || ( ( currentBeat + dur ) == beat ) ) {
-                console.log("nope");
-                return false;
-            }
-
-            console.log("yep");
-            return true;
-        };*/
-
-
-           // console.log(beatIndex);
-
-            /*if( beatIndex[ staffNumber ] < beatIndex[ otherStaffNumber ] ) {
-                if( isAfterCurrentBeatInOtherLine( beatIndex[ staffNumber ], $scope.duration, otherStaffNumber ) )
-                    currentLeftPos[ staffNumber ] += 40;
-                if( isFillingInBeat( beatIndex[ staffNumber ], $scope.duration, otherStaffNumber ) ) {
-                    var notesArr = $( document.querySelectorAll( '[data-staff-index="' + otherStaffNumber + '"].static' ) ),
-                        index =  getNoteAtBeat( beatIndex[ staffNumber ], otherStaffNumber ),
-                        offset = 40,
-                        note, acc, margin;
-
-                    for( i = index; i != notesArr.length ; ++i ) {
-                        note = $( document.querySelector( '[data-note-index="' + ( i ) + '"][data-staff-index="' + otherStaffNumber + '"]' ) );
-                        note[ 0 ].style.marginLeft = ( parseInt( note[ 0 ].style.marginLeft ) + offset ) + 'px';
-                        if( note.hasClass( 'hasAccidental' ) ) {
-                            acc = note[ 0 ].previousElementSibling;
-                            margin = $( acc )[ 0 ].getAttribute( 'style' );
-                            margin = parseInt( margin.slice( 13, margin.indexOf( 'px' ) ) ) + offset;
-                            $( acc )[ 0 ].style = 'margin-left: ' + margin + 'px;';
-                        }
-                    }
-
-                    currentLeftPos[ otherStaffNumber ] += offset;
-                }
-            }*/
