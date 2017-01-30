@@ -246,7 +246,9 @@
 	width: 20px;
 }
 
-.toolbar-item > img.whole {
+.toolbar-item > img.whole, 
+.toolbar-item > img.halfrest,
+.toolbar-item > img.wholerest {
 	width: 22px;
     height: auto;
     margin-top: 22px;

@@ -7,6 +7,10 @@ Install Node and run the following commands from folder
 
 app location: localhost:8080
 
+BUGS
+* Make rules account for rests
+* Make rests appear on middle of staff
+
 Rules To Implement:
 * Hard rules
 	* Direct repetition of contrapuntal combinaiton is forbidden - only 2 sequential repetitions allowed (p26)

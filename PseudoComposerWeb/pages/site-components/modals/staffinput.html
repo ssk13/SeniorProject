@@ -15,9 +15,13 @@
                         <div ng-click="addAccidental('natural')" class="pull-left toolbar-item accidental-item natural"><img src="img/natural.png"></div>
                         <div ng-click="deleteNote()" class="pull-left toolbar-item"><img class="delete" src="img/delete.png"></div>
                         <div class="pull-left toolbar-item break"></div>
-                        <div ng-click="changeDuration('quarter')" class="pull-left toolbar-item quarter-item" ng-class="duration === 'quarter' ? 'active' : ''"><img src="img/quarterup.png"></div>
-                        <div ng-click="changeDuration('half')" class="pull-left toolbar-item half-item" ng-class="duration === 'half' ? 'active' : ''"><img src="img/halfup.png"></div>
-                        <div ng-click="changeDuration('whole')" class="pull-left toolbar-item whole-item" ng-class="duration === 'whole' ? 'active' : ''"><img class="whole" src="img/whole.png"></div>
+                        <div ng-click="changeDuration('quarter', false)" class="pull-left toolbar-item quarter-item" ng-class="duration === 'quarter' ? 'active' : ''"><img src="img/quarterup.png"></div>
+                        <div ng-click="changeDuration('half', false)" class="pull-left toolbar-item half-item" ng-class="duration === 'half' ? 'active' : ''"><img src="img/halfup.png"></div>
+                        <div ng-click="changeDuration('whole', false)" class="pull-left toolbar-item whole-item" ng-class="duration === 'whole' ? 'active' : ''"><img class="whole" src="img/whole.png"></div>
+                        <div class="pull-left toolbar-item break"></div>
+                        <div ng-click="changeDuration('quarter', true)" class="pull-left toolbar-item rest-item" ng-class="(isRest === true) && (duration === 'quarter') ? 'active' : ''"><img class="rest" src="img/quarterrest.png"></div>
+                        <div ng-click="changeDuration('half', true)" class="pull-left toolbar-item rest-item" ng-class="(isRest === true) && (duration === 'half') ? 'active' : ''"><img class="rest halfrest" src="img/halfrest.png"></div>
+                        <div ng-click="changeDuration('whole', true)" class="pull-left toolbar-item rest-item" ng-class="(isRest === true) && (duration === 'whole') ? 'active' : ''"><img class="rest wholerest" src="img/wholerest.png"></div>
 
                     </div>
 

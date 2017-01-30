@@ -2,6 +2,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
     function( $scope, $rootScope ) {
 
         $scope.duration = 'whole';
+        $scope.isRest = false
         $scope.floatingNoteheadTopPos = 59;
 
         /* [ has, show ] */
@@ -148,17 +149,18 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                      !$scope.descendAfterBflat[ 1 ] );
         };
 
-        $scope.changeDuration = function( dur ) {
+        $scope.changeDuration = function( dur, isRest ) {
             var staffIndex, noteIndex, val, prevDur, noteVal;
 
             $scope.duration = dur;
+            $scope.isRest = isRest;
 
             if( targetNote ) {
                 staffIndex = $( targetNote )[ 0 ].getAttribute( 'data-staff-index' );
                 noteIndex = $( targetNote )[ 0 ].getAttribute( 'data-note-index' );
                 val = notes[ staffIndex ][ noteIndex ][ 1 ];
                 prevDur = notes[ staffIndex ][ noteIndex ][ 2 ];
-                $( targetNote ).removeClass( 'whole quarterup quarterdown halfup halfdown' );
+                $( targetNote ).removeClass( 'whole quarterup quarterdown halfup halfdown quarterrest halfrest wholerest' );
 
                 if( prevDur == 'whole' )
                     beatIndex[ staffIndex ] -= 4;
@@ -167,7 +169,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 else
                     beatIndex[ staffIndex ] -= 1;
 
-                noteVal = getNoteFromDurationAndValue( dur, val, $rootScope.inputParams.clef[ staffIndex ] );
+                noteVal = getNoteFromDurationAndValue( dur, val, isRest, $rootScope.inputParams.clef[ staffIndex ] );
 
                 $( targetNote )[ 0 ].setAttribute( 'src', 'img/' + noteVal + '.png' );
                 $( targetNote ).addClass( noteVal );
@@ -178,6 +180,8 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 else
                     beatIndex[ staffIndex ] += 4;
 
+                notes[ staffIndex ][ noteIndex ][ 0 ] = 'rest';
+                notes[ staffIndex ][ noteIndex ][ 1 ] = -1;
                 notes[ staffIndex ][ noteIndex ][ 2 ] = dur;
             }
 
@@ -340,7 +344,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 }
             }
 
-            noteVal = getNoteFromDurationAndValue( $scope.duration, numericValue, $rootScope.inputParams.clef[ staffNumber ] );
+            noteVal = getNoteFromDurationAndValue( $scope.duration, numericValue, $scope.isRest, $rootScope.inputParams.clef[ staffNumber ] );
             spaceEl = $( document.querySelector( '.activeStaff' ).querySelector( classname ) );
             noteheadEl = $( '<img class="notehead static">' )
             $( noteheadEl )[ 0 ].setAttribute( 'src', 'img/' + noteVal + '.png' );
@@ -1377,7 +1381,15 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
 
         /* helpers */
 
-        function getNoteFromDurationAndValue( dur, val, clef ) {
+        function getNoteFromDurationAndValue( dur, val, isRest, clef ) {
+            if( isRest ) {
+                if( dur == 'quarter' )
+                    return 'quarterrest';
+                else if( dur == 'half' )
+                    return 'halfrest';
+                else if( dur == 'whole' )
+                    return 'wholerest';
+            }
             if( dur == 'quarter' ) {
                 if( clef == 'img/trebleclef.png' ) {
                     if( val < 33 )
@@ -1681,12 +1693,31 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                     $( document.querySelector( '.toolbar-item.natural' ) ).addClass( 'active' );
             }
 
-            if( $( target ).hasClass( 'whole' ) )
+            if( $( target ).hasClass( 'whole' ) ) {
                 $scope.duration = 'whole';
-            else if( $( target ).hasClass( 'quarterup' ) || $( target ).hasClass( 'quarterdown' ) )
+                $scope.isRest = false;
+            }
+            else if( $( target ).hasClass( 'quarterup' ) || $( target ).hasClass( 'quarterdown' ) ) {
                 $scope.duration = 'quarter';
-            else
+                $scope.isRest = false;
+            }
+            else if( $( target ).hasClass( 'half' ) ) {
                 $scope.duration = 'half';
+                $scope.isRest = false;
+            }
+            else if( $( target ).hasClass( 'wholerest' ) ) {
+                $scope.duration = 'whole';
+                $scope.isRest = true;
+            }
+            else if( $( target ).hasClass( 'halfrest' ) ) {
+                $scope.duration = 'half';
+                $scope.isRest = true;
+            }
+            else if( $( target ).hasClass( 'quarterrest' ) ) {
+                $scope.duration = 'quarter';
+                $scope.isRest = true;
+            }
+
         };
 
         $rootScope.$on( 'printMusic', function( event, args ) {
