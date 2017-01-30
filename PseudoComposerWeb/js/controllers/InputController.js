@@ -110,8 +110,10 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 }
             }
 
-            if( ( $rootScope.inputParams.keySignature == 1 ) && ( notes[ activeStaff ][ index ][ 0 ].indexOf( 'b' ) != -1 ) )
+            if( ( $rootScope.inputParams.keySignature == 1 ) && ( notes[ activeStaff ][ index ][ 0 ].indexOf( 'b' ) != -1 ) ) {
                 notes[ activeStaff ][ index ][ 0 ] = notes[ activeStaff ][ index ][ 0 ].slice( 0, 2 );
+                notes[ activeStaff ][ index ][ 1 ]++;
+            }
 
             addAccidentalToNote( margin, acc, index );
 
@@ -674,7 +676,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                                                                                     ( ( note[ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) == 5 ) ) )
                                     markOneNote( i, j, 'invalidAccidental' );
                             }
-                            if( j < ( $rootScope.notes[ i ].length - 2 ) ) {
+                            if( ( j < ( $rootScope.notes[ i ].length - 2 ) ) && ( $rootScope.inputParams.keySignature != 1 ) ) {
                                 if( $rootScope.notes[ i ][ j + 1 ][ 1 ] > $rootScope.notes[ i ][ j ][ 1 ] )
                                     markTwoConsecutiveNotes( i, j, 'descendAfterBflat' )
                             }
@@ -695,16 +697,9 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                     }
 
                     if( note[ 0 ].indexOf( 'natural' ) > 0 ) {
-                        if( note[ 0 ].indexOf( 'b' ) === -1 ) {
-                            if( j != 0) {
-                                if ( !( ( ( note[ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) == 1 ) ||
-                                                                                    ( ( note[ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) == 5 ) ) )
-                                    markOneNote( i, j, 'invalidAccidental' );
-                            }
-                        }
-                        else if( j < ( $rootScope.notes[ i ].length - 2 ) ) {
-                            if( $rootScope.notes[ i ][ j + 1 ][ 1 ] > $rootScope.notes[ i ][ j ][ 1 ] )
-                                markTwoConsecutiveNotes( i, j, 'descendAfterBflat' )
+                        if( note[ 0 ].indexOf( 'b' ) !== -1 ) {
+                            if( $rootScope.inputParams.keySignature == 1)
+                                markOneNote( i, j, 'invalidAccidental' );
                         }
                     }
                 }
@@ -1157,7 +1152,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             var diff = secondNote[ 1 ] - firstNote[ 1 ],
                 validityTable = [ 
                                     [ -12, 0 ], [ -7, -4 ], [ -7, 3 ], [ -5, 4 ], [ -5, -3 ], [ -4, 5 ], [ -4, -2 ], [ -3, -5 ], [ -3, -2 ], 
-                                    [-2, 6 ], [ -2, -1 ], [ -1, -6 ], [ -1, -1 ], [ 0, 0 ], [ 1, -6 ], [ 1, 1 ], [ 2, -6 ], [ 2, 1 ], 
+                                    [ -3, 5 ], [-2, 6 ], [ -2, -1 ], [ -1, -6 ], [ -1, -1 ], [ 0, 0 ], [ 1, -6 ], [ 1, 1 ], [ 2, -6 ], [ 2, 1 ], 
                                     [ 3, -5 ], [ 3, 2 ], [ 4, -5 ], [ 4, 2 ], [ 5, -4 ], [ 5, 3 ], [ 7, -3 ], [ 7, 4 ], [ 8, -2 ], [ 8, 5 ], 
                                     [ 12, 0 ] 
                                 ],
