@@ -89,7 +89,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 margin = margin.slice( 0, margin.indexOf( 'px' ) ) ;
                 margin = parseInt( margin ) - 105;
 
-            if( !targetNote )
+            if( !targetNote || $( targetNote ).hasClass( 'quarterrest' ) || $( targetNote ).hasClass( 'halfrest' ) || $( targetNote ).hasClass( 'wholerest' ) )
                 return;
 
             if( $( targetNote ).hasClass( 'hasAccidental' ) ) {
@@ -199,7 +199,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 offset = 40,
                 note, acc, i;
 
-            if( prevDur == 'whole' )
+            if ( prevDur == 'whole' )
                 beatIndex[ activeStaff ] -= 4;
             else if( prevDur == 'half' )
                 beatIndex[ activeStaff ] -= 2;
@@ -391,6 +391,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             };
 
             $scope.duration = 'whole';
+            $scope.isRest = false;
             $scope.floatingNoteheadTopPos = 59;
             $scope.counterpointChecked = false;
 
@@ -484,8 +485,6 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             $scope.floatingNoteheadTopPos = value;
         };
 
-
-
         /* note actions */
 
         function addAccidentalToNote( margin, acc, index ) {
@@ -519,7 +518,7 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             }
 
             return false;
-        }
+        };
 
         /*
             Checks for:
@@ -539,118 +538,180 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 numberOfTimesChangedDirections = 0,
                 numberOfSteps = 0,
                 counterpointStaff = $rootScope.inputParams.voiceType[ 1 ] == 'Counterpoint' ? 1 : 0,
-                i, j, k, noteEl, classA, classB, diff, note, accEl, nextNote, repeatedNote, firstNoteOfOutline;
+                i, j, k, l, prevNonRestVal, noteEl, classA, classB, diff, tempDiff, note, accEl, nextNote, repeatedNote, firstNoteOfOutline;
 
             for( i = 0; i < $rootScope.notes.length; ++i ) {
                 firstNoteOfOutline = 0;
                 for( j = 0; j < $rootScope.notes[ i ].length; ++j ) {
-                    if( j < ( $rootScope.notes[ i ].length - 1 ) ) {
-                        diff = $rootScope.notes[ i ][ j + 1 ][ 1 ] - $rootScope.notes[ i ][ j ][ 1 ];
-                        isAscending = diff > 0;
-                        if( $rootScope.inputParams.species == 3 ) {
-                            if( ( ( j % 4 ) != 0 ) && ( i == counterpointStaff ) ) {
-                                if( diff > 2 )
-                                    markTwoConsecutiveNotes( i, j, 'skippingUpToWeakQuarter' );
-                                if( (diff < 0 ) && ( ( j > 0 ) && ( ( $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) > 0 ) ) )
-                                    markOneNote( i, j, 'tempHighOnWeakQuarter' );
+                    if( $rootScope.notes[ i ][ j ][ 1 ] > 0 ) {
+                        if( j < ( $rootScope.notes[ i ].length - 1 ) ) {
+                            k = j + 1;
+                            while( k < ( $rootScope.notes[ i ].length - 1 ) ) {
+                                if( $rootScope.notes[ i ][ k ][ 1 ] > 0 ) {
+                                    diff = $rootScope.notes[ i ][ k ][ 1 ] - $rootScope.notes[ i ][ j ][ 1 ];
+                                    break;
+                                }
+                                ++k;
                             }
+                            isAscending = diff > 0;
+                            if( $rootScope.inputParams.species == 3 ) {
+                                if( ( ( j % 4 ) != 0 ) && ( i == counterpointStaff ) ) {
+                                    if( diff > 2 )
+                                        markTwoConsecutiveNotes( i, j, 'skippingUpToWeakQuarter' );
+                                    k = j - 1;
+                                    while( k > 0 ) {
+                                        if( $rootScope.notes[ i ][ k ][ 1 ] > 0 ) {
+                                            tempDiff = $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ k ][ 1 ];
+                                            break;
+                                        }
+                                        --k;
+                                    }
+                                    if( (diff < 0 ) && ( ( j > 0 ) && ( tempDiff > 0 ) ) )
+                                        markOneNote( i, j, 'tempHighOnWeakQuarter' );
+                                }
 
-                            if( j < ( $rootScope.notes[ i ].length - 5 ) ) {
-                                numberOfTimesChangedDirections = ( diff != 0 ) ? 1 : 0;
-                                for( k = 1; k < 5; ++k ) {
-                                    diff = $rootScope.notes[ i ][ j + k + 1 ][ 1 ] - $rootScope.notes[ i ][ j + k ][ 1 ];
-                                    if( diff > 0 ) {
-                                        if( !isAscending ) {
-                                            ++numberOfTimesChangedDirections;
-                                            isAscending = true;
+                                if( j < ( $rootScope.notes[ i ].length - 5 ) ) {
+                                    numberOfTimesChangedDirections = ( diff != 0 ) ? 1 : 0;
+                                    for( k = 1; k < 5; ++k ) {
+                                        if( $rootScope.notes[ i ][ j + k ][ 1 ] > 0 )
+                                            prevNonRestVal = $rootScope.notes[ i ][ j + k ][ 1 ];
+
+                                        if( $rootScope.notes[ i ][ j + k + 1 ][ 1 ] > 0 )
+                                            diff = $rootScope.notes[ i ][ j + k + 1 ][ 1 ] - prevNonRestVal;
+
+                                        if( diff > 0 ) {
+                                            if( !isAscending ) {
+                                                ++numberOfTimesChangedDirections;
+                                                isAscending = true;
+                                            }
+                                        }
+                                        else {
+                                            if( isAscending ) {
+                                                ++numberOfTimesChangedDirections;
+                                                isAscending = false;
+                                            }
                                         }
                                     }
-                                    else {
-                                        if( isAscending ) {
-                                            ++numberOfTimesChangedDirections;
-                                            isAscending = false;
-                                        }
+                                }
+
+                                if( numberOfTimesChangedDirections > 3 )
+                                    markSixConsecutiveNotes( 'tooMuchChangingDirection', i, j );
+                            }
+
+                            if( j > 0 ) {
+                                k = j - 1;
+                                while( k > 0 ) {
+                                    if( $rootScope.notes[ i ][ k ][ 1 ] > 0 ) {
+                                        tempDiff = $rootScope.notes[ i ][ k ][ 1 ] - $rootScope.notes[ i ][ j ][ 1 ];
+                                        break;
+                                    }
+                                    --k;
+                                }
+                                k = j + 1;
+                                while( k < ( $rootScope.notes[ i ].length - 1 ) ) {
+                                    if( $rootScope.notes[ i ][ k ][ 1 ] > 0 ) {
+                                        diff = $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ k ][ 1 ];
+                                        break;
+                                    }
+                                    ++k;
+                                }
+                                if( ( tempDiff * diff ) < 0 ) {
+                                    //if there are skips on both sides
+                                    if( ( Math.abs( tempDiff ) > 2 ) && ( Math.abs( diff ) > 2 ) )
+                                        markThreeConsecutiveNotes( i, j, 'skippingToAndFromExtreme' );
+                                }
+
+                                if( j > 1 ) {
+                                //if this note is changing direction
+                                    if( ( tempDiff * diff ) < 0 ) {
+                                        if( $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ firstNoteOfOutline ][ 1 ] == 6 )
+                                            markIllegalOutline( i, firstNoteOfOutline, j, 'outlineOfTritone')
+                                        firstNoteOfOutline = j;
                                     }
                                 }
                             }
 
-                            if( numberOfTimesChangedDirections > 3 )
-                                markSixConsecutiveNotes( 'tooMuchChangingDirection', i, j );
-                        }
-
-                        if( j > 0 ) {
-                            if( ( ( $rootScope.notes[ i ][ j - 1 ][ 1 ] - $rootScope.notes[ i ][ j ][ 1 ] ) ) *
-                                ( $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ j + 1 ][ 1 ] ) < 0 ) {
-                                //if there are skips on both sides
-                                if( ( Math.abs( $rootScope.notes[ i ][ j - 1 ][ 1 ] - $rootScope.notes[ i ][ j ][ 1 ] ) > 2 ) &&
-                                    ( Math.abs( $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ j + 1 ][ 1 ] ) > 2 ) )
-                                    markThreeConsecutiveNotes( i, j, 'skippingToAndFromExtreme' );
+                            k = j + 1;
+                            while( k < ( $rootScope.notes[ i ].length - 1 ) ) {
+                                if( $rootScope.notes[ i ][ k ][ 1 ] > 0 )
+                                    break;
+                                ++k;
+                            }
+                            if( !isValidMelodically( $rootScope.notes[ i ][ k ], $rootScope.notes[ i ][ j ] ) ) {
+                                diff = Math.abs( $rootScope.notes[ i ][ k ][ 1 ] - $rootScope.notes[ i ][ j ][ 1 ] );
+                                if( ( diff == 8 ) || ( diff == 9 ) )
+                                    markTwoConsecutiveNotes( i, j, 'melodic6th' );
+                                else
+                                    markTwoConsecutiveNotes( i, j, 'melodic' );
                             }
 
-                            if( j > 1 ) {
-                            //if this note is changing direction
-                                if( ( ( $rootScope.notes[ i ][ j - 1 ][ 1 ] - $rootScope.notes[ i ][ j ][ 1 ] ) ) *
-                                    ( $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ j + 1 ][ 1 ] ) < 0 ) {
-                                    if( $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ firstNoteOfOutline ][ 1 ] == 6 )
-                                        markIllegalOutline( i, firstNoteOfOutline, j, 'outlineOfTritone')
-                                    firstNoteOfOutline = j;
+                            if( $rootScope.notes[ i ][ k ][ 1 ] == $rootScope.notes[ i ][ j ][ 1 ] ) {
+                                if( ( $rootScope.inputParams.species > 1 ) && ( $rootScope.inputParams.voiceType[ $rootScope.inputParams.species  - 1 ] == 'Counterpoint' ) )
+                                    markTwoConsecutiveNotes( i, j, 'repeatedNoteInCounterpoint' );
+                                if( repeatedNote == $rootScope.notes[ i ][ j ][ 1 ] )
+                                    markThreeConsecutiveNotes( i, j, 'repeatedNote' );
+                                else
+                                    repeatedNote = $rootScope.notes[ i ][ j ][ 1 ];
+                            }
+                            else
+                                repeatedNote = 0;
+
+                            if( isSkip( $rootScope.notes[ i ][ k ], $rootScope.notes[ i ][ j ] ) ) {
+                                ++numberOfSkips;
+                                ++numberOfConsecutiveSkips;
+                                if( isLargeSkip( $rootScope.notes[ i ][ k ], $rootScope.notes[ i ][ j ] ) ) {
+                                    hadLargeSkip = true;
+                                    l = k + 1;
+                                    while( l < ( $rootScope.notes[ i ].length - 1 ) ) {
+                                        if( $rootScope.notes[ i ][ l ][ 1 ] > 0 )
+                                            break;
+                                        ++l;
+                                    }
+                                    if( ( j < ( $rootScope.notes[ i ].length - 2 ) ) &&
+                                        ( isSkip( $rootScope.notes[ i ][ l ], $rootScope.notes[ i ][ k ] ) ||
+                                          ( isAscending == ( ( $rootScope.notes[ i ][ l ][ 1 ] - $rootScope.notes[ i ][ k ][ 1 ] ) > 0 ) ) ||
+                                          ( ( $rootScope.notes[ i ][ l ][ 1 ] - $rootScope.notes[ i ][ k ][ 1 ] ) == 0 )
+                                        )
+                                      )
+                                            markThreeConsecutiveNotes( i, k, 'surroundSkipWithStepsInOppositeDirection' );
+                                        if( $rootScope.inputParams.species == 3 )
+                                            markTwoConsecutiveNotes( i, j, 'leapIn3rdSpecies' );
+                                }
+                                if( numberOfConsecutiveSkips > 1 ) {
+                                    k = j + 1;
+                                    while( k < ( $rootScope.notes[ i ].length - 1 ) ) {
+                                        if( $rootScope.notes[ i ][ k ][ 1 ] > 0 ) {
+                                            diff = $rootScope.notes[ i ][ k ][ 1 ] - $rootScope.notes[ i ][ j ][ 1 ];
+                                            break;
+                                        }
+                                        ++k;
+                                    }
+                                    k = j - 1;
+                                    while( k > 0 ) {
+                                        if( $rootScope.notes[ i ][ k ][ 1 ] > 0 ) {
+                                            tempDiff = $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ k ][ 1 ];
+                                            break;
+                                        }
+                                        --k;
+                                    }
+                                    if( tempDiff < diff )
+                                        markThreeConsecutiveNotes( i, j, 'largeSkipOnTop' );
+
+                                    if( ( numberOfConsecutiveSkips > 2 ) )
+                                        markThreeConsecutiveNotes( i, j, 'consecutiveSkips' );
                                 }
                             }
-                        }
-
-                        if( !isValidMelodically( $rootScope.notes[ i ][ j + 1 ], $rootScope.notes[ i ][ j ] ) ) {
-                            diff = Math.abs( $rootScope.notes[ i ][ j + 1 ][ 1 ] - $rootScope.notes[ i ][ j ][ 1 ] );
-                            if( ( diff == 8 ) || ( diff == 9 ) )
-                                markTwoConsecutiveNotes( i, j, 'melodic6th' );
-                            else
-                                markTwoConsecutiveNotes( i, j, 'melodic' );
-                        }
-
-                        if( $rootScope.notes[ i ][ j + 1 ][ 1 ] == $rootScope.notes[ i ][ j ][ 1 ] ) {
-                            if( ( $rootScope.inputParams.species > 1 ) && ( $rootScope.inputParams.voiceType[ $rootScope.inputParams.species  - 1 ] == 'Counterpoint' ) )
-                                markTwoConsecutiveNotes( i, j, 'repeatedNoteInCounterpoint' );
-                            if( repeatedNote == $rootScope.notes[ i ][ j ][ 1 ] )
-                                markThreeConsecutiveNotes( i, j, 'repeatedNote' );
-                            else
-                                repeatedNote = $rootScope.notes[ i ][ j ][ 1 ];
-                        }
-                        else
-                            repeatedNote = 0;
-
-                        if( isSkip( $rootScope.notes[ i ][ j + 1 ], $rootScope.notes[ i ][ j ] ) ) {
-                            ++numberOfSkips;
-                            ++numberOfConsecutiveSkips;
-                            if( isLargeSkip( $rootScope.notes[ i ][ j + 1 ], $rootScope.notes[ i ][ j ] ) ) {
-                                hadLargeSkip = true;
-                                if( ( j < ( $rootScope.notes[ i ].length - 2 ) ) &&
-                                    ( isSkip( $rootScope.notes[ i ][ j + 2 ], $rootScope.notes[ i ][ j + 1 ] ) ||
-                                      ( isAscending == ( ( $rootScope.notes[ i ][ j + 2 ][ 1 ] - $rootScope.notes[ i ][ j + 1 ][ 1 ] ) > 0 ) ) ||
-                                      ( ( $rootScope.notes[ i ][ j + 2 ][ 1 ] - $rootScope.notes[ i ][ j + 1 ][ 1 ] ) == 0 )
-                                    )
-                                  )
-                                        markThreeConsecutiveNotes( i, j + 1, 'surroundSkipWithStepsInOppositeDirection' );
-                                    if( $rootScope.inputParams.species == 3 )
-                                        markTwoConsecutiveNotes( i, j, 'leapIn3rdSpecies' );
-                            }
-                            if( numberOfConsecutiveSkips > 1 ) {
-                                if( ( $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) < ( $rootScope.notes[ i ][ j + 1 ][ 1 ] - 
-                                      $rootScope.notes[ i ][ j ][ 1 ] ) )
-                                    markThreeConsecutiveNotes( i, j, 'largeSkipOnTop' );
-
-                                if( ( numberOfConsecutiveSkips > 2 ) )
-                                    markThreeConsecutiveNotes( i, j, 'consecutiveSkips' );
+                            else {
+                                ++numberOfSteps;
+                                numberOfConsecutiveSkips = 0;
+                                hadLargeSkip = false;
                             }
                         }
                         else {
-                            ++numberOfSteps;
-                            numberOfConsecutiveSkips = 0;
-                            hadLargeSkip = false;
-                        }
-                    }
-                    else {
-                        if( j > 1 ) {
-                            if( $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ firstNoteOfOutline ][ 1 ] == 6 )
-                                markIllegalOutline( i, firstNoteOfOutline, j, 'outlineOfTritone')
+                            if( j > 1 ) {
+                                if( $rootScope.notes[ i ][ j ][ 1 ] - $rootScope.notes[ i ][ firstNoteOfOutline ][ 1 ] == 6 )
+                                    markIllegalOutline( i, firstNoteOfOutline, j, 'outlineOfTritone')
+                            }
                         }
                     }
 
@@ -675,13 +736,26 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                         if ( ( note[ 0 ].indexOf( 'b' ) === -1 ) && ( note[ 0 ].indexOf( 'e' ) === -1 ) )
                             markOneNote( i, j, 'invalidAccidental' );
                         else if( note[ 0 ].indexOf( 'b' ) !== -1 ) {
+                            k = j + 1;
+                            while( k < $rootScope.notes.length - 1 ) {
+                                if( $rootScope.notes[ i ][ k ][ 1 ] > 0 ) {
+                                    break;
+                                }
+                                ++k;
+                            }
+                            l = j - 1;
+                            while( l > 0 ) {
+                                if( $rootScope.notes[ i ][ l ][ 1 ] > 0 ) {
+                                    break;
+                                }
+                                --l;
+                            }
                             if( j != 0 ) {
-                                if ( !( ( ( note[ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) == 1 ) ||
-                                                                                    ( ( note[ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) == 5 ) ) )
+                                if ( !( ( ( note[ 1 ] - $rootScope.notes[ i ][ l ][ 1 ] ) == 1 ) || ( ( note[ 1 ] - $rootScope.notes[ i ][ l ][ 1 ] ) == 5 ) ) )
                                     markOneNote( i, j, 'invalidAccidental' );
                             }
                             if( ( j < ( $rootScope.notes[ i ].length - 2 ) ) && ( $rootScope.inputParams.keySignature != 1 ) ) {
-                                if( $rootScope.notes[ i ][ j + 1 ][ 1 ] > $rootScope.notes[ i ][ j ][ 1 ] )
+                                if( $rootScope.notes[ i ][ k ][ 1 ] > $rootScope.notes[ i ][ j ][ 1 ] )
                                     markTwoConsecutiveNotes( i, j, 'descendAfterBflat' )
                             }
                         }
@@ -689,12 +763,12 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                             if( $rootScope.inputParams.keySignature != 1 )
                                 markOneNote( i, j, 'invalidAccidental' );
                             else if( j != 0) {
-                                if ( !( ( ( note[ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) == 1 ) ||
-                                                                                    ( ( note[ 1 ] - $rootScope.notes[ i ][ j - 1 ][ 1 ] ) == 5 ) ) )
+                                if ( !( ( ( note[ 1 ] - $rootScope.notes[ i ][ l ][ 1 ] ) == 1 ) ||
+                                                                                    ( ( note[ 1 ] - $rootScope.notes[ i ][ l ][ 1 ] ) == 5 ) ) )
                                     markOneNote( i, j, 'invalidAccidental' );
                             }
                             if( j < ( $rootScope.notes[ i ].length - 2 ) ) {
-                                if( $rootScope.notes[ i ][ j + 1 ][ 1 ] > $rootScope.notes[ i ][ j ][ 1 ] )
+                                if( $rootScope.notes[ i ][ k ][ 1 ] > $rootScope.notes[ i ][ j ][ 1 ] )
                                     markTwoConsecutiveNotes( i, j, 'descendAfterBflat' )
                             }
                         }
@@ -751,152 +825,154 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 currInterval, note, classA, classB, prevNeighbor;
 
             while( ( i < $rootScope.notes[ 0 ].length ) && ( j < $rootScope.notes[ 1 ].length ) ) {
-                checkVoiceCrossing( i, j );
+                if( ( $rootScope.notes[ 0 ][ i ][ 1 ] > 0 ) && ( $rootScope.notes[ 0 ][ j ][ 1 ] > 0 ) ) {
+                    checkVoiceCrossing( i, j );
 
-                if( !isConsonantHarmonically( $rootScope.notes[ 0 ][ i ], $rootScope.notes[ 1 ][ j ] ) ) {
-                    if( isStrongBeat( i, j ) )
-                        markHarmony( 'harmonic', i, j );
-                    else if( !isPassing( i, j ) ) {
-                        if( $rootScope.inputParams.species == 2 )
+                    if( !isConsonantHarmonically( $rootScope.notes[ 0 ][ i ], $rootScope.notes[ 1 ][ j ] ) ) {
+                        if( isStrongBeat( i, j ) )
                             markHarmony( 'harmonic', i, j );
-                        else if( $rootScope.inputParams.species == 3 ) {
-                            if( !isLowerNeighbor( i, j ) && !isCambiata( i, j ) && !isEchappee( i, j )/* && isDoubleNeighbor( i, j )*/ )
+                        else if( !isPassing( i, j ) ) {
+                            if( $rootScope.inputParams.species == 2 )
                                 markHarmony( 'harmonic', i, j );
-                            else {
-                                if( ( counterpointStaff == 0 ) && ( $rootScope.notes[ counterpointStaff ][ i ][ 0 ] == prevNeighbor ) ||
-                                    ( counterpointStaff == 1 ) && ( $rootScope.notes[ counterpointStaff ][ j ][ 0 ] == prevNeighbor ) ) {
-                                    markFourConsecutiveNotes( 'slowTrill', counterpointStaff, i, j );
-                                }
+                            else if( $rootScope.inputParams.species == 3 ) {
+                                if( !isLowerNeighbor( i, j ) && !isCambiata( i, j ) && !isEchappee( i, j ) && isDoubleNeighbor( i, j ) )
+                                    markHarmony( 'harmonic', i, j );
                                 else {
-                                    if( counterpointStaff == 0 )
-                                        prevNeighbor = $rootScope.notes[ counterpointStaff ][ i ][ 0 ];
-                                    else
-                                        prevNeighbor = $rootScope.notes[ counterpointStaff ][ j ][ 0 ];
+                                    if( ( counterpointStaff == 0 ) && ( $rootScope.notes[ counterpointStaff ][ i ][ 0 ] == prevNeighbor ) ||
+                                        ( counterpointStaff == 1 ) && ( $rootScope.notes[ counterpointStaff ][ j ][ 0 ] == prevNeighbor ) ) {
+                                        markFourConsecutiveNotes( 'slowTrill', counterpointStaff, i, j );
+                                    }
+                                    else {
+                                        if( counterpointStaff == 0 )
+                                            prevNeighbor = $rootScope.notes[ counterpointStaff ][ i ][ 0 ];
+                                        else
+                                            prevNeighbor = $rootScope.notes[ counterpointStaff ][ j ][ 0 ];
+                                    }
                                 }
                             }
                         }
+                        else
+                            prevNeighbor = '';
+
                     }
-                    else
+                    else if( !isStrongBeat( i, j ) )
                         prevNeighbor = '';
 
-                }
-                else if( !isStrongBeat( i, j ) )
-                    prevNeighbor = '';
+                    if( ( beatOfI == 0 ) || ( beatOfJ == 0 ) ) {
+                        if( Math.abs( notes[ 0 ][ i ][ 1 ] - notes[ 1 ][ j ][ 1 ] ) > 16 )
+                            markHarmony( 'largerThan12th', i, j );
 
-                if( ( beatOfI == 0 ) || ( beatOfJ == 0 ) ) {
-                    if( Math.abs( notes[ 0 ][ i ][ 1 ] - notes[ 1 ][ j ][ 1 ] ) > 16 )
-                        markHarmony( 'largerThan12th', i, j );
-
-                    if( ( beatOfI == 0 ) && ( beatOfJ == 0 ) ) {
-                        currInterval = Math.abs( notes[ 0 ][ i ] [ 1 ] - notes[ 1 ][ j ][ 1 ] );
-                        if( areSameInterval( currInterval, prevInterval ) ) {
-                            ++numberOfParallelIntervals;
-                            if( numberOfParallelIntervals > 4 )
-                                markConsecutiveVerticalIntervals( 'tooManyParallelIntervals', i, j );
+                        if( ( beatOfI == 0 ) && ( beatOfJ == 0 ) ) {
+                            currInterval = Math.abs( notes[ 0 ][ i ] [ 1 ] - notes[ 1 ][ j ][ 1 ] );
+                            if( areSameInterval( currInterval, prevInterval ) ) {
+                                ++numberOfParallelIntervals;
+                                if( numberOfParallelIntervals > 4 )
+                                    markConsecutiveVerticalIntervals( 'tooManyParallelIntervals', i, j );
+                            }
+                            prevInterval = currInterval;
                         }
-                        prevInterval = currInterval;
-                    }
-                    else {
-                        numberOfParallelIntervals = 0;
-                        prevInterval = -1;
-                        currInterval = -1;
-                    }
+                        else {
+                            numberOfParallelIntervals = 0;
+                            prevInterval = -1;
+                            currInterval = -1;
+                        }
 
-                    if( notes[ 0 ][ i ] [ 1 ] == notes[ 1 ][ j ][ 1 ] ) {
-                        if( isStrongBeat( i, j ) ) {
-                            markHarmony( 'internalUnison', i, j );
-                            if( isApproachedBySimilarMotion( i, j ) )
+                        if( notes[ 0 ][ i ] [ 1 ] == notes[ 1 ][ j ][ 1 ] ) {
+                            if( isStrongBeat( i, j ) ) {
+                                markHarmony( 'internalUnison', i, j );
+                                if( isApproachedBySimilarMotion( i, j ) )
+                                    markConsecutiveVerticalIntervals( 'perfectApproachedBySimilarMotion', i, j );
+                            }
+
+                            if( prevWasOctave || prevWasFifth ) {
+                                markConsecutiveVerticalIntervals( 'consecutivePerfect', i, j );
+                                prevWasUnison = true;
+                            }
+                            else if( prevWasUnison )
+                                markConsecutiveVerticalIntervals( 'parallelPerfect', i, j )
+                            else
+                                prevWasUnison = true;
+
+                            prevWasOctave = false;
+                            prevWasFifth = false;
+                        }
+                        else if( ( ( notes[ 0 ][ i ][ 1 ] - notes[ 1 ][ j ][ 1 ] ) % 7 ) == 0 ) {
+                            if( isStrongBeat( i, j ) && isApproachedBySimilarMotion( i, j ) )
                                 markConsecutiveVerticalIntervals( 'perfectApproachedBySimilarMotion', i, j );
-                        }
 
-                        if( prevWasOctave || prevWasFifth ) {
-                            markConsecutiveVerticalIntervals( 'consecutivePerfect', i, j );
-                            prevWasUnison = true;
+                            if( prevWasOctave || prevWasUnison ) {
+                                markConsecutiveVerticalIntervals( 'consecutivePerfect', i, j );
+                                prevWasFifth = true;
+                            }
+                            else if( prevWasFifth ) 
+                                markConsecutiveVerticalIntervals( 'parallelPerfect', i, j )
+                            else
+                                prevWasFifth = true;
+
+                            prevWasOctave = false;
+                            prevWasUnison = false;
                         }
-                        else if( prevWasUnison )
-                            markConsecutiveVerticalIntervals( 'parallelPerfect', i, j )
+                        else if( ( ( notes[ 0 ][ i ][ 1 ] - notes[ 1 ][ j ][ 1 ] ) % 12 ) == 0 )  {
+                            if( isStrongBeat( i, j ) && isApproachedBySimilarMotion( i, j ) )
+                                markConsecutiveVerticalIntervals( 'perfectApproachedBySimilarMotion', i, j );
+
+                            if( prevWasFifth || prevWasUnison ) {
+                                markConsecutiveVerticalIntervals( 'consecutivePerfect', i, j );
+                                prevWasOctave = true;
+                            }
+                            else if( prevWasOctave ) 
+                                markConsecutiveVerticalIntervals( 'parallelPerfect', i, j )
+                            else
+                                prevWasOctave = true;
+
+                            prevWasFifth = false;
+                            prevWasUnison = false;
+                        }
+                        else {
+                            prevWasFifth = false;
+                            prevWasOctave = false;
+                            prevWasUnison = false;
+                        }
+                    }
+
+                    if( notes[ 0 ][ i ][ 2 ] == 'whole' ) {
+                        if( beatOfI == 3 ) {
+                            beatOfI = 0;
+                            ++i;
+                        }
                         else
-                            prevWasUnison = true;
-
-                        prevWasOctave = false;
-                        prevWasFifth = false;
+                            ++beatOfI;
                     }
-                    else if( ( ( notes[ 0 ][ i ][ 1 ] - notes[ 1 ][ j ][ 1 ] ) % 7 ) == 0 ) {
-                        if( isStrongBeat( i, j ) && isApproachedBySimilarMotion( i, j ) )
-                            markConsecutiveVerticalIntervals( 'perfectApproachedBySimilarMotion', i, j );
-
-                        if( prevWasOctave || prevWasUnison ) {
-                            markConsecutiveVerticalIntervals( 'consecutivePerfect', i, j );
-                            prevWasFifth = true;
+                    else if( notes[ 0 ][ i ][ 2 ] == 'half' ) {
+                        if( beatOfI == 1 ) {
+                            beatOfI = 0;
+                            ++i;
                         }
-                        else if( prevWasFifth ) 
-                            markConsecutiveVerticalIntervals( 'parallelPerfect', i, j )
                         else
-                            prevWasFifth = true;
-
-                        prevWasOctave = false;
-                        prevWasUnison = false;
-                    }
-                    else if( ( ( notes[ 0 ][ i ][ 1 ] - notes[ 1 ][ j ][ 1 ] ) % 12 ) == 0 )  {
-                        if( isStrongBeat( i, j ) && isApproachedBySimilarMotion( i, j ) )
-                            markConsecutiveVerticalIntervals( 'perfectApproachedBySimilarMotion', i, j );
-
-                        if( prevWasFifth || prevWasUnison ) {
-                            markConsecutiveVerticalIntervals( 'consecutivePerfect', i, j );
-                            prevWasOctave = true;
-                        }
-                        else if( prevWasOctave ) 
-                            markConsecutiveVerticalIntervals( 'parallelPerfect', i, j )
-                        else
-                            prevWasOctave = true;
-
-                        prevWasFifth = false;
-                        prevWasUnison = false;
-                    }
-                    else {
-                        prevWasFifth = false;
-                        prevWasOctave = false;
-                        prevWasUnison = false;
-                    }
-                }
-
-                if( notes[ 0 ][ i ][ 2 ] == 'whole' ) {
-                    if( beatOfI == 3 ) {
-                        beatOfI = 0;
-                        ++i;
+                            ++beatOfI;
                     }
                     else
-                        ++beatOfI;
-                }
-                else if( notes[ 0 ][ i ][ 2 ] == 'half' ) {
-                    if( beatOfI == 1 ) {
-                        beatOfI = 0;
-                        ++i;
-                    }
-                    else
-                        ++beatOfI;
-                }
-                else
-                   ++i;
+                       ++i;
 
-               if( notes[ 1 ][ j ][ 2 ] == 'whole' ) {
-                    if( beatOfJ == 3 ) {
-                        beatOfJ = 0;
-                        ++j;
-                    }
+                    if( notes[ 1 ][ j ][ 2 ] == 'whole' ) {
+                        if( beatOfJ == 3 ) {
+                            beatOfJ = 0;
+                            ++j;
+                        }
                     else
                         ++beatOfJ;
-                }
-                else if( notes[ 1 ][ j ][ 2 ] == 'half' ) {
-                    if( beatOfJ == 1 ) {
-                        beatOfJ = 0;
-                        ++j;
                     }
+                    else if( notes[ 1 ][ j ][ 2 ] == 'half' ) {
+                        if( beatOfJ == 1 ) {
+                            beatOfJ = 0;
+                            ++j;
+                        }
                     else
                         ++beatOfJ;
+                    }
+                    else
+                        ++j;
                 }
-                else
-                   ++j;
 
             }
 
@@ -1067,6 +1143,9 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 firstBottomNote = notes[ 1 ][ bottomNoteIndex - 1 ],
                 secondBottomNote = notes[ 1 ][ bottomNoteIndex ];
 
+            if( ( firstTopNote[ 1 ] * firstBottomNote[ 1 ] * secondTopNote[ 1 ] * secondBottomNote[ 1 ] ) < 0 )
+                return false;
+
             if( ( secondTopNote[ 1 ] - firstTopNote[ 1 ] ) < 0 ) {
                 if( ( secondBottomNote[ 1 ] - firstBottomNote[ 1 ] ) < 0 )
                     return true;
@@ -1085,6 +1164,9 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         };
 
         function isConsonantHarmonically( topNote, bottomNote ) {
+            if( ( topNote[ 1 ] * bottomNote [ 1 ] ) < 0 )
+                return true;
+
             var diff = topNote[ 1 ] - bottomNote[ 1 ],
                 validityTable = [ 
                                     [ 0, 0 ], [ 3, -5 ], [ 3, 2 ], [ 4, -5 ], [ 4, 2 ], [ 7, -3 ], [ 7, 4 ], [ 8, -2 ], [ 8, 5 ], [ 9, -2 ], 
@@ -1121,6 +1203,9 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
             Returns whether an interval is a perfect 5th or octave (omits 4th)
         */
         function isPerfectInterval( topNote, bottomNote ) {
+            if( ( topNote[ 1 ] * bottomNote [ 1 ] ) < 0 )
+                return false;
+
             var diff = ( topNote[ 1 ] - bottomNote[ 1 ] ),
                 validityTable = [
                                     [ -12, 0 ], [ -7, -4 ], [ -7, 3 ], [ 0, 0 ], [ 7, -3 ], [ 7, 4 ], [ 12, 0 ]
@@ -1153,6 +1238,9 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         }
 
         function isValidMelodically( secondNote, firstNote ) {
+            if( ( firstNote[ 1 ] * secondNote [ 1 ] ) < 0 )
+                return true;
+
             var diff = secondNote[ 1 ] - firstNote[ 1 ],
                 validityTable = [ 
                                     [ -12, 0 ], [ -7, -4 ], [ -7, 3 ], [ -5, 4 ], [ -5, -3 ], [ -4, 5 ], [ -4, -2 ], [ -3, -5 ], [ -3, -2 ], 
@@ -1176,6 +1264,9 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         };
 
         function isLargeSkip( secondNote, firstNote ) {
+            if( ( secondNote[ 1 ] * firstNote [ 1 ] ) < 0 )
+                return false;
+
             if( ( Math.abs( $rootScope.getAsciiDiff( secondNote[ 0 ].charAt( 0 ), firstNote[ 0 ].charAt( 0 ) ) ) <= 2 ) || 
                 ( (secondNote[ 0 ].charAt( 0 ) == 'g' ) && ( firstNote[ 0 ].charAt( 0 ) == 'a' ) ) ||
                 ( (secondNote[ 0 ].charAt( 0 ) == 'a' ) && ( firstNote[ 0 ].charAt( 0 ) == 'g' ) ) ||
@@ -1192,6 +1283,9 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         };
 
         function isSkip( secondNote, firstNote ) {
+            if( ( secondNote[ 1 ] * firstNote [ 1 ] ) < 0 )
+                return false;
+
             if( ( Math.abs( $rootScope.getAsciiDiff( secondNote[ 0 ].charAt( 0 ), firstNote[ 0 ].charAt( 0 ) ) ) <= 1 ) || 
                 ( (secondNote[ 0 ].charAt( 0 ) == 'g' ) && ( firstNote[ 0 ].charAt( 0 ) == 'a' ) ) ||
                 ( (secondNote[ 0 ].charAt( 0 ) == 'a' ) && ( firstNote[ 0 ].charAt( 0 ) == 'g' ) )
@@ -1283,8 +1377,11 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         function markOneNote( i, j, className ) {
             var targetEl = $( document.querySelector( '[data-note-index="' + j + '"][data-staff-index="' + i + '"]' ) );
 
-            if( className == 'invalidAccidental' )
-                targetEl = $( $( $( $( targetEl )[ 0 ].previousElementSibling )[ 0 ] )[ 0 ].firstElementChild );
+            if( className == 'invalidAccidental' ) {
+                if( $( $( $( targetEl )[ 0 ].previousElementSibling )[ 0 ] )[ 0 ] ) {
+                    targetEl = $( $( $( $( targetEl )[ 0 ].previousElementSibling )[ 0 ] )[ 0 ].firstElementChild );
+                }
+            }
 
             $( targetEl ).addClass( className );
 
@@ -1491,6 +1588,10 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 cpStaff = 1;
             }
 
+            if( ( $rootScope.notes[ cpStaff ][ beatInCp ][ 1 ] * $rootScope.notes[ cpStaff ][ beatInCp - 1 ][ 1 ] ) < 0 )
+                return false;
+
+
             if( Math.abs( $rootScope.notes[ cpStaff ][ beatInCp ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp - 1 ][ 1 ] ) < 3 ) {
                 if( ( $rootScope.notes[ cpStaff ][ beatInCp ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp - 1 ][ 1 ] ) < 0 ) {
                     if( ( ( beatInCp + 1 ) < $rootScope.notes[ cpStaff ].length ) &&
@@ -1498,11 +1599,17 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                           ( ( $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp ][ 1 ] ) == -4 ) )
                       )
                     {
-                        if( ( ( beatInCp + 2 ) < $rootScope.notes[ cpStaff ].length ) &&
+                        if( ( $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] * $rootScope.notes[ cpStaff ][ beatInCp ][ 1 ] ) < 0 )
+                            return false;
+
+                            if( ( ( beatInCp + 2 ) < $rootScope.notes[ cpStaff ].length ) &&
                             ( ( ( $rootScope.notes[ cpStaff ][ beatInCp + 2 ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] ) == 2 ) ||
                               ( ( $rootScope.notes[ cpStaff ][ beatInCp + 2 ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] ) == 1 ) )
-                          )
-                            return true;
+                          ) {
+                                if( ( $rootScope.notes[ cpStaff ][ beatInCp + 2 ][ 1 ] * $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] ) < 0 )
+                                        return false;
+                                return true;
+                            }
                     }
                 }
             }
@@ -1522,17 +1629,25 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 cpStaff = 1;
             }
 
+            if( ( $rootScope.notes[ cpStaff ][ beatInCp ][ 1 ] * $rootScope.notes[ cpStaff ][ beatInCp - 1 ][ 1 ] ) < 0 )
+                return false;
+
             if( Math.abs( $rootScope.notes[ cpStaff ][ beatInCp ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp - 1 ][ 1 ] ) < 3 ) {
                 if( ( $rootScope.notes[ cpStaff ][ beatInCp ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp - 1 ][ 1 ] ) < 0 ) {
                     if( ( ( beatInCp + 1 ) < $rootScope.notes[ cpStaff ].length ) &&
                         ( ( $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp ][ 1 ] ) >= 3 )
                       )
                     {
+                        if( ( $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] * $rootScope.notes[ cpStaff ][ beatInCp ][ 1 ] ) < 0 )
+                            return false;
                         if( ( ( beatInCp + 2 ) < $rootScope.notes[ cpStaff ].length ) &&
                             ( ( ( $rootScope.notes[ cpStaff ][ beatInCp + 2 ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] ) == -2 ) ||
                               ( ( $rootScope.notes[ cpStaff ][ beatInCp + 2 ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] ) == -1 ) )
-                          )
-                            return true;
+                          ) {
+                                if( ( $rootScope.notes[ cpStaff ][ beatInCp + 2 ][ 1 ] * $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] ) < 0 )
+                                    return false;
+                                return true;
+                            }
                     }
                 }
                 else if( ( $rootScope.notes[ cpStaff ][ beatInCp ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp - 1 ][ 1 ] ) > 0 ) {
@@ -1540,11 +1655,16 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                         ( ( $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp ][ 1 ] ) <= -3 )
                       )
                     {
+                        if( ( $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] * $rootScope.notes[ cpStaff ][ beatInCp ][ 1 ] ) < 0 )
+                            return false;
                         if( ( ( beatInCp + 2 ) < $rootScope.notes[ cpStaff ].length ) &&
                             ( ( ( $rootScope.notes[ cpStaff ][ beatInCp + 2 ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] ) == 2 ) ||
                               ( ( $rootScope.notes[ cpStaff ][ beatInCp + 2 ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] ) == 1 ) )
-                          )
-                            return true;
+                          ) {
+                                if( ( $rootScope.notes[ cpStaff ][ beatInCp + 2 ][ 1 ] * $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] ) < 0 )
+                                    return false;
+                                return true;
+                        }
                     }
                 }
             }
@@ -1552,10 +1672,10 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
         };
 
         /*
-            Checks if this note in the counterpoint is a lower neighbor - is preceded by third in one direction and folowed by a third in the opposite direction,
+            Checks if this note in the counterpoint is a double neighbor - is preceded by third in one direction and folowed by a third in the opposite direction,
             and then resolved by step in the first direction
         */
-        function isLowerNeighbor( topVoiceBeat, bottomVoiceBeat ) {
+        function isDoubleNeighbor( topVoiceBeat, bottomVoiceBeat ) {
             var beatInCp = topVoiceBeat,
                 cpStaff = 0;
 
@@ -1563,6 +1683,9 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 beatInCp = bottomVoiceBeat;
                 cpStaff = 1;
             }
+
+             if( ( $rootScope.notes[ cpStaff ][ beatInCp ][ 1 ] * $rootScope.notes[ cpStaff ][ beatInCp - 1 ][ 1 ] ) < 0 )
+                return false;
 
             if( ( ( beatInCp + 2 ) < $rootScope.notes[ cpStaff ].length ) &&
                 ( $rootScope.notes[ cpStaff ][ beatInCp - 1 ][ 1 ] == $rootScope.notes[ cpStaff ][ beatInCp + 2 ][ 1 ] )
@@ -1572,8 +1695,11 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                   ) {
                     if( ( ( $rootScope.notes[ cpStaff ][ beatInCp + 2 ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] ) == -2 ) ||
                         ( ( $rootScope.notes[ cpStaff ][ beatInCp + 2 ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] ) == -1 )
-                      )
+                      ) {
+                        if( ( $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] * $rootScope.notes[ cpStaff ][ beatInCp + 2 ][ 1 ] ) < 0 )
+                            return false;
                         return true;
+                    }
                 }
             }
             else if( ( ( $rootScope.notes[ cpStaff ][ beatInCp ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp - 1 ][ 1 ] ) == -2 ) ||
@@ -1581,8 +1707,11 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                    ) {
                 if( ( ( $rootScope.notes[ cpStaff ][ beatInCp + 2 ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] ) == 2 ) ||
                     ( ( $rootScope.notes[ cpStaff ][ beatInCp + 2 ][ 1 ] - $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] ) == 1 )
-                  )
+                  ) {
+                    if( ( $rootScope.notes[ cpStaff ][ beatInCp + 1 ][ 1 ] * $rootScope.notes[ cpStaff ][ beatInCp + 2 ][ 1 ] ) < 0 )
+                        return false;
                     return true;
+                }
             }
             return false;
         };
@@ -1600,10 +1729,15 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 counterpointStaff = 1;
             }
 
+            if( ( $rootScope.notes[ counterpointStaff ][ beatInCounterpoint - 1 ] * $rootScope.notes[ counterpointStaff ][ beatInCounterpoint ] ) < 0 )
+                return false;
+
             if( !isSkip( $rootScope.notes[ counterpointStaff ][ beatInCounterpoint - 1 ], $rootScope.notes[ counterpointStaff ][ beatInCounterpoint ] ) ) {
                 if( ( ( beatInCounterpoint + 1 ) < $rootScope.notes[ counterpointStaff ].length ) && 
                     ( !isSkip( $rootScope.notes[ counterpointStaff ][ beatInCounterpoint ], $rootScope.notes[ counterpointStaff ][ beatInCounterpoint + 1 ] ) ) ) {
                     if( ( $rootScope.notes[ counterpointStaff ][ beatInCounterpoint ][ 1 ] - $rootScope.notes[ counterpointStaff ][ beatInCounterpoint - 1 ][ 1 ] ) < 0 ) {
+                        if( $rootScope.notes[ counterpointStaff ][ beatInCounterpoint + 1 ] < 0 )
+                            return false;
                         if( ( $rootScope.notes[ counterpointStaff ][ beatInCounterpoint + 1 ][ 1 ] - $rootScope.notes[ counterpointStaff ][ beatInCounterpoint ][ 1 ] ) > 0 )
                             return true;
                         else
@@ -1627,9 +1761,14 @@ PseudoComposer.controller( 'inputController', [ '$scope', '$rootScope',
                 counterpointStaff = 1;
             }
 
+            if( ( $rootScope.notes[ counterpointStaff ][ beatInCounterpoint - 1 ] * $rootScope.notes[ counterpointStaff ][ beatInCounterpoint ] ) < 0 )
+                return false;
+
             if( !isSkip( $rootScope.notes[ counterpointStaff ][ beatInCounterpoint - 1 ], $rootScope.notes[ counterpointStaff ][ beatInCounterpoint ] ) ) {
                 if( ( ( beatInCounterpoint + 1 ) < $rootScope.notes[ counterpointStaff ].length ) && 
                     ( !isSkip( $rootScope.notes[ counterpointStaff ][ beatInCounterpoint ], $rootScope.notes[ counterpointStaff ][ beatInCounterpoint + 1 ] ) ) ) {
+                    if( $rootScope.notes[ counterpointStaff ][ beatInCounterpoint + 1 ] < 0 )
+                        return false;
                     if( ( $rootScope.notes[ counterpointStaff ][ beatInCounterpoint ][ 1 ] - $rootScope.notes[ counterpointStaff ][ beatInCounterpoint - 1 ][ 1 ] ) < 0 ) {
                         if( ( $rootScope.notes[ counterpointStaff ][ beatInCounterpoint + 1 ][ 1 ] - $rootScope.notes[ counterpointStaff ][ beatInCounterpoint ][ 1 ] ) < 0 )
                             return true;
