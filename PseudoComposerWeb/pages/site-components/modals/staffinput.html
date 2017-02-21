@@ -92,6 +92,25 @@
                 <div class="row" ng-show="counterpointChecked">
 
                     <div class="row">
+
+                        <div style="float: left; width: 400px; position: relative;z-index: 2;">
+                            <div class="player" style="height: 26px; margin-bottom: 0;">
+                                <div style="margin: 0 auto; width: 160px; float: right;">
+                                    <input type="image" src="./img/pause.png" align="absmiddle" value="pause" onclick="pausePlayStop()" id="pausePlayStop">
+                                </div>
+                                <div class="time-controls" style="float: left; margin: 0; position: relative;">
+                                    <span id="time1" class="time">0:00</span>
+                                    <span id="capsule">
+                                        <span id="cursor"></span>
+                                    </span>
+                                    <span id="time2" class="time" style="text-align: left;">-0:00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
                         <span ng-click="toggleAll(true);" class="toggle" ng-class="{activeToggle: areAllShown()}">Show All</span>
                         <span>|</span>
                         <span ng-click="toggleAll(false);" class="toggle" ng-class="{activeToggle: areAllHidden()}">Hide All</span>

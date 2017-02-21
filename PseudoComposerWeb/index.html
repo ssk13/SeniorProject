@@ -20,9 +20,36 @@
     <script src="js/factories/NoteFactory.js"></script>
     <script src="js/factories/TwoVoiceCounterpointFactory.js"></script>
 
+    <!-- shim -->
+    <script src="js/import/inc/shim/Base64.js" type="text/javascript"></script>
+    <script src="js/import/inc/shim/Base64binary.js" type="text/javascript"></script>
+    <script src="js/import/inc/shim/WebAudioAPI.js" type="text/javascript"></script>
+    <script src="js/import/inc/shim/WebMIDIAPI.js" type="text/javascript"></script>
+    <!-- jasmid package -->
+    <script src="js/import/inc/jasmid/stream.js"></script>
+    <script src="js/import/inc/jasmid/midifile.js"></script>
+    <script src="js/import/inc/jasmid/replayer.js"></script>
+    <!-- midi.js package -->
+    <script src="js/import/js/midi/audioDetect.js" type="text/javascript"></script>
+    <script src="js/import/js/midi/gm.js" type="text/javascript"></script>
+    <script src="js/import/js/midi/loader.js" type="text/javascript"></script>
+    <script src="js/import/js/midi/plugin.audiotag.js" type="text/javascript"></script>
+    <script src="js/import/js/midi/plugin.webaudio.js" type="text/javascript"></script>
+    <script src="js/import/js/midi/plugin.webmidi.js" type="text/javascript"></script>
+    <script src="js/import/js/midi/player.js" type="text/javascript"></script>
+    <script src="js/import/js/midi/synesthesia.js" type="text/javascript"></script>
+    <!-- utils -->
+    <script src="js/import/js/util/dom_request_xhr.js" type="text/javascript"></script>
+    <script src="js/import/js/util/dom_request_script.js" type="text/javascript"></script>
+    <!-- includes -->
+    <script src="js/import/inc/timer.js" type="text/javascript"></script>
+    <script src="js/import/inc/event.js" type="text/javascript"></script>
+    <script src="js/import/soundfont/acoustic_grand_piano-ogg.js"></script>
+
     <!-- Bootstrap -->
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/connections.css" rel="stylesheet">
+    <link href="css/MIDIPlayer.css" rel="stylesheet">
     <link href="css/modal.css" rel="stylesheet">
     <link href="css/results.css" rel="stylesheet">
     <link href="css/staffcomponents.css" rel="stylesheet">
@@ -57,6 +84,7 @@
       <!-- Include all compiled plugins (below), or include individual files as needed -->
       <script src="js/bootstrap.min.js"></script>
       <script src="js/import/connections.js"></script>
+      <script src="js/import/MIDIPlayer.js"></script>
 
   </body>
 </html>
