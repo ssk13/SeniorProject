@@ -94,16 +94,10 @@
                     <div class="row">
 
                         <div style="float: left; width: 400px; position: relative;z-index: 2;">
-                            <div class="player" style="height: 26px; margin-bottom: 0;">
-                                <div style="margin: 0 auto; width: 160px; float: right;">
-                                    <input type="image" src="./img/pause.png" align="absmiddle" value="pause" onclick="pausePlayStop()" id="pausePlayStop">
-                                </div>
-                                <div class="time-controls" style="float: left; margin: 0; position: relative;">
-                                    <span id="time1" class="time">0:00</span>
-                                    <span id="capsule">
-                                        <span id="cursor"></span>
-                                    </span>
-                                    <span id="time2" class="time" style="text-align: left;">-0:00</span>
+                            <div class="player" style="height: 50px; margin-bottom: 0;">
+                                <div style="width: 265px;">
+                                    <input type="image" src="./img/pause.png" align="absmiddle" value="pause" ng-click="pausePlayStop(false)" id="pausePlayStop">
+                                    <span>MIDI playback coming soon!</span>
                                 </div>
                             </div>
                         </div>
