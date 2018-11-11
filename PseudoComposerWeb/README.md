@@ -1,5 +1,5 @@
 # PseudoComposer
-Senior Project
+Senior Project - A dynamic angular application that algorithmically verifies species counterpoint according to 16th century standards (research paper selected for publication in Journal of Undergraduate Research, Summer 2018, http://ufdc.ufl.edu/UF00091523/00872)
 
 Install Node and run the following commands from folder
 	npm install http-server -g
@@ -11,7 +11,7 @@ BUGS
 * Make rules account for rests
 * Make rests appear on middle of staff
 
-Rules To Implement:
+Future Rules To Implement:
 * Hard rules
 	* Direct repetition of contrapuntal combinaiton is forbidden - only 2 sequential repetitions allowed (p26)
 	* 2nd species
@@ -24,7 +24,7 @@ Rules To Implement:
 	* Avoid skipping in both voices - not as bad if 3rds
 	* It is preferable to precede a skip with a step or steps in the opposite direction.
 	* Try to fill in skips
-	* no outline of 7th, 9th, other dissonant intervals
+	* No outline of 7th, 9th, other dissonant intervals
 	* Try to cover the whole octave every 10-20 CF notes (first species)
 	* Try to cover the whole octave every 4-8 CF notes (2nd species)
 	* 2nd
@@ -43,12 +43,8 @@ Features To Implement
 * Create a form that sends me the composition and a brief message about what is mistaken
 * Verify mode
 * Let users change clef/species later
-
-Features intentionally omitted
-* Page that just lists all da rulez	- nah just direct to schubert
-
-Aesthetic:
-* Find way to connect parallel/consecutive perfect intervals horizontally to better group them
+* Bank of cantus firmuses - to practice with
+* Practice exercises with randomly generated cantus firmuses
 
 Rules to fix:
 * Make repeated intervals check for enharmonic spellings of intervals
@@ -56,23 +52,3 @@ Rules to fix:
 * For violation of parallels, indicate *what* the intervals are
 * For tritone outline, outline of diminished 5th must be filled in and followed by step in the opposite direction
 * Make melodic intervals check for legal Bb
-
-Questions for Richards
-* In the case that the user put in incorrect rhythmic values (i.e. not proper to species selected) how should I determine strong v/ weak beats?
-	nah just go ahead and assume that they want it checked anyway
-* In the rule enumerations, should I cater it to the species that they're using?
-	Such as, for harmonic violations, should I only discuss passing tones and such when relevant?
-		make it specific
-* How to account for larger leaps in 3rd species regarding excessively changing direction
-
-change 'change duration' so the next note changes ,not the current one
-
-Bank of cantus firmuses - to practice with
-Practice exercises with randomly generated cantus firmuses
-
-
-make the 'active' state more apparent - different color
-
-connection between rules more significant
-similar motion into perfect itnerval - circe them
-	also for repetitions
